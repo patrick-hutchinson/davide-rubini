@@ -1,0 +1,50 @@
+ul.projectContainer {
+  grid-column: 1 / 13;
+  padding-inline-start: 0;
+}
+
+li.project > a span:nth-child(1) {
+  grid-column: 1 / 7;
+}
+
+span.projectTitle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+span.projectTitle > .imageCount {
+  text-decoration: none;
+}
+
+span.projectTitle::before {
+  content: "•";
+  margin-right: 0.5em;
+  text-decoration: none !important;
+  text-decoration-line: none !important;
+  text-decoration-thickness: none !important;
+}
+
+li.project > a span:nth-child(2) {
+  grid-column: 7 / 11;
+}
+li.project > a span:nth-child(3) {
+  grid-column: 12 / 13;
+}
+
+.gallery {
+  position: absolute;
+  top: var(--margin-page);
+  left: var(--margin-page);
+  width: 100vw;
+  height: var(--content-height);
+  z-index: -1;
+}
+
+/* Project Page */
+.projectFooter {
+  display: flex;
+
+  position: absolute;
+  bottom: var(--margin-page);
+}

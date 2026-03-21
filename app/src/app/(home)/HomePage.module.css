@@ -1,0 +1,8 @@
+.coverMediaContainer {
+  width: 150px;
+  height: calc(150px * 1.2);
+  margin: auto;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}

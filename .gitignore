@@ -1,0 +1,52 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.*
+.pnp.js
+
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Next.js
+.next
+out
+build
+
+# Sanity
+dist
+.sanity
+
+# Testing / Coverage
+coverage
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Environment
+.env*
+*.local
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Misc
+.DS_Store
+*.pem
+
+# Backups
+backup/
+backups/
+*.tar.gz

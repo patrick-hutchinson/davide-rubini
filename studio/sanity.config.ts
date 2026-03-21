@@ -3,6 +3,10 @@ import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './schemaTypes'
 
+import {structure} from './structure'
+
+import {muxInput} from 'sanity-plugin-mux-input'
+
 export default defineConfig({
   name: 'default',
   title: 'davide-rubini',
@@ -10,7 +14,7 @@ export default defineConfig({
   projectId: 'kcuxsqwd',
   dataset: 'production',
 
-  plugins: [structureTool(), visionTool()],
+  plugins: [structureTool({structure}), visionTool(), muxInput()],
 
   schema: {
     types: schemaTypes,
