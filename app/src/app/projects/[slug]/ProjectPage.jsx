@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import AnimationLink from "@/components/Animation/AnimationLink";
-import Medium from "@/components/Medium/Medium";
+
 import styles from "../ProjectsPage.module.css";
 import { AnimatePresence } from "framer-motion";
 import Carousel from "@/components/Carousel/Carousel";
@@ -19,10 +19,13 @@ const ProjectPage = ({ projects, project }) => {
   const nextProject = total > 0 ? safeProjects[(currentIndex + 1) % total] : null;
 
   const gallery = [project.coverMedia, ...project.gallery];
+  const coverAspectRatio = project?.coverMedia?.medium?.width / project?.coverMedia?.medium?.height || 1;
 
   return (
     <div>
-      <div className={styles.gallery}>{gallery.length > 0 && <Carousel array={gallery} />}</div>
+      <div className={styles.gallery} style={{ "--cover-aspect": coverAspectRatio }}>
+        {gallery.length > 0 && <Carousel array={gallery} />}
+      </div>
 
       <AnimatePresence>{showInfo && <div>{project.description && <div>{project.description}</div>}</div>}</AnimatePresence>
 
