@@ -6,25 +6,37 @@ export const useAnimatedNavigation = () => {
 
   const navigate = (href) => {
     if (!href) return;
+    if (typeof window !== "undefined") window.__appTransitionPending = true;
 
     const pageAnimation = () => {
-      document.documentElement.animate([{ opacity: 1 }, { opacity: 0 }], {
+      const oldAnimation = document.documentElement.animate([{ opacity: 1 }, { opacity: 0 }], {
         duration: 1000,
         easing: "ease",
         fill: "forwards",
         pseudoElement: "::view-transition-old(root)",
       });
 
-      document.documentElement.animate([{ opacity: 0 }, { opacity: 1 }], {
+      const newAnimation = document.documentElement.animate([{ opacity: 0 }, { opacity: 1 }], {
         duration: 1000,
         easing: "ease",
         fill: "forwards",
         pseudoElement: "::view-transition-new(root)",
+      });
+
+      Promise.allSettled([oldAnimation.finished, newAnimation.finished]).then(() => {
+        if (typeof window === "undefined") return;
+        window.__appTransitionPending = false;
+        window.dispatchEvent(new CustomEvent("app:view-transition-finished"));
       });
     };
 
     router.push(href, { onTransitionReady: pageAnimation });
   };
 
-  return navigate;
+  const prefetch = (href) => {
+    if (!href || typeof router.prefetch !== "function") return;
+    router.prefetch(href);
+  };
+
+  return { navigate, prefetch };
 };

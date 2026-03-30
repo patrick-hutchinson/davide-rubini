@@ -1,5 +1,6 @@
 export const mediaAssetFragment = `{
   "medium": {
+    _index,
     "type": select(_type == "imageAsset" => "image", _type == "videoAsset" => "video"),
 
     "_id": select(

@@ -8,7 +8,7 @@ import { ViewTransitions } from "next-view-transitions";
 
 import ScrollRestorationController from "@/controllers/ScrollRestorationController";
 
-import Header from "./components/Header/Header";
+import Header from "@/components/Header/Header";
 
 import "./globals.css";
 import "./fonts.css";

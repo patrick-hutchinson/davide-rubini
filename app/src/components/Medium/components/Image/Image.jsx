@@ -1,12 +1,21 @@
-import { useImageResolution } from "@/components/Medium/hooks/useImageResolution";
+import { getImageResolutionUrl } from "@/components/Medium/hooks/useImageResolution";
+import { markImageLoaded } from "@/lib/preloadImage";
 
 import NextImage from "next/image";
 
-const Image = ({ medium, setIsLoaded, eager = false }) => {
+const Image = ({ medium, setIsLoaded, eager = false, sizes = "100vw", quality = 75, fit = "cover", position = "center" }) => {
   const imageSource = medium.url;
 
   const resolutionWidth = medium.width;
   const resolutionHeight = medium.height;
+  const imageLoader = ({ src, width: nextWidth, quality: nextQuality }) =>
+    getImageResolutionUrl(
+      { ...medium, url: src },
+      {
+        width: nextWidth,
+        quality: nextQuality ?? quality,
+      }
+    );
 
   return (
     <div
@@ -20,9 +29,11 @@ const Image = ({ medium, setIsLoaded, eager = false }) => {
       <NextImage
         src={imageSource}
         alt="image"
-        unoptimized
+        loader={imageLoader}
         width={resolutionWidth}
         height={resolutionHeight}
+        sizes={sizes}
+        quality={quality}
         loading={eager ? "eager" : "lazy"}
         fetchPriority={eager ? "high" : "auto"}
         decoding="sync"
@@ -33,10 +44,11 @@ const Image = ({ medium, setIsLoaded, eager = false }) => {
           height: "100%",
           left: 0,
           top: 0,
-          objectFit: "cover",
-          objectPosition: "center",
+          objectFit: fit,
+          objectPosition: position,
         }}
         onLoad={() => {
+          markImageLoaded(imageSource);
           setIsLoaded?.(true);
         }}
       />

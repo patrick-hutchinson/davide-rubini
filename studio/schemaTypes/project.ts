@@ -35,29 +35,24 @@ export const project = defineType({
         'Queste immagini verranno mostrate a tutta altezza dello schermo sotto i commenti.',
       validation: (Rule) => Rule.required(),
     }),
-    // defineField({
-    //   name: 'credits',
-    //   type: 'array',
-    //   of: [
-    //     {
-    //       type: 'object',
-    //       fields: [
-    //         defineField({name: 'role', title: 'Role', type: 'string'}),
-    //         defineField({
-    //           name: 'people',
-    //           title: 'People',
-    //           type: 'array',
-    //           of: [{type: 'string'}],
-    //           options: {
-    //             layout: 'tags',
-    //           },
-    //           description:
-    //             "⚠️ Aggiungi i nomi dei festival e poi premi INVIO, così l'inserimento comparirà come tag.",
-    //         }),
-    //       ],
-    //     },
-    //   ],
-    // }),
+    defineField({
+      name: 'credits',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({name: 'role', title: 'Role', type: 'string'}),
+            defineField({
+              name: 'entries',
+              title: 'Entries',
+              type: 'array',
+              of: [{type: 'string', name: 'entry'}],
+            }),
+          ],
+        },
+      ],
+    }),
     defineField({
       name: 'slug',
       title: 'url',

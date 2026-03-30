@@ -1,0 +1,95 @@
+.main {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--content-height);
+  padding: var(--margin-page);
+  padding-top: var(--margin-text);
+  overflow-x: clip;
+}
+
+.block {
+  margin-bottom: var(--margin-text);
+}
+
+.label {
+  margin: 0 0 var(--margin-page);
+  font-size: inherit;
+  font-weight: bold;
+}
+
+.circleStatic {
+  width: 152px;
+  height: 152px;
+  border-radius: 50%;
+  background: #000;
+  margin: 0 0 var(--margin-text);
+}
+
+.circleOverlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 152px;
+  height: 152px;
+  border-radius: 50%;
+  background: #000;
+}
+
+.physicsStage {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.measureText {
+  white-space: pre-wrap;
+  margin: 0;
+  width: min(100%, 900px);
+  padding: 0;
+  line-height: inherit;
+}
+
+.measureChar {
+  display: inline-block;
+}
+
+.measureHidden {
+  visibility: hidden;
+}
+
+.letterLayer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.letterLayerReady {
+  opacity: 1;
+}
+
+.letter {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: inline-block;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.paragraph {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.staticHidden {
+  visibility: hidden;
+  pointer-events: none;
+}

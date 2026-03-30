@@ -1,7 +1,8 @@
 import { useAnimatedNavigation } from "./hooks/useAnimatedNavigation";
+import { preloadImage } from "@/lib/preloadImage";
 
-const AnimationLink = ({ link, children, className }) => {
-  const navigate = useAnimatedNavigation();
+const AnimationLink = ({ link, children, className, preloadSrc }) => {
+  const { navigate, prefetch } = useAnimatedNavigation();
 
   const resolveInternalHref = (internalLink) => {
     if (!internalLink) return null;
@@ -43,11 +44,20 @@ const AnimationLink = ({ link, children, className }) => {
     navigate(href);
   };
 
+  const handleIntent = () => {
+    if (isExternal || isEmail) return;
+    prefetch(href);
+    preloadImage(preloadSrc);
+  };
+
   return (
     <a
       href={href}
       className={className}
       onClick={handleClick}
+      onMouseEnter={handleIntent}
+      onFocus={handleIntent}
+      onTouchStart={handleIntent}
       target={isExternal ? "_blank" : undefined}
       rel={isExternal ? "noopener noreferrer" : undefined}
     >

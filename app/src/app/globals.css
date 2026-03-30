@@ -1,9 +1,17 @@
 :root {
   --background: #ffffff;
   --foreground: #000000;
+  --link-color: #0050ff;
 
   --margin-page: 8px;
+  --margin-text: 2em;
+
+  --header-height: 18.5px;
   --content-height: calc(100vh - (2 * var(--margin-page)));
+}
+
+html {
+  overscroll-behavior: none;
 }
 
 html.dark {
@@ -29,7 +37,7 @@ button {
   all: unset; /* removes default button styles */
   cursor: pointer;
   text-decoration: underline;
-  color: rgb(0, 0, 238);
+  color: var(--link-color);
 }
 
 /* optional: match visited/hover if you care */

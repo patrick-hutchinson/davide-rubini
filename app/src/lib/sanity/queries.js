@@ -20,7 +20,24 @@ export const projectsQuery = `*[_type=="project"]{
   client,
   year,
   description,
+  credits[]{
+    role,
+    entries
+  },
   coverMedia[0] ${mediaAssetFragment},
   gallery[] ${mediaAssetFragment},
   slug
+}`;
+
+export const archiveQuery = `*[_type=="archive"][0]{
+  gallery[] ${mediaAssetFragment},
+}`;
+
+export const aboutQuery = `*[_type=="about"][0]{
+  description,
+  selectedClients,
+  contact[]{
+    platform,
+    link
+  },
 }`;

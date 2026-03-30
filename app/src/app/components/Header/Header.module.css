@@ -1,8 +1,0 @@
-a.homeLink {
-  text-decoration: none;
-}
-
-a.homeLink:visited,
-a.homeLink {
-  color: unset;
-}

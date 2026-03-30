@@ -1,5 +1,5 @@
 import { production, preview } from "./client";
-import { projectsQuery, siteQuery } from "./queries";
+import { projectsQuery, siteQuery, archiveQuery, aboutQuery } from "./queries";
 
 const isProduction = process.env.VERCEL_ENV === "production";
 const isPreview = process.env.VERCEL_ENV === "preview";
@@ -20,4 +20,12 @@ export async function getSite() {
 
 export async function getProjects() {
   return client.fetch(projectsQuery);
+}
+
+export async function getArchive() {
+  return client.fetch(archiveQuery);
+}
+
+export async function getAbout() {
+  return client.fetch(aboutQuery);
 }

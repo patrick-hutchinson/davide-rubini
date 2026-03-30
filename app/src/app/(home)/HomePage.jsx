@@ -25,7 +25,7 @@ const HomePage = ({ projects }) => {
       <AnimatePresence>
         <AnimationLink link="/projects">
           <motion.div className={styles.coverMediaContainer}>
-            <Medium medium={coverMedia[index].medium} />
+            <Medium medium={coverMedia[index].medium} sizes="150px" quality={75} />
           </motion.div>
         </AnimationLink>
       </AnimatePresence>

@@ -22,15 +22,19 @@ const ProjectsPage = ({ projects }) => {
             onMouseEnter={() => handleMouseEnter(project)}
             onMouseLeave={() => handleMouseLeave(project)}
           >
-            <AnimationLink className="grid" link={`/projects/${project.slug.current}`}>
-              <span className={styles.projectTitle}>
-                {project.title}
+            <AnimationLink
+              className="grid"
+              link={`/projects/${project.slug.current}`}
+              preloadSrc={project.coverMedia?.medium?.url}
+            >
+              <span className={styles.projectTitleWrapper}>
+                <span className={styles.title}>{project.title}</span>
                 <span className={styles.imageCount} typo="small">
                   ({project.gallery?.length})
                 </span>
               </span>
-              <span>{project.client}</span>
-              <span>{project.year}</span>
+              <span className={styles.client}>{project.client}</span>
+              <span className={styles.year}>{project.year}</span>
             </AnimationLink>
           </li>
         ))}

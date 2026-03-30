@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import useEmblaCarousel from "embla-carousel-react";
 import Medium from "@/components/Medium/Medium";
@@ -7,9 +7,10 @@ import styles from "./Carousel.module.css";
 
 import { motion } from "framer-motion";
 
-const Carousel = ({ array, onIndexChange }) => {
+const Carousel = ({ array, onIndexChange, initialOffsetPx = 0, deferInitialOffsetUntilTransitionEnd = false }) => {
   if (!array) return;
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, dragResistance: 1, dragFree: true }, []);
+  const hasAppliedInitialOffset = useRef(false);
 
   // Triple the date in case it is not long enough to fill the width of the screen
 
@@ -54,30 +55,31 @@ const Carousel = ({ array, onIndexChange }) => {
   }, [emblaApi]);
 
   useEffect(() => {
-    if (!emblaApi) return;
+    if (!emblaApi || !initialOffsetPx || hasAppliedInitialOffset.current) return;
 
-    const onDragStart = () => setIsDragging(true);
-    const onDragEnd = () => setIsDragging(false);
-
-    emblaApi.on("pointerDown", onDragStart);
-    emblaApi.on("pointerUp", onDragEnd);
-    emblaApi.on("dragEnd", onDragEnd);
-
-    return () => {
-      emblaApi.off("pointerDown", onDragStart);
-      emblaApi.off("pointerUp", onDragEnd);
-      emblaApi.off("dragEnd", onDragEnd);
+    const applyInitialOffset = () => {
+      if (hasAppliedInitialOffset.current) return;
+      emblaApi.internalEngine().scrollTo.distance(initialOffsetPx, false);
+      hasAppliedInitialOffset.current = true;
     };
-  }, [emblaApi]);
+
+    if (deferInitialOffsetUntilTransitionEnd && typeof window !== "undefined" && window.__appTransitionPending) {
+      const onTransitionFinished = () => requestAnimationFrame(applyInitialOffset);
+      window.addEventListener("app:view-transition-finished", onTransitionFinished, { once: true });
+      return () => window.removeEventListener("app:view-transition-finished", onTransitionFinished);
+    }
+
+    requestAnimationFrame(applyInitialOffset);
+  }, [emblaApi, initialOffsetPx, deferInitialOffsetUntilTransitionEnd]);
 
   return (
-    <motion.div className={`${styles.carousel_outer} embla`} ref={emblaRef}>
+    <motion.div className={`${styles.carousel_outer} embla carousel`} ref={emblaRef}>
       <div className={`${styles.carousel_inner} embla__container`}>
         {array.map((item) => {
           return (
-            <li key={item._id} className={`${styles.slide} embla__slide`}>
+            <div key={item._id} className={`${styles.slide} embla__slide`}>
               <Medium medium={item.medium} />
-            </li>
+            </div>
           );
         })}
       </div>

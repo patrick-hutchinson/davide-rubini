@@ -15,6 +15,7 @@ export default function GalleryDropzoneInput(props: ArrayOfObjectsInputProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [statusMessage, setStatusMessage] = useState<string>('')
+  const [uploadProgress, setUploadProgress] = useState({uploaded: 0, total: 0})
 
   const client = useClient({apiVersion: '2024-01-01'})
 
@@ -31,6 +32,7 @@ export default function GalleryDropzoneInput(props: ArrayOfObjectsInputProps) {
     if (!acceptedImages.length) return
 
     setIsUploading(true)
+    setUploadProgress({uploaded: 0, total: acceptedImages.length})
 
     try {
       const uploadedImageAssets = await Promise.all(
@@ -38,6 +40,11 @@ export default function GalleryDropzoneInput(props: ArrayOfObjectsInputProps) {
           const asset = await client.assets.upload('image', file, {
             filename: file.name,
           })
+
+          setUploadProgress((prev) => ({
+            ...prev,
+            uploaded: prev.uploaded + 1,
+          }))
 
           return {
             _type: 'imageAsset',
@@ -61,6 +68,7 @@ export default function GalleryDropzoneInput(props: ArrayOfObjectsInputProps) {
       setStatusMessage('Caricamento non riuscito. Riprova.')
     } finally {
       setIsUploading(false)
+      setUploadProgress({uploaded: 0, total: 0})
     }
   }
 
@@ -107,6 +115,11 @@ export default function GalleryDropzoneInput(props: ArrayOfObjectsInputProps) {
               disabled={isUploading}
               onClick={() => inputRef.current?.click()}
             />
+            {isUploading ? (
+              <Text size={1}>
+                {uploadProgress.uploaded} / {uploadProgress.total} caricate
+              </Text>
+            ) : null}
             {statusMessage ? <Text size={1}>{statusMessage}</Text> : null}
           </Flex>
         </Stack>

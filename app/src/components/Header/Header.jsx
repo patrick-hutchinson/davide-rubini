@@ -3,11 +3,13 @@
 import AnimationLink from "@/components/Animation/AnimationLink";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
+import { usePathname } from "next/navigation";
 
 import styles from "./Header.module.css";
 
 const Header = ({ site }) => {
   const { theme, setTheme } = useTheme();
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [now, setNow] = useState(new Date());
 
@@ -36,13 +38,39 @@ const Header = ({ site }) => {
   const date = `${year} - ${month} - ${day}`;
   const time = `${hours12}:${minutes} ${period}`;
 
+  const isActiveRoute = (basePath) => pathname === basePath || pathname?.startsWith(`${basePath}/`);
+  const isArchiveRoute = isActiveRoute("/archive");
+
+  const handleChangeColumns = () => {
+    if (typeof window === "undefined") return;
+    window.dispatchEvent(new CustomEvent("archive:change-columns"));
+  };
+
   return (
-    <header>
+    <header className={styles.header}>
       <AnimationLink className={styles.homeLink} link="/">
         <strong>{site.title}</strong>
       </AnimationLink>{" "}
-      / {date} / {time} / <AnimationLink link="/projects">Projects</AnimationLink> /{" "}
-      <AnimationLink link="/about">About</AnimationLink> / <AnimationLink link="/archive">Archive</AnimationLink> /{" "}
+      / {date} / {time} /{" "}
+      <AnimationLink className={isActiveRoute("/projects") ? styles.activeNavLink : undefined} link="/projects">
+        Projects
+      </AnimationLink>{" "}
+      / <AnimationLink className={isActiveRoute("/about") ? styles.activeNavLink : undefined} link="/about">
+        About
+      </AnimationLink>{" "}
+      / <AnimationLink className={isActiveRoute("/archive") ? styles.activeNavLink : undefined} link="/archive">
+        Archive
+      </AnimationLink>{" "}
+      {isArchiveRoute && (
+        <>
+          / <span>• Columns [</span>
+          <button type="button" onClick={handleChangeColumns}>
+            Change
+          </button>
+          <span>]</span>{" "}
+        </>
+      )}
+      /{" "}
       {mounted && (
         <>
           <button onClick={() => setTheme("light")} className={theme === "light" ? "active" : ""} type="button">
