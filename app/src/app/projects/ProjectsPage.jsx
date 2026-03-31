@@ -14,7 +14,7 @@ const ProjectsPage = ({ projects }) => {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const mediaQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const mediaQuery = window.matchMedia("(min-width: 48rem) and (hover: hover) and (pointer: fine)");
 
     const apply = () => setCanHover(mediaQuery.matches);
     apply();

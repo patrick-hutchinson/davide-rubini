@@ -153,8 +153,11 @@ const AboutPage = ({ about }) => {
     if (!stage) return undefined;
 
     const { Engine, World, Bodies, Body, Runner, Events } = Matter;
-    const engine = Engine.create();
-    engine.gravity.y = 0.9;
+    const engine = Engine.create({ enableSleeping: true });
+    engine.gravity.y = 1.35;
+    engine.positionIterations = 8;
+    engine.velocityIterations = 6;
+    engine.constraintIterations = 4;
 
     const wallThickness = 120;
     let walls = [];
@@ -178,9 +181,12 @@ const AboutPage = ({ about }) => {
       const bodyHeight = Math.max(1, letter.height * WORD_HITBOX_SCALE_Y);
 
       return Bodies.rectangle(letter.x + letter.width / 2, letter.y + letter.height / 2, bodyWidth, bodyHeight, {
-        restitution: 0.02,
+        restitution: 0,
         friction: 0.22,
-        frictionAir: 0.08,
+        frictionStatic: 0.9,
+        frictionAir: 0.02,
+        sleepThreshold: 40,
+        slop: 0.08,
       });
     });
 
@@ -193,8 +199,11 @@ const AboutPage = ({ about }) => {
             {
               restitution: 0.08,
               friction: 0.12,
-              frictionAir: 0.04,
+              frictionStatic: 0.8,
+              frictionAir: 0.015,
               density: 0.0005,
+              sleepThreshold: 40,
+              slop: 0.08,
             },
           )
         : null;
@@ -202,22 +211,60 @@ const AboutPage = ({ about }) => {
     walls = buildWalls();
     World.add(engine.world, [...walls, ...letterBodies, ...(circleBody ? [circleBody] : [])]);
 
-    const syncPositions = () => {
+    const MOVEMENT_EPSILON = 0.02;
+    const ANGLE_EPSILON = 0.001;
+    const SETTLE_FRAMES_REQUIRED = 20;
+    const lastWordTransforms = letterBodies.map(() => ({ x: Number.NaN, y: Number.NaN, angle: Number.NaN }));
+    let lastCircleTransform = { x: Number.NaN, y: Number.NaN, angle: Number.NaN };
+    let settledFrames = 0;
+    let runnerActive = true;
+
+    const syncPositions = (force = false) => {
       letterBodies.forEach((body, index) => {
         const node = letterRefs.current[index];
         const letter = letters[index];
         if (!node) return;
 
-        node.style.transform = `translate(${body.position.x - letter.width / 2}px, ${
-          body.position.y - letter.height / 2
-        }px) rotate(${body.angle}rad)`;
+        const nextX = body.position.x - letter.width / 2;
+        const nextY = body.position.y - letter.height / 2;
+        const nextAngle = body.angle;
+        const prev = lastWordTransforms[index];
+        const movedEnough =
+          force ||
+          Math.abs(nextX - prev.x) > MOVEMENT_EPSILON ||
+          Math.abs(nextY - prev.y) > MOVEMENT_EPSILON ||
+          Math.abs(nextAngle - prev.angle) > ANGLE_EPSILON;
+        if (!movedEnough) return;
+
+        node.style.transform = `translate(${nextX}px, ${nextY}px) rotate(${nextAngle}rad)`;
+        prev.x = nextX;
+        prev.y = nextY;
+        prev.angle = nextAngle;
       });
 
       if (circleBody && circleOverlayRef.current) {
         const radius = Math.min(circleModel.width, circleModel.height) / 2;
-        circleOverlayRef.current.style.transform = `translate(${circleBody.position.x - radius}px, ${
-          circleBody.position.y - radius
-        }px) rotate(${circleBody.angle}rad)`;
+        const nextX = circleBody.position.x - radius;
+        const nextY = circleBody.position.y - radius;
+        const nextAngle = circleBody.angle;
+        const movedEnough =
+          force ||
+          Math.abs(nextX - lastCircleTransform.x) > MOVEMENT_EPSILON ||
+          Math.abs(nextY - lastCircleTransform.y) > MOVEMENT_EPSILON ||
+          Math.abs(nextAngle - lastCircleTransform.angle) > ANGLE_EPSILON;
+
+        if (movedEnough) {
+          circleOverlayRef.current.style.transform = `translate(${nextX}px, ${nextY}px) rotate(${nextAngle}rad)`;
+          lastCircleTransform = { x: nextX, y: nextY, angle: nextAngle };
+        }
+      }
+
+      const dynamicBodies = [...letterBodies, ...(circleBody ? [circleBody] : [])];
+      const allSleeping = dynamicBodies.every((body) => body.isSleeping);
+      settledFrames = allSleeping ? settledFrames + 1 : 0;
+      if (runnerActive && settledFrames >= SETTLE_FRAMES_REQUIRED) {
+        Runner.stop(runner);
+        runnerActive = false;
       }
     };
 
@@ -236,12 +283,13 @@ const AboutPage = ({ about }) => {
           Body.setPosition(body, { x: clampedX, y: body.position.y });
         }
       });
+      syncPositions(true);
     };
 
     const runner = Runner.create();
     Events.on(engine, "afterUpdate", syncPositions);
     Runner.run(runner, engine);
-    syncPositions();
+    syncPositions(true);
     window.addEventListener("resize", handleResize);
 
     return () => {

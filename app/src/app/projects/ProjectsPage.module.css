@@ -114,7 +114,7 @@ li.project .projectTitleWrapper::before {
   }
 }
 
-@media (hover: hover) and (pointer: fine) {
+@media (min-width: 48rem) and (hover: hover) and (pointer: fine) {
   .coverMedia {
     display: block;
   }
