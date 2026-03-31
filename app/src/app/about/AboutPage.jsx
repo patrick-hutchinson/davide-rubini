@@ -47,12 +47,14 @@ const measureRenderedWords = (container, stageRect) => {
 
         const rect = range.getBoundingClientRect();
         if (rect.width > 0 && rect.height > 0) {
+          const fontSizePx = Number.parseFloat(computed.fontSize) || rect.height;
           result.push({
             text: token,
             x: rect.left - stageRect.left,
             y: rect.top - stageRect.top,
             width: rect.width,
             height: rect.height,
+            fontSizePx,
             fontFamily: computed.fontFamily,
             fontSize: computed.fontSize,
             fontWeight: computed.fontWeight,
@@ -181,7 +183,8 @@ const AboutPage = ({ about }) => {
     const allowWordRotation = !isMobileViewport;
     const letterBodies = letters.map((letter) => {
       const bodyWidth = Math.max(1, letter.width * WORD_HITBOX_SCALE_X);
-      const bodyHeight = Math.max(1, letter.height * WORD_HITBOX_SCALE_Y);
+      const glyphLikeHeight = Math.min(letter.height, (letter.fontSizePx || letter.height) * 0.94);
+      const bodyHeight = Math.max(1, (isMobileViewport ? glyphLikeHeight : letter.height) * WORD_HITBOX_SCALE_Y);
 
       return Bodies.rectangle(letter.x + letter.width / 2, letter.y + letter.height / 2, bodyWidth, bodyHeight, {
         restitution: 0,
