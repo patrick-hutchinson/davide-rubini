@@ -2,29 +2,38 @@ ul.projectContainer {
   grid-column: 1 / 13;
   padding-inline-start: 0;
   margin: 0;
-  margin-top: var(--margin-text) !important;
+  margin-top: var(--margin-text);
+  list-style: none;
+}
+
+.project {
+  margin-bottom: var(--margin-page);
 }
 
 li.project > a {
+  display: block;
   text-decoration: none;
 }
 
-li.project .projectTitleWrapper {
-  grid-column: 1 / 7;
+.mobileCover {
+  width: 100%;
+  height: auto;
+  margin-bottom: 2px;
+}
 
+li.project .projectTitleWrapper {
   display: flex;
   align-items: end;
   gap: 4px;
 }
 
-li.project .projectTitleWrapper .title,
-li.project .client,
-li.project .year {
+li.project .projectTitleWrapper .title {
   text-decoration: underline;
 }
 
 .imageCount {
   padding-bottom: 2px;
+  display: none;
 }
 
 li.project .projectTitleWrapper::before {
@@ -35,20 +44,136 @@ li.project .projectTitleWrapper::before {
   text-decoration-thickness: none !important;
 }
 
-li.project > a span:nth-child(2) {
-  grid-column: 7 / 11;
-}
-li.project > a span:nth-child(3) {
-  grid-column: 12 / 13;
+.client,
+.year {
+  display: none;
 }
 
 .coverMedia {
+  display: none;
   position: absolute !important;
   top: var(--margin-page) !important;
   right: var(--margin-page) !important;
   height: var(--content-height) !important;
   width: auto !important;
   z-index: -1;
+}
+
+/* Common 2026 breakpoint set (mobile-first) */
+@media (min-width: 48rem) {
+  .project {
+    margin-bottom: 0;
+  }
+
+  li.project > a {
+    display: grid;
+  }
+
+  .mobileCover {
+    display: none;
+  }
+
+  li.project .projectTitleWrapper {
+    grid-column: 1 / 7;
+  }
+
+  .imageCount {
+    display: inline;
+  }
+
+  .client {
+    display: inline;
+    grid-column: 7 / 11;
+    text-decoration: underline;
+  }
+
+  .year {
+    display: inline;
+    grid-column: 12 / 13;
+    text-decoration: underline;
+  }
+}
+
+@media (min-width: 64rem) {
+  .coverMedia {
+    display: block;
+  }
+}
+
+@media (min-width: 90rem) {
+  li.project .projectTitleWrapper {
+    grid-column: 1 / 6;
+  }
+
+  .client {
+    grid-column: 6 / 10;
+  }
+
+  .year {
+    grid-column: 12 / 13;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .coverMedia {
+    display: block;
+  }
+}
+
+/* Mobile Project Slug */
+.mobileProjectStackPage {
+  box-sizing: border-box;
+  width: 100vw;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: clip;
+  padding: var(--margin-page);
+  padding-top: calc(var(--margin-page) + var(--header-height) + var(--margin-text) + 1.5em);
+}
+
+.mobileBackButton {
+  display: inline-block;
+  margin: 0 0 var(--margin-text);
+}
+
+.mobileProjectSection {
+  margin-bottom: var(--margin-text);
+}
+
+.mobileProjectSectionTitle {
+  margin: 0 0 var(--margin-page);
+  font-size: inherit;
+  font-weight: bold;
+}
+
+.mobileProjectDescription {
+  white-space: pre-wrap;
+}
+
+.mobileProjectGalleryStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--margin-page);
+}
+
+.mobileCreditList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.desktopProjectPage {
+  display: none;
+}
+
+@media (min-width: 48rem) {
+  .mobileProjectStackPage {
+    display: none;
+  }
+
+  .desktopProjectPage {
+    display: block;
+  }
 }
 
 .galleryWrapper {
@@ -104,10 +229,17 @@ li.project > a span:nth-child(3) {
 
 li.creditRow::before {
   content: "•";
-  margin-right: 0.5em;
+  position: absolute;
+  left: 0;
+  top: 0;
   text-decoration: none !important;
   text-decoration-line: none !important;
   text-decoration-thickness: none !important;
+}
+
+li.creditRow {
+  position: relative;
+  padding-left: 1em;
 }
 
 .projectFooter .projectTitle::before {

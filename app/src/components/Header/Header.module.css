@@ -1,6 +1,8 @@
 .header {
   position: fixed;
   z-index: 20;
+  top: var(--margin-page);
+  left: var(--margin-page);
 }
 
 .activeNavLink {
@@ -16,4 +18,60 @@ a.homeLink {
 a.homeLink:visited,
 a.homeLink {
   color: unset;
+}
+
+.desktopNav {
+  display: none;
+}
+
+.mobileMeta {
+  display: block;
+}
+
+.mobileMenuButton {
+  position: fixed;
+  right: var(--margin-page);
+  bottom: var(--margin-page);
+  z-index: 31;
+}
+
+.mobileMenuOverlay {
+  position: fixed;
+  left: var(--margin-page);
+  bottom: var(--margin-page);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.mobileMenuLine {
+  display: flex;
+  align-items: baseline;
+}
+
+.mobileMenuSuffix {
+  color: var(--foreground);
+  text-decoration: none;
+}
+
+.mobileThemeRow {
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 48rem) {
+  .desktopNav {
+    display: block;
+  }
+
+  .mobileMeta {
+    display: none;
+  }
+
+  .mobileMenuButton,
+  .mobileMenuOverlay {
+    display: none;
+  }
 }

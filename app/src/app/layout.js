@@ -59,7 +59,7 @@ export default async function RootLayout({ children }) {
 
   return (
     <ViewTransitions>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <DeviceProvider>
           <ViewportProvider>
             <ScrollRestorationController />

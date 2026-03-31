@@ -85,6 +85,7 @@ const AboutPage = ({ about }) => {
   const stageRef = useRef(null);
   const contentRef = useRef(null);
   const circleSourceRef = useRef(null);
+  const circleOverlayRef = useRef(null);
   const letterRefs = useRef([]);
 
   const [letters, setLetters] = useState([]);
@@ -94,17 +95,11 @@ const AboutPage = ({ about }) => {
   const [showOverlay, setShowOverlay] = useState(false);
   const [layoutVersion, setLayoutVersion] = useState(0);
 
-  useEffect(() => {
-    const onKeyDown = (event) => {
-      if (event.code !== "Space" || dropStarted) return;
-      event.preventDefault();
-      setShowOverlay(true);
-      setDropStarted(true);
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [dropStarted]);
+  const triggerDrop = () => {
+    if (dropStarted) return;
+    setShowOverlay(true);
+    setDropStarted(true);
+  };
 
   useEffect(() => {
     const content = contentRef.current;
@@ -182,8 +177,10 @@ const AboutPage = ({ about }) => {
             circleModel.y + circleModel.height / 2,
             Math.min(circleModel.width, circleModel.height) / 2,
             {
-              isStatic: true,
-              restitution: 0.6,
+              restitution: 0.45,
+              friction: 0.04,
+              frictionAir: 0.01,
+              density: 0.005,
             },
           )
         : null;
@@ -200,6 +197,13 @@ const AboutPage = ({ about }) => {
           body.position.y - letter.height / 2
         }px) rotate(${body.angle}rad)`;
       });
+
+      if (circleBody && circleOverlayRef.current) {
+        const radius = Math.min(circleModel.width, circleModel.height) / 2;
+        circleOverlayRef.current.style.transform = `translate(${circleBody.position.x - radius}px, ${
+          circleBody.position.y - radius
+        }px) rotate(${circleBody.angle}rad)`;
+      }
     };
 
     const runner = Runner.create();
@@ -216,7 +220,13 @@ const AboutPage = ({ about }) => {
   }, [circleModel, dropStarted, letters]);
 
   return (
-    <main className={styles.main}>
+    <main
+      className={styles.main}
+      onClick={(event) => {
+        if (event.target.closest("a, button")) return;
+        triggerDrop();
+      }}
+    >
       <div ref={contentRef} className={showOverlay ? styles.staticHidden : ""}>
         <div ref={circleSourceRef} className={styles.circleStatic} aria-hidden />
 
@@ -266,6 +276,7 @@ const AboutPage = ({ about }) => {
         <div className={`${styles.letterLayer} ${showOverlay && isReady ? styles.letterLayerReady : ""}`} aria-hidden>
           {circleModel ? (
             <div
+              ref={circleOverlayRef}
               className={styles.circleOverlay}
               style={{
                 transform: `translate(${circleModel.x}px, ${circleModel.y}px)`,

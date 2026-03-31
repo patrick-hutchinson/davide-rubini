@@ -16,7 +16,7 @@ const Placeholder = ({ medium, isLoaded, sizes = "100vw", delay = 0.5 }) => {
       alt="placeholder image"
       style={{
         position: "absolute",
-
+        pointerEvents: "none",
         width: "100%",
         height: "100%",
         top: 0,

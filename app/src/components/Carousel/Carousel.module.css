@@ -26,6 +26,10 @@
   margin-right: var(--margin-page);
 }
 
+.slide:last-child {
+  margin-right: 0px;
+}
+
 @media screen and (min-width: 320px) {
 }
 

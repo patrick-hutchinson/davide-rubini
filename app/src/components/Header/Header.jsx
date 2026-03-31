@@ -12,6 +12,7 @@ const Header = ({ site }) => {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [now, setNow] = useState(new Date());
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -24,6 +25,10 @@ const Header = ({ site }) => {
 
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
 
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, "0");
@@ -48,40 +53,98 @@ const Header = ({ site }) => {
 
   return (
     <header className={styles.header}>
-      <AnimationLink className={styles.homeLink} link="/">
-        <strong>{site.title}</strong>
-      </AnimationLink>{" "}
-      / {date} / {time} /{" "}
-      <AnimationLink className={isActiveRoute("/projects") ? styles.activeNavLink : undefined} link="/projects">
-        Projects
-      </AnimationLink>{" "}
-      / <AnimationLink className={isActiveRoute("/about") ? styles.activeNavLink : undefined} link="/about">
-        About
-      </AnimationLink>{" "}
-      / <AnimationLink className={isActiveRoute("/archive") ? styles.activeNavLink : undefined} link="/archive">
-        Archive
-      </AnimationLink>{" "}
-      {isArchiveRoute && (
-        <>
-          / <span>• Columns [</span>
-          <button type="button" onClick={handleChangeColumns}>
-            Change
-          </button>
-          <span>]</span>{" "}
-        </>
-      )}
-      /{" "}
-      {mounted && (
-        <>
-          <button onClick={() => setTheme("light")} className={theme === "light" ? "active" : ""} type="button">
-            Light
-          </button>{" "}
-          -{" "}
-          <button onClick={() => setTheme("dark")} className={theme === "dark" ? "active" : ""} type="button">
-            Dark
-          </button>
-        </>
-      )}
+      <div className={styles.mobileMeta}>
+        <AnimationLink className={styles.homeLink} link="/">
+          <strong>{site.title}</strong>
+        </AnimationLink>{" "}
+        / {date} / {time}
+      </div>
+
+      <div className={styles.desktopNav}>
+        <AnimationLink className={styles.homeLink} link="/">
+          <strong>{site.title}</strong>
+        </AnimationLink>{" "}
+        / {date} / {time} /{" "}
+        <AnimationLink className={isActiveRoute("/projects") ? styles.activeNavLink : undefined} link="/projects">
+          Projects
+        </AnimationLink>{" "}
+        /{" "}
+        <AnimationLink className={isActiveRoute("/about") ? styles.activeNavLink : undefined} link="/about">
+          About
+        </AnimationLink>{" "}
+        /{" "}
+        <AnimationLink className={isActiveRoute("/archive") ? styles.activeNavLink : undefined} link="/archive">
+          Archive
+        </AnimationLink>{" "}
+        {isArchiveRoute && (
+          <>
+            / <span>• Columns [</span>
+            <button type="button" onClick={handleChangeColumns}>
+              Change
+            </button>
+            <span>]</span>{" "}
+          </>
+        )}
+        /{" "}
+        {mounted && (
+          <>
+            <button onClick={() => setTheme("light")} className={theme === "light" ? "active" : ""} type="button">
+              Light
+            </button>{" "}
+            -{" "}
+            <button onClick={() => setTheme("dark")} className={theme === "dark" ? "active" : ""} type="button">
+              Dark
+            </button>
+          </>
+        )}
+      </div>
+
+      <button type="button" className={styles.mobileMenuButton} onClick={() => setIsMobileMenuOpen((value) => !value)}>
+        {isMobileMenuOpen ? "Close" : "Menu"}
+      </button>
+
+      {isMobileMenuOpen ? (
+        <nav className={styles.mobileMenuOverlay}>
+          <div className={styles.mobileMenuLine}>
+            <AnimationLink className={isActiveRoute("/projects") ? styles.activeNavLink : undefined} link="/projects">
+              Projects
+            </AnimationLink>
+            <span className={styles.mobileMenuSuffix}>&nbsp;/</span>
+          </div>
+          <div className={styles.mobileMenuLine}>
+            <AnimationLink className={isActiveRoute("/about") ? styles.activeNavLink : undefined} link="/about">
+              About
+            </AnimationLink>
+            <span className={styles.mobileMenuSuffix}>&nbsp;/</span>
+          </div>
+          <div className={styles.mobileMenuLine}>
+            <AnimationLink className={isActiveRoute("/archive") ? styles.activeNavLink : undefined} link="/archive">
+              Archive
+            </AnimationLink>
+            <span className={styles.mobileMenuSuffix}>&nbsp;/</span>
+          </div>
+          {isArchiveRoute ? (
+            <div className={styles.mobileMenuLine}>
+              <button type="button" onClick={handleChangeColumns}>
+                • Columns [Change]
+              </button>
+              <span className={styles.mobileMenuSuffix}>&nbsp;/</span>
+            </div>
+          ) : null}
+          {mounted && (
+            <div className={styles.mobileThemeRow}>
+              <button onClick={() => setTheme("light")} className={theme === "light" ? "active" : ""} type="button">
+                Light
+              </button>
+              <span>&nbsp;-&nbsp;</span>
+              <button onClick={() => setTheme("dark")} className={theme === "dark" ? "active" : ""} type="button">
+                Dark
+              </button>
+              <span>&nbsp;/</span>
+            </div>
+          )}
+        </nav>
+      ) : null}
     </header>
   );
 };

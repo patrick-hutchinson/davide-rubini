@@ -3,14 +3,41 @@
 import AnimationLink from "@/components/Animation/AnimationLink";
 
 import styles from "./ProjectsPage.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Medium from "@/components/Medium/Medium";
 
 const ProjectsPage = ({ projects }) => {
-  const [hoveredProject, setHoveredProject] = useState(projects[1]);
+  const [canHover, setCanHover] = useState(false);
+  const [hoveredProject, setHoveredProject] = useState(null);
 
-  const handleMouseEnter = (project) => setHoveredProject(project);
-  const handleMouseLeave = () => setHoveredProject(null);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+
+    const apply = () => setCanHover(mediaQuery.matches);
+    apply();
+
+    mediaQuery.addEventListener("change", apply);
+    return () => mediaQuery.removeEventListener("change", apply);
+  }, []);
+
+  useEffect(() => {
+    if (!canHover) {
+      setHoveredProject(null);
+      return;
+    }
+
+    setHoveredProject(projects[0] ?? null);
+  }, [canHover, projects]);
+
+  const handleMouseEnter = (project) => {
+    if (!canHover) return;
+    setHoveredProject(project);
+  };
+  const handleMouseLeave = () => {
+    if (!canHover) return;
+    setHoveredProject(null);
+  };
 
   return (
     <div className="grid">
@@ -19,18 +46,28 @@ const ProjectsPage = ({ projects }) => {
           <li
             key={project._id}
             className={styles.project}
-            onMouseEnter={() => handleMouseEnter(project)}
-            onMouseLeave={() => handleMouseLeave(project)}
+            onMouseEnter={canHover ? () => handleMouseEnter(project) : undefined}
+            onMouseLeave={canHover ? () => handleMouseLeave(project) : undefined}
           >
             <AnimationLink
               className="grid"
               link={`/projects/${project.slug.current}`}
               preloadSrc={project.coverMedia?.medium?.url}
             >
+              <Medium
+                className={styles.mobileCover}
+                medium={project.coverMedia?.medium}
+                sizes="(max-width: 47.99rem) calc(100vw - (2 * var(--margin-page))), 1px"
+                quality={72}
+              />
               <span className={styles.projectTitleWrapper}>
                 <span className={styles.title}>{project.title}</span>
                 <span className={styles.imageCount} typo="small">
-                  ({project.gallery?.length})
+                  (
+                  <span style={{ position: "relative", bottom: "-0.5px" }}>
+                    {project.gallery?.length > 0 ? project.gallery.length : 0}
+                  </span>
+                  )
                 </span>
               </span>
               <span className={styles.client}>{project.client}</span>
@@ -40,7 +77,7 @@ const ProjectsPage = ({ projects }) => {
         ))}
       </ul>
 
-      <Medium className={styles.coverMedia} medium={hoveredProject?.coverMedia.medium} />
+      <Medium className={styles.coverMedia} medium={canHover ? hoveredProject?.coverMedia.medium : undefined} />
     </div>
   );
 };

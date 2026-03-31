@@ -7,20 +7,55 @@ import Medium from "@/components/Medium/Medium";
 import { preloadImage } from "@/lib/preloadImage";
 import styles from "./ArchivePage.module.css";
 
+const getAllowedColumns = () => {
+  if (typeof window === "undefined") return [3, 4, 6, 12];
+
+  const width = window.innerWidth;
+  const isLandscape = window.matchMedia("(orientation: landscape)").matches;
+
+  if (width < 768) {
+    return isLandscape ? [2, 3, 4] : [1, 2];
+  }
+
+  if (width < 1024) {
+    return isLandscape ? [3, 4, 6] : [2, 3, 4];
+  }
+
+  return [3, 4, 6, 12];
+};
+
+const getPreferredDefaultColumns = () => {
+  if (typeof window === "undefined") return 3;
+  return window.innerWidth >= 1024 ? 12 : 2;
+};
+
 const ArchivePage = ({ archive }) => {
-  const [columns, setColumns] = useState(12);
+  const [columns, setColumns] = useState(() => getPreferredDefaultColumns());
   const [activeIndex, setActiveIndex] = useState(null);
   const gallery = Array.isArray(archive?.gallery) ? archive.gallery : [];
   if (gallery.length === 0) return null;
 
   const changeColumns = () => {
+    const allowed = getAllowedColumns();
     setColumns((prev) => {
-      if (prev === 3) return 4;
-      if (prev === 4) return 6;
-      if (prev === 6) return 12;
-      return 3;
+      const currentIndex = allowed.indexOf(prev);
+      if (currentIndex === -1) return allowed[0];
+      return allowed[(currentIndex + 1) % allowed.length];
     });
   };
+
+  useEffect(() => {
+    const applyAllowedColumns = () => {
+      const allowed = getAllowedColumns();
+      const preferred = getPreferredDefaultColumns();
+      const fallback = allowed.includes(preferred) ? preferred : allowed[0];
+      setColumns((prev) => (allowed.includes(prev) ? prev : fallback));
+    };
+
+    applyAllowedColumns();
+    window.addEventListener("resize", applyAllowedColumns);
+    return () => window.removeEventListener("resize", applyAllowedColumns);
+  }, []);
 
   useEffect(() => {
     const onChangeColumns = () => {
@@ -72,14 +107,14 @@ const ArchivePage = ({ archive }) => {
     const next = reversedGallery[(activeIndex + 1) % reversedGallery.length];
     const prev = reversedGallery[(activeIndex - 1 + reversedGallery.length) % reversedGallery.length];
 
-    const urls = [current, next, prev]
-      .map((item) => item?.medium?.url)
-      .filter(Boolean);
+    const urls = [current, next, prev].map((item) => item?.medium?.url).filter(Boolean);
 
     urls.forEach((url) => preloadImage(url));
   }, [activeIndex, reversedGallery]);
 
   const columnSizes = {
+    1: "calc(100vw - (2 * var(--margin-page)))",
+    2: "(max-width: 47.99rem) calc((100vw - 24px) / 2), calc((100vw - 24px) / 2)",
     3: "(max-width: 900px) calc((100vw - 24px) / 2), calc((100vw - 32px) / 3)",
     4: "(max-width: 900px) calc((100vw - 24px) / 2), calc((100vw - 40px) / 4)",
     6: "(max-width: 900px) calc((100vw - 24px) / 3), calc((100vw - 56px) / 6)",
@@ -134,12 +169,21 @@ const ArchivePage = ({ archive }) => {
             </div>
 
             <div className={styles.fullscreenMeta}>
-              <strong>
+              <strong className={styles.fullscreenLabel}>
                 • {reversedGallery[activeIndex]._index} - {reversedGallery[activeIndex]?.altText || "Untitled"}
-              </strong>{" "}
-              <button type="button" onClick={closeFullscreen}>
-                (close)
-              </button>
+              </strong>
+              <div className={styles.fullscreenControls}>
+                <button type="button" onClick={goPrev}>
+                  Prev
+                </button>
+                <button type="button" onClick={goNext}>
+                  Next
+                </button>
+                &nbsp;/
+                <button type="button" onClick={closeFullscreen}>
+                  Close
+                </button>
+              </div>
             </div>
           </motion.div>
         )}

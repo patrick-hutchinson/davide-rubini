@@ -53,6 +53,13 @@ button.active {
   cursor: default;
 }
 
+*:focus,
+*:focus-visible,
+*:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 mux-player {
   --play-button: none;
   --live-button: none;
