@@ -197,7 +197,7 @@ const AboutPage = ({ about }) => {
     const stage = stageRef.current;
     if (!stage) return undefined;
 
-    const { Engine, World, Bodies, Body, Runner, Events } = Matter;
+    const { Engine, World, Bodies, Body, Runner, Events, Sleeping } = Matter;
     const engine = Engine.create({ enableSleeping: true });
     engine.gravity.y = 1.35;
     engine.positionIterations = 12;
@@ -315,7 +315,7 @@ const AboutPage = ({ about }) => {
       const dynamicBodies = [...letterBodies, ...(circleBody ? [circleBody] : [])];
       const allSleeping = dynamicBodies.every((body) => body.isSleeping);
       settledFrames = allSleeping ? settledFrames + 1 : 0;
-      if (runnerActive && settledFrames >= SETTLE_FRAMES_REQUIRED) {
+      if (runnerActive && !tiltEnabled && settledFrames >= SETTLE_FRAMES_REQUIRED) {
         Runner.stop(runner);
         runnerActive = false;
       }
@@ -347,16 +347,32 @@ const AboutPage = ({ about }) => {
 
     const isMobileTiltViewport = typeof window !== "undefined" && window.innerWidth < 768;
     const TILT_RANGE = 30;
+    let lastTiltX = 0;
+    let lastTiltY = 0;
     const onDeviceOrientation = (event) => {
       if (!isMobileTiltViewport) return;
       const gamma = Number.isFinite(event.gamma) ? event.gamma : 0; // left/right tilt
       const beta = Number.isFinite(event.beta) ? event.beta : 0; // front/back tilt
+      const alpha = Number.isFinite(event.alpha) ? event.alpha : 0; // z-axis rotation
 
       const xNorm = clamp(gamma, -TILT_RANGE, TILT_RANGE) / TILT_RANGE;
       const yNorm = clamp(beta, -TILT_RANGE, TILT_RANGE) / TILT_RANGE;
+      const alphaRad = (alpha * Math.PI) / 180;
+      const rotatedX = xNorm * Math.cos(alphaRad) - yNorm * Math.sin(alphaRad);
+      const rotatedY = xNorm * Math.sin(alphaRad) + yNorm * Math.cos(alphaRad);
 
-      engine.gravity.x = xNorm * 1.1;
-      engine.gravity.y = Math.max(0.2, 1 + yNorm * 0.45);
+      const nextGravityX = clamp(rotatedX * 1.1, -1.2, 1.2);
+      const nextGravityY = clamp(rotatedY * 1.1, -1.2, 1.2);
+      engine.gravity.x = nextGravityX;
+      engine.gravity.y = nextGravityY;
+
+      const tiltDelta = Math.abs(nextGravityX - lastTiltX) + Math.abs(nextGravityY - lastTiltY);
+      if (tiltDelta > 0.06) {
+        [...letterBodies, ...(circleBody ? [circleBody] : [])].forEach((body) => Sleeping.set(body, false));
+        settledFrames = 0;
+      }
+      lastTiltX = nextGravityX;
+      lastTiltY = nextGravityY;
     };
 
     if (tiltEnabled) {
