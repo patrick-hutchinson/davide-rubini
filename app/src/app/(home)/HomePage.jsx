@@ -16,6 +16,22 @@ const HomePage = ({ projects }) => {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+    const isMobileViewport = window.matchMedia("(max-width: 47.99rem)").matches;
+    if (!isMobileViewport) return undefined;
+
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+    };
+  }, []);
+
+  useEffect(() => {
     if (coverMedia.length <= 1) return undefined;
 
     const interval = setInterval(() => {
