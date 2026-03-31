@@ -26,6 +26,7 @@ const portableTextToPlainText = (value) => {
 const measureRenderedWords = (container, stageRect) => {
   const result = [];
   const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+  const isMobileViewport = typeof window !== "undefined" && window.innerWidth < 768;
 
   let node = walker.nextNode();
   while (node) {
@@ -48,6 +49,8 @@ const measureRenderedWords = (container, stageRect) => {
         const rect = range.getBoundingClientRect();
         if (rect.width > 0 && rect.height > 0) {
           const fontSizePx = Number.parseFloat(computed.fontSize) || rect.height;
+          const renderLineHeightPx = isMobileViewport ? fontSizePx * 0.96 : null;
+          const renderOffsetY = renderLineHeightPx ? (rect.height - renderLineHeightPx) / 2 : 0;
           result.push({
             text: token,
             x: rect.left - stageRect.left,
@@ -55,6 +58,8 @@ const measureRenderedWords = (container, stageRect) => {
             width: rect.width,
             height: rect.height,
             fontSizePx,
+            renderLineHeightPx,
+            renderOffsetY,
             fontFamily: computed.fontFamily,
             fontSize: computed.fontSize,
             fontWeight: computed.fontWeight,
@@ -233,7 +238,7 @@ const AboutPage = ({ about }) => {
         if (!node) return;
 
         const nextX = body.position.x - letter.width / 2;
-        const nextY = body.position.y - letter.height / 2;
+        const nextY = body.position.y - letter.height / 2 + (letter.renderOffsetY || 0);
         const nextAngle = body.angle;
         const prev = lastWordTransforms[index];
         const movedEnough =
@@ -387,7 +392,7 @@ const AboutPage = ({ about }) => {
                   fontSize: letter.fontSize,
                   fontWeight: letter.fontWeight,
                   fontStyle: letter.fontStyle,
-                  lineHeight: letter.lineHeight,
+                  lineHeight: letter.renderLineHeightPx ? `${letter.renderLineHeightPx}px` : letter.lineHeight,
                   letterSpacing: letter.letterSpacing,
                   color: "var(--foreground)",
                 }}
