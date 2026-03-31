@@ -23,7 +23,7 @@ const portableTextToPlainText = (value) => {
     .join("\n\n");
 };
 
-const measureRenderedCharacters = (container, stageRect) => {
+const measureRenderedWords = (container, stageRect) => {
   const result = [];
   const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
 
@@ -35,18 +35,20 @@ const measureRenderedCharacters = (container, stageRect) => {
     if (parent && !parent.closest("[data-no-fall='true']") && text.trim().length > 0) {
       const computed = window.getComputedStyle(parent);
 
-      for (let index = 0; index < text.length; index += 1) {
-        const char = text[index];
-        if (/\s/.test(char)) continue;
-
+      const wordMatcher = /\S+/g;
+      let match;
+      while ((match = wordMatcher.exec(text)) !== null) {
+        const word = match[0];
+        const start = match.index;
+        const end = start + word.length;
         const range = document.createRange();
-        range.setStart(node, index);
-        range.setEnd(node, index + 1);
+        range.setStart(node, start);
+        range.setEnd(node, end);
 
         const rect = range.getBoundingClientRect();
         if (rect.width > 0 && rect.height > 0) {
           result.push({
-            char,
+            text: word,
             x: rect.left - stageRect.left,
             y: rect.top - stageRect.top,
             width: rect.width,
@@ -131,7 +133,7 @@ const AboutPage = ({ about }) => {
     if (!stage || !content || !circleSource) return;
 
     const stageRect = stage.getBoundingClientRect();
-    const measured = measureRenderedCharacters(content, stageRect);
+    const measured = measureRenderedWords(content, stageRect);
     const circleRect = circleSource.getBoundingClientRect();
 
     setLetters(measured);
@@ -169,13 +171,18 @@ const AboutPage = ({ about }) => {
       ];
     };
 
-    const letterBodies = letters.map((letter) =>
-      Bodies.rectangle(letter.x + letter.width / 2, letter.y + letter.height / 2, letter.width, letter.height, {
-        restitution: 0.25,
-        friction: 0.08,
-        frictionAir: 0.02,
-      }),
-    );
+    const WORD_HITBOX_SCALE_X = 0.9;
+    const WORD_HITBOX_SCALE_Y = 0.82;
+    const letterBodies = letters.map((letter) => {
+      const bodyWidth = Math.max(1, letter.width * WORD_HITBOX_SCALE_X);
+      const bodyHeight = Math.max(1, letter.height * WORD_HITBOX_SCALE_Y);
+
+      return Bodies.rectangle(letter.x + letter.width / 2, letter.y + letter.height / 2, bodyWidth, bodyHeight, {
+        restitution: 0.02,
+        friction: 0.22,
+        frictionAir: 0.08,
+      });
+    });
 
     const circleBody =
       circleModel && circleModel.width > 0 && circleModel.height > 0
@@ -184,10 +191,10 @@ const AboutPage = ({ about }) => {
             circleModel.y + circleModel.height / 2,
             Math.min(circleModel.width, circleModel.height) / 2,
             {
-              restitution: 0.45,
-              friction: 0.04,
-              frictionAir: 0.01,
-              density: 0.005,
+              restitution: 0.08,
+              friction: 0.12,
+              frictionAir: 0.04,
+              density: 0.0005,
             },
           )
         : null;
@@ -312,7 +319,7 @@ const AboutPage = ({ about }) => {
           ) : null}
           {letters.map((letter, index) => (
             <span
-              key={`physics-${letter.char}-${index}`}
+              key={`physics-${letter.text}-${index}`}
               ref={(node) => {
                 letterRefs.current[index] = node;
               }}
@@ -328,8 +335,8 @@ const AboutPage = ({ about }) => {
                   color: "var(--foreground)",
                 }}
               >
-                {letter.char}
-              </span>
+              {letter.text}
+            </span>
           ))}
         </div>
       </div>
