@@ -35,7 +35,7 @@ const measureRenderedWords = (container, stageRect) => {
     if (parent && !parent.closest("[data-no-fall='true']") && text.trim().length > 0) {
       const computed = window.getComputedStyle(parent);
 
-      const wordMatcher = /\S+[ \t]*/g;
+      const wordMatcher = /\S+/g;
       let match;
       while ((match = wordMatcher.exec(text)) !== null) {
         const token = match[0];
@@ -174,8 +174,9 @@ const AboutPage = ({ about }) => {
       ];
     };
 
-    const WORD_HITBOX_SCALE_X = 0.9;
-    const WORD_HITBOX_SCALE_Y = 0.82;
+    const isMobileViewport = typeof window !== "undefined" && window.innerWidth < 768;
+    const WORD_HITBOX_SCALE_X = isMobileViewport ? 0.74 : 0.9;
+    const WORD_HITBOX_SCALE_Y = isMobileViewport ? 0.58 : 0.82;
     const letterBodies = letters.map((letter) => {
       const bodyWidth = Math.max(1, letter.width * WORD_HITBOX_SCALE_X);
       const bodyHeight = Math.max(1, letter.height * WORD_HITBOX_SCALE_Y);
@@ -186,7 +187,7 @@ const AboutPage = ({ about }) => {
         frictionStatic: 0.9,
         frictionAir: 0.02,
         sleepThreshold: 40,
-        slop: 0.08,
+        slop: 0.02,
       });
     });
 
@@ -203,7 +204,7 @@ const AboutPage = ({ about }) => {
               frictionAir: 0.015,
               density: 0.0005,
               sleepThreshold: 40,
-              slop: 0.08,
+              slop: 0.02,
             },
           )
         : null;
@@ -380,7 +381,6 @@ const AboutPage = ({ about }) => {
                   fontStyle: letter.fontStyle,
                   lineHeight: letter.lineHeight,
                   letterSpacing: letter.letterSpacing,
-                  whiteSpace: "pre",
                   color: "var(--foreground)",
                 }}
               >

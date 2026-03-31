@@ -30,6 +30,7 @@ const getPreferredDefaultColumns = () => {
 };
 
 const ArchivePage = ({ archive }) => {
+  const SWIPE_THRESHOLD_PX = 36;
   const [columns, setColumns] = useState(() => getPreferredDefaultColumns());
   const [activeIndex, setActiveIndex] = useState(null);
   const gallery = Array.isArray(archive?.gallery) ? archive.gallery : [];
@@ -98,6 +99,48 @@ const ArchivePage = ({ archive }) => {
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
+  }, [activeIndex, reversedGallery.length]);
+
+  useEffect(() => {
+    if (activeIndex === null) return undefined;
+
+    let touchStartX = null;
+    let touchStartY = null;
+
+    const onTouchStart = (event) => {
+      const touch = event.touches?.[0];
+      if (!touch) return;
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+    };
+
+    const onTouchEnd = (event) => {
+      const touch = event.changedTouches?.[0];
+      if (!touch || touchStartX === null || touchStartY === null) return;
+
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
+      const isHorizontalSwipe = Math.abs(deltaX) > Math.abs(deltaY);
+
+      if (isHorizontalSwipe && Math.abs(deltaX) >= SWIPE_THRESHOLD_PX) {
+        if (deltaX < 0) {
+          goNext();
+        } else {
+          goPrev();
+        }
+      }
+
+      touchStartX = null;
+      touchStartY = null;
+    };
+
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchend", onTouchEnd);
+    };
   }, [activeIndex, reversedGallery.length]);
 
   useEffect(() => {
