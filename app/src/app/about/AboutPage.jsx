@@ -107,6 +107,7 @@ const AboutPage = ({ about }) => {
 
     let raf = 0;
     const resizeObserver = new ResizeObserver(() => {
+      if (dropStarted) return;
       cancelAnimationFrame(raf);
       raf = window.requestAnimationFrame(() => {
         setLayoutVersion((value) => value + 1);
@@ -119,9 +120,11 @@ const AboutPage = ({ about }) => {
       cancelAnimationFrame(raf);
       resizeObserver.disconnect();
     };
-  }, []);
+  }, [dropStarted]);
 
   useEffect(() => {
+    if (dropStarted) return;
+
     const stage = stageRef.current;
     const content = contentRef.current;
     const circleSource = circleSourceRef.current;
@@ -139,7 +142,7 @@ const AboutPage = ({ about }) => {
       height: circleRect.height,
     });
     setIsReady(measured.length > 0);
-  }, [layoutVersion]);
+  }, [dropStarted, layoutVersion]);
 
   useEffect(() => {
     if (!dropStarted || letters.length === 0) return undefined;
@@ -147,20 +150,24 @@ const AboutPage = ({ about }) => {
     const stage = stageRef.current;
     if (!stage) return undefined;
 
-    const { Engine, World, Bodies, Runner, Events } = Matter;
+    const { Engine, World, Bodies, Body, Runner, Events } = Matter;
     const engine = Engine.create();
     engine.gravity.y = 0.9;
 
-    const stageRect = stage.getBoundingClientRect();
-    const width = stageRect.width;
-    const height = stageRect.height;
     const wallThickness = 120;
+    let walls = [];
 
-    const walls = [
-      Bodies.rectangle(width / 2, height + wallThickness / 2, width + wallThickness * 2, wallThickness, { isStatic: true }),
-      Bodies.rectangle(-wallThickness / 2, height / 2, wallThickness, height + wallThickness * 2, { isStatic: true }),
-      Bodies.rectangle(width + wallThickness / 2, height / 2, wallThickness, height + wallThickness * 2, { isStatic: true }),
-    ];
+    const buildWalls = () => {
+      const rect = stage.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+
+      return [
+        Bodies.rectangle(width / 2, height + wallThickness / 2, width + wallThickness * 2, wallThickness, { isStatic: true }),
+        Bodies.rectangle(-wallThickness / 2, height / 2, wallThickness, height + wallThickness * 2, { isStatic: true }),
+        Bodies.rectangle(width + wallThickness / 2, height / 2, wallThickness, height + wallThickness * 2, { isStatic: true }),
+      ];
+    };
 
     const letterBodies = letters.map((letter) =>
       Bodies.rectangle(letter.x + letter.width / 2, letter.y + letter.height / 2, letter.width, letter.height, {
@@ -185,6 +192,7 @@ const AboutPage = ({ about }) => {
           )
         : null;
 
+    walls = buildWalls();
     World.add(engine.world, [...walls, ...letterBodies, ...(circleBody ? [circleBody] : [])]);
 
     const syncPositions = () => {
@@ -206,12 +214,31 @@ const AboutPage = ({ about }) => {
       }
     };
 
+    const handleResize = () => {
+      World.remove(engine.world, walls);
+      walls = buildWalls();
+      World.add(engine.world, walls);
+
+      // Keep bodies within the new horizontal bounds so they continue naturally after resize.
+      const rect = stage.getBoundingClientRect();
+      const minX = 0;
+      const maxX = rect.width;
+      [...letterBodies, ...(circleBody ? [circleBody] : [])].forEach((body) => {
+        const clampedX = Math.min(Math.max(body.position.x, minX), maxX);
+        if (clampedX !== body.position.x) {
+          Body.setPosition(body, { x: clampedX, y: body.position.y });
+        }
+      });
+    };
+
     const runner = Runner.create();
     Events.on(engine, "afterUpdate", syncPositions);
     Runner.run(runner, engine);
     syncPositions();
+    window.addEventListener("resize", handleResize);
 
     return () => {
+      window.removeEventListener("resize", handleResize);
       Runner.stop(runner);
       Events.off(engine, "afterUpdate", syncPositions);
       World.clear(engine.world, false);
@@ -290,19 +317,19 @@ const AboutPage = ({ about }) => {
                 letterRefs.current[index] = node;
               }}
               className={styles.letter}
-              style={{
-                transform: `translate(${letter.x}px, ${letter.y}px)`,
-                fontFamily: letter.fontFamily,
-                fontSize: letter.fontSize,
-                fontWeight: letter.fontWeight,
-                fontStyle: letter.fontStyle,
-                lineHeight: letter.lineHeight,
-                letterSpacing: letter.letterSpacing,
-                color: letter.color,
-              }}
-            >
-              {letter.char}
-            </span>
+                style={{
+                  transform: `translate(${letter.x}px, ${letter.y}px)`,
+                  fontFamily: letter.fontFamily,
+                  fontSize: letter.fontSize,
+                  fontWeight: letter.fontWeight,
+                  fontStyle: letter.fontStyle,
+                  lineHeight: letter.lineHeight,
+                  letterSpacing: letter.letterSpacing,
+                  color: "var(--foreground)",
+                }}
+              >
+                {letter.char}
+              </span>
           ))}
         </div>
       </div>

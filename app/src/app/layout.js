@@ -13,8 +13,20 @@ import Header from "@/components/Header/Header";
 import "./globals.css";
 import "./fonts.css";
 
+const fallbackSite = {
+  title: "Site",
+  google_description: "",
+};
+
 export async function generateMetadata() {
-  const site = await getSite();
+  let site = fallbackSite;
+
+  try {
+    const fetched = await getSite();
+    if (fetched) site = fetched;
+  } catch {
+    site = fallbackSite;
+  }
 
   return {
     title: site.title,
@@ -27,27 +39,27 @@ export async function generateMetadata() {
         { url: "/icons/favicon/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
         { url: "/icons/favicon/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
       ],
-      apple: [{ url: "/icons/favicon/favicon-180x180.png" }],
+      // apple: [{ url: "/icons/favicon/favicon-180x180.png" }],
       shortcut: "/icons/favicon/favicon.ico",
     },
     openGraph: {
       title: site.title,
       description: site.google_description,
-      images: [
-        {
-          url: "/icons/share.png", // <- your share image path
-          width: 1200,
-          height: 630,
-          alt: site.title,
-        },
-      ],
+      // images: [
+      //   {
+      //     url: "/icons/share.png", // <- your share image path
+      //     width: 1200,
+      //     height: 630,
+      //     alt: site.title,
+      //   },
+      // ],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
       title: site.title,
       description: site.google_description,
-      images: ["/icons/share.png"],
+      // images: ["/icons/share.png"],
     },
   };
 }
@@ -55,7 +67,14 @@ export async function generateMetadata() {
 export const dynamic = "force-dynamic";
 
 export default async function RootLayout({ children }) {
-  const site = await getSite();
+  let site = fallbackSite;
+
+  try {
+    const fetched = await getSite();
+    if (fetched) site = fetched;
+  } catch {
+    site = fallbackSite;
+  }
 
   return (
     <ViewTransitions>

@@ -8,17 +8,24 @@ import styles from "./HomePage.module.css";
 import AnimationLink from "@/components/Animation/AnimationLink";
 
 const HomePage = ({ projects }) => {
-  const coverMedia = projects.map((project) => project.coverMedia);
+  const safeProjects = Array.isArray(projects) ? projects : [];
+  const coverMedia = safeProjects
+    .map((project) => project?.coverMedia)
+    .filter((item) => item?.medium);
 
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
+    if (coverMedia.length <= 1) return undefined;
+
     const interval = setInterval(() => {
       setIndex((prevIndex) => (prevIndex + 1) % coverMedia.length);
     }, 300);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [coverMedia.length]);
+
+  if (coverMedia.length === 0) return <main className={styles.main} />;
 
   return (
     <main className={styles.main}>

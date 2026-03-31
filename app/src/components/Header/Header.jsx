@@ -78,7 +78,7 @@ const Header = ({ site }) => {
         </AnimationLink>{" "}
         {isArchiveRoute && (
           <>
-            / <span>• Columns [</span>
+            <span>• Columns [</span>
             <button type="button" onClick={handleChangeColumns}>
               Change
             </button>

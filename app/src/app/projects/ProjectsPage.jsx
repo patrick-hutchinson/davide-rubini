@@ -3,10 +3,11 @@
 import AnimationLink from "@/components/Animation/AnimationLink";
 
 import styles from "./ProjectsPage.module.css";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Medium from "@/components/Medium/Medium";
 
 const ProjectsPage = ({ projects }) => {
+  const safeProjects = useMemo(() => (Array.isArray(projects) ? projects : []), [projects]);
   const [canHover, setCanHover] = useState(false);
   const [hoveredProject, setHoveredProject] = useState(null);
 
@@ -27,8 +28,8 @@ const ProjectsPage = ({ projects }) => {
       return;
     }
 
-    setHoveredProject(projects[0] ?? null);
-  }, [canHover, projects]);
+    setHoveredProject(safeProjects[0] ?? null);
+  }, [canHover, safeProjects]);
 
   const handleMouseEnter = (project) => {
     if (!canHover) return;
@@ -42,7 +43,7 @@ const ProjectsPage = ({ projects }) => {
   return (
     <div className="grid">
       <ul className={styles.projectContainer}>
-        {projects.map((project) => (
+        {safeProjects.map((project) => (
           <li
             key={project._id}
             className={styles.project}
