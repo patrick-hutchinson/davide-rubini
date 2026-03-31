@@ -23,6 +23,8 @@ const portableTextToPlainText = (value) => {
     .join("\n\n");
 };
 
+const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
 const measureRenderedWords = (container, stageRect) => {
   const result = [];
   const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
@@ -122,12 +124,28 @@ const AboutPage = ({ about }) => {
   const [isReady, setIsReady] = useState(false);
   const [dropStarted, setDropStarted] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
+  const [tiltEnabled, setTiltEnabled] = useState(false);
   const [layoutVersion, setLayoutVersion] = useState(0);
 
-  const triggerDrop = () => {
+  const triggerDrop = async () => {
     if (dropStarted) return;
     setShowOverlay(true);
     setDropStarted(true);
+
+    if (typeof window === "undefined" || !("DeviceOrientationEvent" in window)) return;
+
+    const requestPermission = window.DeviceOrientationEvent?.requestPermission;
+    if (typeof requestPermission === "function") {
+      try {
+        const permission = await requestPermission();
+        setTiltEnabled(permission === "granted");
+      } catch {
+        setTiltEnabled(false);
+      }
+      return;
+    }
+
+    setTiltEnabled(true);
   };
 
   useEffect(() => {
@@ -327,14 +345,35 @@ const AboutPage = ({ about }) => {
     syncPositions(true);
     window.addEventListener("resize", handleResize);
 
+    const isMobileTiltViewport = typeof window !== "undefined" && window.innerWidth < 768;
+    const TILT_RANGE = 30;
+    const onDeviceOrientation = (event) => {
+      if (!isMobileTiltViewport) return;
+      const gamma = Number.isFinite(event.gamma) ? event.gamma : 0; // left/right tilt
+      const beta = Number.isFinite(event.beta) ? event.beta : 0; // front/back tilt
+
+      const xNorm = clamp(gamma, -TILT_RANGE, TILT_RANGE) / TILT_RANGE;
+      const yNorm = clamp(beta, -TILT_RANGE, TILT_RANGE) / TILT_RANGE;
+
+      engine.gravity.x = xNorm * 1.1;
+      engine.gravity.y = Math.max(0.2, 1 + yNorm * 0.45);
+    };
+
+    if (tiltEnabled) {
+      window.addEventListener("deviceorientation", onDeviceOrientation, true);
+    }
+
     return () => {
       window.removeEventListener("resize", handleResize);
+      if (tiltEnabled) {
+        window.removeEventListener("deviceorientation", onDeviceOrientation, true);
+      }
       Runner.stop(runner);
       Events.off(engine, "afterUpdate", syncPositions);
       World.clear(engine.world, false);
       Engine.clear(engine);
     };
-  }, [circleModel, dropStarted, letters]);
+  }, [circleModel, dropStarted, letters, tiltEnabled]);
 
   return (
     <main
