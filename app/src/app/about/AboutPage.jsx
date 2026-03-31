@@ -27,6 +27,8 @@ const measureRenderedWords = (container, stageRect) => {
   const result = [];
   const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
   const isMobileViewport = typeof window !== "undefined" && window.innerWidth < 768;
+  const canvas = typeof document !== "undefined" ? document.createElement("canvas") : null;
+  const canvasContext = canvas ? canvas.getContext("2d") : null;
 
   let node = walker.nextNode();
   while (node) {
@@ -49,8 +51,26 @@ const measureRenderedWords = (container, stageRect) => {
         const rect = range.getBoundingClientRect();
         if (rect.width > 0 && rect.height > 0) {
           const fontSizePx = Number.parseFloat(computed.fontSize) || rect.height;
-          const renderLineHeightPx = isMobileViewport ? fontSizePx * 0.96 : null;
-          const renderOffsetY = renderLineHeightPx ? (rect.height - renderLineHeightPx) / 2 : 0;
+          const letterSpacingPx = Number.parseFloat(computed.letterSpacing);
+          const safeLetterSpacingPx = Number.isFinite(letterSpacingPx) ? letterSpacingPx : 0;
+
+          let colliderWidthPx = rect.width;
+          let colliderHeightPx = Math.min(rect.height, fontSizePx * 0.94);
+
+          if (isMobileViewport && canvasContext) {
+            const fontStyle = computed.fontStyle || "normal";
+            const fontWeight = computed.fontWeight || "400";
+            const fontFamily = computed.fontFamily || "serif";
+            canvasContext.font = `${fontStyle} ${fontWeight} ${fontSizePx}px ${fontFamily}`;
+            const metrics = canvasContext.measureText(token);
+            const measuredWidth = metrics.width + Math.max(0, token.length - 1) * safeLetterSpacingPx;
+            const measuredHeight =
+              (metrics.actualBoundingBoxAscent || 0) + (metrics.actualBoundingBoxDescent || 0);
+
+            colliderWidthPx = Math.max(1, measuredWidth || rect.width);
+            colliderHeightPx = Math.max(1, measuredHeight || fontSizePx * 0.78);
+          }
+
           result.push({
             text: token,
             x: rect.left - stageRect.left,
@@ -58,8 +78,8 @@ const measureRenderedWords = (container, stageRect) => {
             width: rect.width,
             height: rect.height,
             fontSizePx,
-            renderLineHeightPx,
-            renderOffsetY,
+            colliderWidthPx,
+            colliderHeightPx,
             fontFamily: computed.fontFamily,
             fontSize: computed.fontSize,
             fontWeight: computed.fontWeight,
@@ -187,9 +207,10 @@ const AboutPage = ({ about }) => {
     const WORD_SLOP = isMobileViewport ? 0.001 : 0.02;
     const allowWordRotation = !isMobileViewport;
     const letterBodies = letters.map((letter) => {
-      const bodyWidth = Math.max(1, letter.width * WORD_HITBOX_SCALE_X);
-      const glyphLikeHeight = Math.min(letter.height, (letter.fontSizePx || letter.height) * 0.94);
-      const bodyHeight = Math.max(1, (isMobileViewport ? glyphLikeHeight : letter.height) * WORD_HITBOX_SCALE_Y);
+      const baseWidth = letter.colliderWidthPx || letter.width;
+      const baseHeight = letter.colliderHeightPx || letter.height;
+      const bodyWidth = Math.max(1, baseWidth * WORD_HITBOX_SCALE_X);
+      const bodyHeight = Math.max(1, baseHeight * WORD_HITBOX_SCALE_Y);
 
       return Bodies.rectangle(letter.x + letter.width / 2, letter.y + letter.height / 2, bodyWidth, bodyHeight, {
         restitution: 0,
@@ -238,7 +259,7 @@ const AboutPage = ({ about }) => {
         if (!node) return;
 
         const nextX = body.position.x - letter.width / 2;
-        const nextY = body.position.y - letter.height / 2 + (letter.renderOffsetY || 0);
+        const nextY = body.position.y - letter.height / 2;
         const nextAngle = body.angle;
         const prev = lastWordTransforms[index];
         const movedEnough =
@@ -392,7 +413,7 @@ const AboutPage = ({ about }) => {
                   fontSize: letter.fontSize,
                   fontWeight: letter.fontWeight,
                   fontStyle: letter.fontStyle,
-                  lineHeight: letter.renderLineHeightPx ? `${letter.renderLineHeightPx}px` : letter.lineHeight,
+                  lineHeight: letter.lineHeight,
                   letterSpacing: letter.letterSpacing,
                   color: "var(--foreground)",
                 }}
