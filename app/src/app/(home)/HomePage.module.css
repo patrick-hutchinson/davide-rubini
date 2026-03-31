@@ -2,6 +2,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100dvh !important;
+  width: 100dvw !important;
 }
 
 .coverMediaContainer {

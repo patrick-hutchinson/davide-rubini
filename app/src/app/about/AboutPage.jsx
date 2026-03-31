@@ -23,8 +23,6 @@ const portableTextToPlainText = (value) => {
     .join("\n\n");
 };
 
-const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-
 const measureRenderedWords = (container, stageRect) => {
   const result = [];
   const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
@@ -124,28 +122,12 @@ const AboutPage = ({ about }) => {
   const [isReady, setIsReady] = useState(false);
   const [dropStarted, setDropStarted] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
-  const [tiltEnabled, setTiltEnabled] = useState(false);
   const [layoutVersion, setLayoutVersion] = useState(0);
 
-  const triggerDrop = async () => {
+  const triggerDrop = () => {
     if (dropStarted) return;
     setShowOverlay(true);
     setDropStarted(true);
-
-    if (typeof window === "undefined" || !("DeviceOrientationEvent" in window)) return;
-
-    const requestPermission = window.DeviceOrientationEvent?.requestPermission;
-    if (typeof requestPermission === "function") {
-      try {
-        const permission = await requestPermission();
-        setTiltEnabled(permission === "granted");
-      } catch {
-        setTiltEnabled(false);
-      }
-      return;
-    }
-
-    setTiltEnabled(true);
   };
 
   useEffect(() => {
@@ -197,7 +179,7 @@ const AboutPage = ({ about }) => {
     const stage = stageRef.current;
     if (!stage) return undefined;
 
-    const { Engine, World, Bodies, Body, Runner, Events, Sleeping } = Matter;
+    const { Engine, World, Bodies, Body, Runner, Events } = Matter;
     const engine = Engine.create({ enableSleeping: true });
     engine.gravity.y = 1.35;
     engine.positionIterations = 12;
@@ -315,7 +297,7 @@ const AboutPage = ({ about }) => {
       const dynamicBodies = [...letterBodies, ...(circleBody ? [circleBody] : [])];
       const allSleeping = dynamicBodies.every((body) => body.isSleeping);
       settledFrames = allSleeping ? settledFrames + 1 : 0;
-      if (runnerActive && !tiltEnabled && settledFrames >= SETTLE_FRAMES_REQUIRED) {
+      if (runnerActive && settledFrames >= SETTLE_FRAMES_REQUIRED) {
         Runner.stop(runner);
         runnerActive = false;
       }
@@ -345,51 +327,14 @@ const AboutPage = ({ about }) => {
     syncPositions(true);
     window.addEventListener("resize", handleResize);
 
-    const isMobileTiltViewport = typeof window !== "undefined" && window.innerWidth < 768;
-    const TILT_RANGE = 30;
-    let lastTiltX = 0;
-    let lastTiltY = 0;
-    const onDeviceOrientation = (event) => {
-      if (!isMobileTiltViewport) return;
-      const gamma = Number.isFinite(event.gamma) ? event.gamma : 0; // left/right tilt
-      const beta = Number.isFinite(event.beta) ? event.beta : 0; // front/back tilt
-      const alpha = Number.isFinite(event.alpha) ? event.alpha : 0; // z-axis rotation
-
-      const xNorm = clamp(gamma, -TILT_RANGE, TILT_RANGE) / TILT_RANGE;
-      const yNorm = clamp(beta, -TILT_RANGE, TILT_RANGE) / TILT_RANGE;
-      const alphaRad = (alpha * Math.PI) / 180;
-      const rotatedX = xNorm * Math.cos(alphaRad) - yNorm * Math.sin(alphaRad);
-      const rotatedY = xNorm * Math.sin(alphaRad) + yNorm * Math.cos(alphaRad);
-
-      const nextGravityX = clamp(rotatedX * 1.1, -1.2, 1.2);
-      const nextGravityY = clamp(rotatedY * 1.1, -1.2, 1.2);
-      engine.gravity.x = nextGravityX;
-      engine.gravity.y = nextGravityY;
-
-      const tiltDelta = Math.abs(nextGravityX - lastTiltX) + Math.abs(nextGravityY - lastTiltY);
-      if (tiltDelta > 0.06) {
-        [...letterBodies, ...(circleBody ? [circleBody] : [])].forEach((body) => Sleeping.set(body, false));
-        settledFrames = 0;
-      }
-      lastTiltX = nextGravityX;
-      lastTiltY = nextGravityY;
-    };
-
-    if (tiltEnabled) {
-      window.addEventListener("deviceorientation", onDeviceOrientation, true);
-    }
-
     return () => {
       window.removeEventListener("resize", handleResize);
-      if (tiltEnabled) {
-        window.removeEventListener("deviceorientation", onDeviceOrientation, true);
-      }
       Runner.stop(runner);
       Events.off(engine, "afterUpdate", syncPositions);
       World.clear(engine.world, false);
       Engine.clear(engine);
     };
-  }, [circleModel, dropStarted, letters, tiltEnabled]);
+  }, [circleModel, dropStarted, letters]);
 
   return (
     <main
