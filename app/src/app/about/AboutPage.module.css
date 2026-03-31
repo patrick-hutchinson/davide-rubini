@@ -2,7 +2,8 @@
   position: relative;
   box-sizing: border-box;
   width: 100%;
-  height: var(--content-height);
+  height: auto;
+  min-height: var(--content-height);
   padding: var(--margin-page);
   padding-top: var(--margin-text);
   overflow-x: clip;

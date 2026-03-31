@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import Medium from "@/components/Medium/Medium";
 
 const ProjectsPage = ({ projects }) => {
+  const mobileProjectCardSizes = "(max-width: 47.99rem) calc(100vw - 16px), 1px";
   const safeProjects = useMemo(() => (Array.isArray(projects) ? projects : []), [projects]);
   const [canHover, setCanHover] = useState(false);
   const [hoveredProject, setHoveredProject] = useState(null);
@@ -58,7 +59,7 @@ const ProjectsPage = ({ projects }) => {
               <Medium
                 className={styles.mobileCover}
                 medium={project.coverMedia?.medium}
-                sizes="(max-width: 47.99rem) calc(100vw - (2 * var(--margin-page))), 1px"
+                sizes={mobileProjectCardSizes}
                 quality={72}
               />
               <span className={styles.projectTitleWrapper}>

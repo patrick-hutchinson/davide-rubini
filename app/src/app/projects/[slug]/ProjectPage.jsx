@@ -13,6 +13,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Carousel from "@/components/Carousel/Carousel";
 
 const ProjectPage = ({ projects, project }) => {
+  const mobileStackSizes = "(max-width: 47.99rem) calc(100vw - 16px), 1px";
   const [showInfo, setShowInfo] = useState(false);
 
   useEffect(() => {
@@ -49,11 +50,7 @@ const ProjectPage = ({ projects, project }) => {
 
         <section className={styles.mobileProjectSection}>
           <h2 className={styles.mobileProjectSectionTitle}>Cover Media</h2>
-          <Medium
-            medium={project?.coverMedia?.medium}
-            sizes="(max-width: 47.99rem) calc(100vw - (2 * var(--margin-page))), 1px"
-            quality={75}
-          />
+          <Medium medium={project?.coverMedia?.medium} sizes={mobileStackSizes} quality={75} />
         </section>
 
         <section className={styles.mobileProjectSection}>
@@ -68,7 +65,7 @@ const ProjectPage = ({ projects, project }) => {
               <div key={item?._id || `mobile-gallery-${index}`}>
                 <Medium
                   medium={item?.medium}
-                  sizes="(max-width: 47.99rem) calc(100vw - (2 * var(--margin-page))), 1px"
+                  sizes={mobileStackSizes}
                   quality={75}
                 />
               </div>
