@@ -35,12 +35,12 @@ const measureRenderedWords = (container, stageRect) => {
     if (parent && !parent.closest("[data-no-fall='true']") && text.trim().length > 0) {
       const computed = window.getComputedStyle(parent);
 
-      const wordMatcher = /\S+/g;
+      const wordMatcher = /\S+[ \t]*/g;
       let match;
       while ((match = wordMatcher.exec(text)) !== null) {
-        const word = match[0];
+        const token = match[0];
         const start = match.index;
-        const end = start + word.length;
+        const end = start + token.length;
         const range = document.createRange();
         range.setStart(node, start);
         range.setEnd(node, end);
@@ -48,7 +48,7 @@ const measureRenderedWords = (container, stageRect) => {
         const rect = range.getBoundingClientRect();
         if (rect.width > 0 && rect.height > 0) {
           result.push({
-            text: word,
+            text: token,
             x: rect.left - stageRect.left,
             y: rect.top - stageRect.top,
             width: rect.width,
@@ -366,12 +366,12 @@ const AboutPage = ({ about }) => {
             />
           ) : null}
           {letters.map((letter, index) => (
-            <span
-              key={`physics-${letter.text}-${index}`}
-              ref={(node) => {
-                letterRefs.current[index] = node;
-              }}
-              className={styles.letter}
+              <span
+                key={`physics-${letter.text}-${index}`}
+                ref={(node) => {
+                  letterRefs.current[index] = node;
+                }}
+                className={styles.letter}
                 style={{
                   transform: `translate(${letter.x}px, ${letter.y}px)`,
                   fontFamily: letter.fontFamily,
@@ -380,6 +380,7 @@ const AboutPage = ({ about }) => {
                   fontStyle: letter.fontStyle,
                   lineHeight: letter.lineHeight,
                   letterSpacing: letter.letterSpacing,
+                  whiteSpace: "pre",
                   color: "var(--foreground)",
                 }}
               >
