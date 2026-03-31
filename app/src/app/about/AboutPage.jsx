@@ -155,8 +155,8 @@ const AboutPage = ({ about }) => {
     const { Engine, World, Bodies, Body, Runner, Events } = Matter;
     const engine = Engine.create({ enableSleeping: true });
     engine.gravity.y = 1.35;
-    engine.positionIterations = 8;
-    engine.velocityIterations = 6;
+    engine.positionIterations = 12;
+    engine.velocityIterations = 10;
     engine.constraintIterations = 4;
 
     const wallThickness = 120;
@@ -175,8 +175,10 @@ const AboutPage = ({ about }) => {
     };
 
     const isMobileViewport = typeof window !== "undefined" && window.innerWidth < 768;
-    const WORD_HITBOX_SCALE_X = isMobileViewport ? 0.74 : 0.9;
-    const WORD_HITBOX_SCALE_Y = isMobileViewport ? 0.58 : 0.82;
+    const WORD_HITBOX_SCALE_X = isMobileViewport ? 1 : 0.9;
+    const WORD_HITBOX_SCALE_Y = isMobileViewport ? 1 : 0.82;
+    const WORD_SLOP = isMobileViewport ? 0.001 : 0.02;
+    const allowWordRotation = !isMobileViewport;
     const letterBodies = letters.map((letter) => {
       const bodyWidth = Math.max(1, letter.width * WORD_HITBOX_SCALE_X);
       const bodyHeight = Math.max(1, letter.height * WORD_HITBOX_SCALE_Y);
@@ -187,7 +189,8 @@ const AboutPage = ({ about }) => {
         frictionStatic: 0.9,
         frictionAir: 0.02,
         sleepThreshold: 40,
-        slop: 0.02,
+        slop: WORD_SLOP,
+        inertia: allowWordRotation ? undefined : Infinity,
       });
     });
 
@@ -204,7 +207,7 @@ const AboutPage = ({ about }) => {
               frictionAir: 0.015,
               density: 0.0005,
               sleepThreshold: 40,
-              slop: 0.02,
+              slop: WORD_SLOP,
             },
           )
         : null;
@@ -237,7 +240,9 @@ const AboutPage = ({ about }) => {
           Math.abs(nextAngle - prev.angle) > ANGLE_EPSILON;
         if (!movedEnough) return;
 
-        node.style.transform = `translate(${nextX}px, ${nextY}px) rotate(${nextAngle}rad)`;
+        node.style.transform = allowWordRotation
+          ? `translate(${nextX}px, ${nextY}px) rotate(${nextAngle}rad)`
+          : `translate(${nextX}px, ${nextY}px)`;
         prev.x = nextX;
         prev.y = nextY;
         prev.angle = nextAngle;
