@@ -79,6 +79,12 @@ export default async function RootLayout({ children }) {
   return (
     <ViewTransitions>
       <html lang="en" suppressHydrationWarning>
+        <head>
+          <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="" />
+          <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+          <link rel="preconnect" href="https://image.mux.com" crossOrigin="" />
+          <link rel="dns-prefetch" href="https://image.mux.com" />
+        </head>
         <DeviceProvider>
           <ViewportProvider>
             <ScrollRestorationController />

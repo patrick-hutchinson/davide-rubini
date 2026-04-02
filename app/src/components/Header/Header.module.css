@@ -9,6 +9,7 @@
   font-weight: bold;
   text-decoration: none;
   color: var(--foreground);
+  cursor: default;
 }
 
 a.homeLink {

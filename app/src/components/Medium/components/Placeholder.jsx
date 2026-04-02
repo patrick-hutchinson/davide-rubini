@@ -1,6 +1,6 @@
 import NextImage from "next/image";
 
-const Placeholder = ({ medium, isLoaded, sizes = "100vw", delay = 0.5 }) => {
+const Placeholder = ({ medium, isLoaded, sizes = "100vw", delay = 0.5, eager = false }) => {
   let src;
 
   medium.type === "image"
@@ -12,7 +12,9 @@ const Placeholder = ({ medium, isLoaded, sizes = "100vw", delay = 0.5 }) => {
       src={src}
       fill
       sizes={sizes}
-      loading="eager"
+      loading={eager ? "eager" : "lazy"}
+      fetchPriority={eager ? "high" : "low"}
+      decoding="async"
       alt="placeholder image"
       style={{
         position: "absolute",

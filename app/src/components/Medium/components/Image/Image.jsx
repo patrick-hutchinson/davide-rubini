@@ -34,9 +34,10 @@ const Image = ({ medium, setIsLoaded, eager = false, sizes = "100vw", quality = 
         height={resolutionHeight}
         sizes={sizes}
         quality={quality}
+        priority={eager}
         loading={eager ? "eager" : "lazy"}
-        fetchPriority={eager ? "high" : "auto"}
-        decoding="sync"
+        fetchPriority={eager ? "high" : "low"}
+        decoding={eager ? "sync" : "async"}
         draggable={false}
         style={{
           position: "absolute",

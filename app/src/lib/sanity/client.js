@@ -16,7 +16,7 @@ export const production = createClient({
   projectId: "kcuxsqwd",
   dataset: "production",
   apiVersion: "2025-09-23", // today’s date or the version you want
-  useCdn: false, // set to false if you want fresh data
+  useCdn: true, // set to false if you want fresh data
   fetch: {
     cache: "no-store",
   },

@@ -8,9 +8,15 @@ import Medium from "@/components/Medium/Medium";
 
 const ProjectsPage = ({ projects }) => {
   const mobileProjectCardSizes = "(max-width: 47.99rem) calc(100vw - 16px), 1px";
+  const eagerPreviewCount = 8;
   const safeProjects = useMemo(() => (Array.isArray(projects) ? projects : []), [projects]);
   const [canHover, setCanHover] = useState(false);
-  const [hoveredProject, setHoveredProject] = useState(null);
+  const [hoveredProjectId, setHoveredProjectId] = useState(null);
+
+  const hoverPreviewProjects = useMemo(
+    () => safeProjects.filter((project) => project?.coverMedia?.medium),
+    [safeProjects]
+  );
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -25,26 +31,26 @@ const ProjectsPage = ({ projects }) => {
 
   useEffect(() => {
     if (!canHover) {
-      setHoveredProject(null);
+      setHoveredProjectId(null);
       return;
     }
 
-    setHoveredProject(safeProjects[0] ?? null);
-  }, [canHover, safeProjects]);
+    setHoveredProjectId(hoverPreviewProjects[0]?._id ?? null);
+  }, [canHover, hoverPreviewProjects]);
 
   const handleMouseEnter = (project) => {
     if (!canHover) return;
-    setHoveredProject(project);
+    setHoveredProjectId(project?._id ?? null);
   };
   const handleMouseLeave = () => {
     if (!canHover) return;
-    setHoveredProject(null);
+    setHoveredProjectId(null);
   };
 
   return (
     <div className="grid">
       <ul className={styles.projectContainer}>
-        {safeProjects.map((project) => (
+        {safeProjects.map((project, index) => (
           <li
             key={project._id}
             className={styles.project}
@@ -61,6 +67,7 @@ const ProjectsPage = ({ projects }) => {
                 medium={project.coverMedia?.medium}
                 sizes={mobileProjectCardSizes}
                 quality={72}
+                eager={index < eagerPreviewCount}
               />
               <span className={styles.projectTitleWrapper}>
                 <span className={styles.title}>{project.title}</span>
@@ -79,7 +86,21 @@ const ProjectsPage = ({ projects }) => {
         ))}
       </ul>
 
-      <Medium className={styles.coverMedia} medium={canHover ? hoveredProject?.coverMedia.medium : undefined} />
+      <div className={styles.coverMediaStack} aria-hidden={!canHover}>
+        {hoverPreviewProjects.map((project) => {
+          const isActive = canHover && hoveredProjectId === project._id;
+
+          return (
+            <div
+              key={project._id}
+              className={`${styles.coverMediaLayer} ${isActive ? styles.coverMediaLayerActive : ""}`}
+              aria-hidden={!isActive}
+            >
+              <Medium className={styles.coverMedia} medium={project.coverMedia.medium} eager />
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

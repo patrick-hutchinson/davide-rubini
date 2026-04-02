@@ -59,6 +59,26 @@ li.project .projectTitleWrapper::before {
   z-index: -1;
 }
 
+.coverMediaStack {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.coverMediaLayer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.coverMediaLayerActive {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* Common 2026 breakpoint set (mobile-first) */
 @media (min-width: 48rem) {
   .project {
@@ -98,6 +118,10 @@ li.project .projectTitleWrapper::before {
   .coverMedia {
     display: block;
   }
+
+  .coverMediaStack {
+    display: block;
+  }
 }
 
 @media (min-width: 90rem) {
@@ -116,6 +140,10 @@ li.project .projectTitleWrapper::before {
 
 @media (min-width: 48rem) and (hover: hover) and (pointer: fine) {
   .coverMedia {
+    display: block;
+  }
+
+  .coverMediaStack {
     display: block;
   }
 }

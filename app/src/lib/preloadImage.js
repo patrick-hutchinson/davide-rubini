@@ -7,10 +7,19 @@ export const markImageLoaded = (src) => {
   loadedImageUrls.add(src);
 };
 
-export const preloadImage = (src) => {
-  if (!src || isImageLoaded(src) || typeof window === "undefined") return;
+export const preloadImage = (src, options = {}) => {
+  if (!src || typeof window === "undefined") return;
+
+  const { cacheKey } = options;
+  const key = cacheKey || src;
+
+  if (isImageLoaded(src) || isImageLoaded(key)) return;
 
   const img = new window.Image();
-  img.onload = () => markImageLoaded(src);
+  img.decoding = "async";
+  img.onload = () => {
+    markImageLoaded(src);
+    markImageLoaded(key);
+  };
   img.src = src;
 };
