@@ -4,6 +4,7 @@ import AnimationLink from "@/components/Animation/AnimationLink";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
+import { disableScroll, enableScroll } from "@/helpers/blockScrolling";
 
 import styles from "./Header.module.css";
 
@@ -30,6 +31,16 @@ const Header = ({ site }) => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
+  useEffect(() => {
+    if (!isMobileMenuOpen) {
+      enableScroll();
+      return undefined;
+    }
+
+    disableScroll();
+    return () => enableScroll();
+  }, [isMobileMenuOpen]);
+
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, "0");
   const day = String(now.getDate()).padStart(2, "0");
@@ -40,7 +51,7 @@ const Header = ({ site }) => {
   const period = hours24 >= 12 ? "pm" : "am";
   const hours12 = String(hours24 % 12 || 12).padStart(2, "0");
 
-  const date = `${year}—${month}—${day}`;
+  const date = `${year}–${month}–${day}`;
   const time = `${hours12}:${minutes} ${period}`;
 
   const isActiveRoute = (basePath) => pathname === basePath || pathname?.startsWith(`${basePath}/`);
@@ -98,7 +109,7 @@ const Header = ({ site }) => {
             <button onClick={() => setTheme("light")} className={theme === "light" ? "active" : ""} type="button">
               Light
             </button>
-            —
+            –
             <button onClick={() => setTheme("dark")} className={theme === "dark" ? "active" : ""} type="button">
               Dark
             </button>
