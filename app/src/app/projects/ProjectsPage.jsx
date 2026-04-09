@@ -42,60 +42,62 @@ const ProjectsPage = ({ projects }) => {
   };
 
   return (
-    <div className="grid">
-      <ul className={styles.projectContainer}>
-        {safeProjects.map((project, index) => (
-          <li
-            key={project._id}
-            className={styles.project}
-            onMouseEnter={canHover ? () => handleMouseEnter(project) : undefined}
-            onMouseLeave={canHover ? () => handleMouseLeave(project) : undefined}
-          >
-            <AnimationLink
-              className="grid"
-              link={`/projects/${project.slug.current}`}
-              preloadSrc={project.coverMedia?.medium?.url}
-            >
-              <Medium
-                className={styles.mobileCover}
-                medium={project.coverMedia?.medium}
-                sizes={mobileProjectCardSizes}
-                quality={72}
-                eager={index < eagerPreviewCount}
-              />
-              <span className={styles.projectTitleWrapper}>
-                <span className={styles.title}>{project.title}</span>
-                <span className={styles.imageCount} typo="small">
-                  (
-                  <span style={{ position: "relative", bottom: "-0.5px" }}>
-                    {project.gallery?.length > 0 ? project.gallery.length : 0}
-                  </span>
-                  )
-                </span>
-              </span>
-              <span className={styles.client}>{project.client}</span>
-              <span className={styles.year}>{project.year}</span>
-            </AnimationLink>
-          </li>
-        ))}
-      </ul>
-
-      <div className={styles.coverMediaStack} aria-hidden={!canHover}>
-        {hoverPreviewProjects.map((project) => {
-          const isActive = canHover && hoveredProjectId === project._id;
-
-          return (
-            <div
+    <main>
+      <div className="grid">
+        <ul className={styles.projectContainer}>
+          {safeProjects.map((project, index) => (
+            <li
               key={project._id}
-              className={`${styles.coverMediaLayer} ${isActive ? styles.coverMediaLayerActive : ""}`}
-              aria-hidden={!isActive}
+              className={styles.project}
+              onMouseEnter={canHover ? () => handleMouseEnter(project) : undefined}
+              onMouseLeave={canHover ? () => handleMouseLeave(project) : undefined}
             >
-              <Medium className={styles.coverMedia} medium={project.coverMedia.medium} eager />
-            </div>
-          );
-        })}
+              <AnimationLink
+                className="grid"
+                link={`/projects/${project.slug.current}`}
+                preloadSrc={project.coverMedia?.medium?.url}
+              >
+                <Medium
+                  className={styles.mobileCover}
+                  medium={project.coverMedia?.medium}
+                  sizes={mobileProjectCardSizes}
+                  quality={72}
+                  eager={index < eagerPreviewCount}
+                />
+                <span className={styles.projectTitleWrapper}>
+                  <span className={styles.title}>{project.title}</span>
+                  <span className={styles.imageCount} typo="small">
+                    (
+                    <span style={{ position: "relative", bottom: "-0.5px" }}>
+                      {project.gallery?.length > 0 ? project.gallery.length : 0}
+                    </span>
+                    )
+                  </span>
+                </span>
+                <span className={styles.client}>{project.client}</span>
+                <span className={styles.year}>{project.year}</span>
+              </AnimationLink>
+            </li>
+          ))}
+        </ul>
+
+        <div className={styles.coverMediaStack} aria-hidden={!canHover}>
+          {hoverPreviewProjects.map((project) => {
+            const isActive = canHover && hoveredProjectId === project._id;
+
+            return (
+              <div
+                key={project._id}
+                className={`${styles.coverMediaLayer} ${isActive ? styles.coverMediaLayerActive : ""}`}
+                aria-hidden={!isActive}
+              >
+                <Medium className={styles.coverMedia} medium={project.coverMedia.medium} eager />
+              </div>
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </main>
   );
 };
 

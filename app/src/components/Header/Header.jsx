@@ -45,6 +45,13 @@ const Header = ({ site }) => {
 
   const isActiveRoute = (basePath) => pathname === basePath || pathname?.startsWith(`${basePath}/`);
   const isArchiveRoute = isActiveRoute("/archive");
+  const isProjectsListRoute = pathname === "/projects";
+  const isProjectDetailRoute = pathname?.startsWith("/projects/") && pathname !== "/projects";
+  const projectsLinkClassName = isProjectsListRoute
+    ? styles.activeNavLink
+    : isProjectDetailRoute
+      ? styles.activeNavLinkClickable
+      : undefined;
 
   const handleChangeColumns = () => {
     if (typeof window === "undefined") return;
@@ -65,7 +72,7 @@ const Header = ({ site }) => {
           <strong>{site.title}</strong>
         </AnimationLink>{" "}
         / {date} / {time} /{" "}
-        <AnimationLink className={isActiveRoute("/projects") ? styles.activeNavLink : undefined} link="/projects">
+        <AnimationLink className={projectsLinkClassName} link="/projects">
           Projects
         </AnimationLink>{" "}
         /{" "}
@@ -106,7 +113,7 @@ const Header = ({ site }) => {
       {isMobileMenuOpen ? (
         <nav className={styles.mobileMenuOverlay}>
           <div className={styles.mobileMenuLine}>
-            <AnimationLink className={isActiveRoute("/projects") ? styles.activeNavLink : undefined} link="/projects">
+            <AnimationLink className={projectsLinkClassName} link="/projects">
               Projects
             </AnimationLink>
             <span className={styles.mobileMenuSuffix}>&nbsp;/</span>

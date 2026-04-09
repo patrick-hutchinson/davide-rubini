@@ -101,7 +101,8 @@ const ProjectPage = ({ projects, project }) => {
           {gallery.length > 0 && (
             <Carousel
               array={gallery}
-              initialOffsetPx={gallery.length > 1 ? -50 : 0}
+              autoScrollPxPerSecond={18}
+              stopAutoScrollOnFirstInteraction
             />
           )}
         </div>

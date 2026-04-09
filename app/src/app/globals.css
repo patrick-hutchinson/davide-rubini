@@ -19,12 +19,35 @@ html.dark {
   --foreground: #fbfbfb !important;
 }
 
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+*,
+*::-webkit-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+a:visited,
+a:visited * {
+  color: var(--foreground) !important;
+}
+
+a:-webkit-any-link {
+  color: var(--foreground) !important;
+}
+
 main {
   width: 100vw;
   height: 100vh;
   position: absolute;
   top: 0;
   left: 0;
+
+  padding: var(--margin-page);
 }
 
 .grid {
@@ -93,13 +116,4 @@ mux-player::part(control-bar) {
 
 mux-player .mux-spinner {
   display: none !important;
-}
-
-a:visited,
-a:visited * {
-  color: var(--foreground) !important;
-}
-
-a:-webkit-any-link {
-  color: var(--foreground) !important;
 }

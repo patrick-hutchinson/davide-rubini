@@ -7,13 +7,15 @@ import styles from "./Carousel.module.css";
 
 import { motion } from "framer-motion";
 
-const Carousel = ({ array, onIndexChange, initialOffsetPx = 0 }) => {
+const Carousel = ({ array, onIndexChange, initialOffsetPx = 0, autoScrollPxPerSecond = 0, stopAutoScrollOnFirstInteraction = false }) => {
   if (!array) return;
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { loop: false, dragResistance: 1, dragFree: true, skipSnaps: true, containScroll: true, duration: 0 },
     [],
   );
   const hasAppliedInitialOffset = useRef(false);
+  const autoScrollStoppedRef = useRef(false);
+  const autoScrollRafRef = useRef(null);
 
   // Triple the date in case it is not long enough to fill the width of the screen
 
@@ -126,6 +128,78 @@ const Carousel = ({ array, onIndexChange, initialOffsetPx = 0 }) => {
 
     requestAnimationFrame(applyInitialOffset);
   }, [emblaApi, initialOffsetPx]);
+
+  useEffect(() => {
+    if (!emblaApi || !stopAutoScrollOnFirstInteraction || autoScrollPxPerSecond <= 0) return;
+
+    const stopAutoScroll = () => {
+      autoScrollStoppedRef.current = true;
+      if (autoScrollRafRef.current) {
+        window.cancelAnimationFrame(autoScrollRafRef.current);
+        autoScrollRafRef.current = null;
+      }
+    };
+
+    const interactionEvents = ["pointerdown", "touchstart", "wheel", "keydown"];
+    interactionEvents.forEach((eventName) => {
+      window.addEventListener(eventName, stopAutoScroll, { passive: true, once: true });
+    });
+
+    emblaApi.on("pointerDown", stopAutoScroll);
+
+    return () => {
+      interactionEvents.forEach((eventName) => {
+        window.removeEventListener(eventName, stopAutoScroll);
+      });
+      emblaApi.off("pointerDown", stopAutoScroll);
+    };
+  }, [emblaApi, autoScrollPxPerSecond, stopAutoScrollOnFirstInteraction]);
+
+  useEffect(() => {
+    if (!emblaApi || autoScrollPxPerSecond <= 0 || array.length <= 1) return undefined;
+
+    autoScrollStoppedRef.current = false;
+    let previousTimestamp;
+
+    const tick = (timestamp) => {
+      if (autoScrollStoppedRef.current) return;
+
+      if (typeof previousTimestamp !== "number") {
+        previousTimestamp = timestamp;
+        autoScrollRafRef.current = window.requestAnimationFrame(tick);
+        return;
+      }
+
+      const deltaSeconds = Math.max(0, (timestamp - previousTimestamp) / 1000);
+      previousTimestamp = timestamp;
+
+      const requestedDistance = -(autoScrollPxPerSecond * deltaSeconds);
+      const engine = emblaApi.internalEngine();
+      engine.scrollBody.useDuration(0).useBaseFriction();
+      const currentTarget = engine.target.get();
+      const clampedTarget = engine.limit.constrain(currentTarget + requestedDistance);
+      const clampedDistance = clampedTarget - currentTarget;
+
+      if (!clampedDistance) {
+        autoScrollStoppedRef.current = true;
+        return;
+      }
+
+      engine.scrollTo.distance(clampedDistance, false);
+      autoScrollRafRef.current = window.requestAnimationFrame(tick);
+    };
+
+    autoScrollRafRef.current = window.requestAnimationFrame(tick);
+
+    return () => {
+      autoScrollStoppedRef.current = true;
+      previousTimestamp = undefined;
+      if (autoScrollRafRef.current) {
+        window.cancelAnimationFrame(autoScrollRafRef.current);
+        autoScrollRafRef.current = null;
+      }
+    };
+  }, [emblaApi, autoScrollPxPerSecond, array.length]);
 
   return (
     <motion.div className={`${styles.carousel_outer} embla carousel`} ref={emblaRef}>
