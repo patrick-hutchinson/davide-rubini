@@ -36,11 +36,26 @@ a.homeLink {
   display: block;
 }
 
-.mobileMenuButton {
+.mobileControls {
   position: fixed;
-  left: var(--margin-page);
-  bottom: var(--margin-page);
+  left: calc(var(--margin-page) + env(safe-area-inset-left, 0px));
+  bottom: calc(var(--margin-page) + env(safe-area-inset-bottom, 0px));
   z-index: 31;
+  display: flex;
+  align-items: baseline;
+}
+
+.mobileMenuButton {
+  position: static;
+}
+
+.mobileColumnsButton {
+  position: static;
+}
+
+.mobileControlsSuffix {
+  color: var(--foreground);
+  text-decoration: none;
 }
 
 .mobileMenuOverlay {
@@ -52,8 +67,10 @@ a.homeLink {
   align-items: flex-start;
   justify-content: flex-end;
   gap: 2px;
-  padding: var(--margin-page);
-  padding-bottom: calc(var(--margin-page) + 1.25em);
+  padding-top: calc(var(--margin-page) + env(safe-area-inset-top, 0px));
+  padding-right: calc(var(--margin-page) + env(safe-area-inset-right, 0px));
+  padding-left: calc(var(--margin-page) + env(safe-area-inset-left, 0px));
+  padding-bottom: calc(var(--margin-page) + env(safe-area-inset-bottom, 0px) + 1.25em);
   box-sizing: border-box;
   background: var(--background);
   color: var(--foreground);
@@ -83,7 +100,7 @@ a.homeLink {
     display: none;
   }
 
-  .mobileMenuButton,
+  .mobileControls,
   .mobileMenuOverlay {
     display: none;
   }

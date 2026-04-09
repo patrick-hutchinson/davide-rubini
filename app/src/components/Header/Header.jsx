@@ -117,9 +117,20 @@ const Header = ({ site }) => {
         )}
       </div>
 
-      <button type="button" className={styles.mobileMenuButton} onClick={() => setIsMobileMenuOpen((value) => !value)}>
-        {isMobileMenuOpen ? "Close" : "Menu"}
-      </button>
+      <div className={styles.mobileControls}>
+        <button type="button" className={styles.mobileMenuButton} onClick={() => setIsMobileMenuOpen((value) => !value)}>
+          {isMobileMenuOpen ? "Close" : "Menu"}
+        </button>
+        {isArchiveRoute ? (
+          <>
+            <span className={styles.mobileControlsSuffix}>&nbsp;• Columns [</span>
+            <button type="button" className={styles.mobileColumnsButton} onClick={handleChangeColumns}>
+              Change
+            </button>
+            <span className={styles.mobileControlsSuffix}>]</span>
+          </>
+        ) : null}
+      </div>
 
       {isMobileMenuOpen ? (
         <nav className={styles.mobileMenuOverlay}>
