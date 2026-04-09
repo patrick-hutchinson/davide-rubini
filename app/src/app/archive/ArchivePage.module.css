@@ -10,6 +10,7 @@ main.main {
   width: 100%;
   grid-template-columns: repeat(var(--archive-columns, 3), minmax(0, 1fr));
   gap: var(--margin-page);
+  padding-bottom: var(--margin-page);
 }
 
 .archiveMediumContainer {
