@@ -40,7 +40,7 @@ const Header = ({ site }) => {
   const period = hours24 >= 12 ? "pm" : "am";
   const hours12 = String(hours24 % 12 || 12).padStart(2, "0");
 
-  const date = `${year} - ${month} - ${day}`;
+  const date = `${year}—${month}—${day}`;
   const time = `${hours12}:${minutes} ${period}`;
 
   const isActiveRoute = (basePath) => pathname === basePath || pathname?.startsWith(`${basePath}/`);
@@ -90,8 +90,8 @@ const Header = ({ site }) => {
           <>
             <button onClick={() => setTheme("light")} className={theme === "light" ? "active" : ""} type="button">
               Light
-            </button>{" "}
-            -{" "}
+            </button>
+            —
             <button onClick={() => setTheme("dark")} className={theme === "dark" ? "active" : ""} type="button">
               Dark
             </button>

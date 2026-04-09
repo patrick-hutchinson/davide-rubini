@@ -15,8 +15,8 @@ html {
 }
 
 html.dark {
-  --background: #000000 !important;
-  --foreground: #ffffff !important;
+  --background: #121212 !important;
+  --foreground: #fbfbfb !important;
 }
 
 main {
@@ -93,4 +93,13 @@ mux-player::part(control-bar) {
 
 mux-player .mux-spinner {
   display: none !important;
+}
+
+a:visited,
+a:visited * {
+  color: var(--foreground) !important;
+}
+
+a:-webkit-any-link {
+  color: var(--foreground) !important;
 }

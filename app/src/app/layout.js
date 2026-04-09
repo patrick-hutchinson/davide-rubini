@@ -4,8 +4,6 @@ import { DeviceProvider } from "@/context/DeviceContext";
 import { ViewportProvider } from "../context/ViewportContext";
 import { ThemeProvider } from "@/context/ThemeProvider";
 
-import { ViewTransitions } from "next-view-transitions";
-
 import ScrollRestorationController from "@/controllers/ScrollRestorationController";
 
 import Header from "@/components/Header/Header";
@@ -77,26 +75,24 @@ export default async function RootLayout({ children }) {
   }
 
   return (
-    <ViewTransitions>
-      <html lang="en" suppressHydrationWarning>
-        <head>
-          <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="" />
-          <link rel="dns-prefetch" href="https://cdn.sanity.io" />
-          <link rel="preconnect" href="https://image.mux.com" crossOrigin="" />
-          <link rel="dns-prefetch" href="https://image.mux.com" />
-        </head>
-        <DeviceProvider>
-          <ViewportProvider>
-            <ScrollRestorationController />
-            <body>
-              <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-                <Header site={site} />
-                {children}
-              </ThemeProvider>
-            </body>
-          </ViewportProvider>
-        </DeviceProvider>
-      </html>
-    </ViewTransitions>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+        <link rel="preconnect" href="https://image.mux.com" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://image.mux.com" />
+      </head>
+      <DeviceProvider>
+        <ViewportProvider>
+          <ScrollRestorationController />
+          <body>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+              <Header site={site} />
+              {children}
+            </ThemeProvider>
+          </body>
+        </ViewportProvider>
+      </DeviceProvider>
+    </html>
   );
 }

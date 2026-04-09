@@ -7,7 +7,7 @@ import styles from "./Carousel.module.css";
 
 import { motion } from "framer-motion";
 
-const Carousel = ({ array, onIndexChange, initialOffsetPx = 0, deferInitialOffsetUntilTransitionEnd = false }) => {
+const Carousel = ({ array, onIndexChange, initialOffsetPx = 0 }) => {
   if (!array) return;
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { loop: false, dragResistance: 1, dragFree: true, skipSnaps: true, containScroll: true, duration: 0 },
@@ -124,14 +124,8 @@ const Carousel = ({ array, onIndexChange, initialOffsetPx = 0, deferInitialOffse
       hasAppliedInitialOffset.current = true;
     };
 
-    if (deferInitialOffsetUntilTransitionEnd && typeof window !== "undefined" && window.__appTransitionPending) {
-      const onTransitionFinished = () => requestAnimationFrame(applyInitialOffset);
-      window.addEventListener("app:view-transition-finished", onTransitionFinished, { once: true });
-      return () => window.removeEventListener("app:view-transition-finished", onTransitionFinished);
-    }
-
     requestAnimationFrame(applyInitialOffset);
-  }, [emblaApi, initialOffsetPx, deferInitialOffsetUntilTransitionEnd]);
+  }, [emblaApi, initialOffsetPx]);
 
   return (
     <motion.div className={`${styles.carousel_outer} embla carousel`} ref={emblaRef}>

@@ -201,11 +201,11 @@ const AboutPage = ({ about }) => {
       ];
     };
 
-    const isMobileViewport = typeof window !== "undefined" && window.innerWidth < 768;
-    const WORD_HITBOX_SCALE_X = isMobileViewport ? 1 : 0.9;
-    const WORD_HITBOX_SCALE_Y = isMobileViewport ? 1 : 0.82;
-    const WORD_SLOP = isMobileViewport ? 0.001 : 0.02;
-    const allowWordRotation = !isMobileViewport;
+    // Mirror desktop physics behavior across all viewports, including mobile.
+    const WORD_HITBOX_SCALE_X = 0.9;
+    const WORD_HITBOX_SCALE_Y = 0.82;
+    const WORD_SLOP = 0.02;
+    const allowWordRotation = true;
     const letterBodies = letters.map((letter) => {
       const baseWidth = letter.colliderWidthPx || letter.width;
       const baseHeight = letter.colliderHeightPx || letter.height;

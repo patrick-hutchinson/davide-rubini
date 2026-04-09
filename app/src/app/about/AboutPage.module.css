@@ -4,7 +4,7 @@
   width: 100%;
   height: auto;
   min-height: var(--content-height);
-  padding: var(--margin-page);
+  /* padding: var(--margin-page); */
   padding-top: var(--margin-text);
   overflow-x: clip;
 }

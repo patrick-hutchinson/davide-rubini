@@ -13,10 +13,7 @@ const ProjectsPage = ({ projects }) => {
   const [canHover, setCanHover] = useState(false);
   const [hoveredProjectId, setHoveredProjectId] = useState(null);
 
-  const hoverPreviewProjects = useMemo(
-    () => safeProjects.filter((project) => project?.coverMedia?.medium),
-    [safeProjects]
-  );
+  const hoverPreviewProjects = useMemo(() => safeProjects.filter((project) => project?.coverMedia?.medium), [safeProjects]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -32,11 +29,8 @@ const ProjectsPage = ({ projects }) => {
   useEffect(() => {
     if (!canHover) {
       setHoveredProjectId(null);
-      return;
     }
-
-    setHoveredProjectId(hoverPreviewProjects[0]?._id ?? null);
-  }, [canHover, hoverPreviewProjects]);
+  }, [canHover]);
 
   const handleMouseEnter = (project) => {
     if (!canHover) return;

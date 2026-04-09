@@ -102,7 +102,6 @@ const ProjectPage = ({ projects, project }) => {
             <Carousel
               array={gallery}
               initialOffsetPx={gallery.length > 1 ? -50 : 0}
-              deferInitialOffsetUntilTransitionEnd
             />
           )}
         </div>
