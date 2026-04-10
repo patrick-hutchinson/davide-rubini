@@ -39,7 +39,7 @@ a.homeLink {
 .mobileControls {
   position: fixed;
   left: calc(var(--margin-page) + env(safe-area-inset-left, 0px));
-  bottom: calc(var(--margin-page) + env(safe-area-inset-bottom, 0px));
+  bottom: max(var(--margin-page), calc(var(--margin-page) + env(safe-area-inset-bottom, 0px)));
   z-index: 31;
   display: flex;
   align-items: baseline;

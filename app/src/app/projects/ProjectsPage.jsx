@@ -61,7 +61,7 @@ const ProjectsPage = ({ projects }) => {
                   className={styles.mobileCover}
                   medium={project.coverMedia?.medium}
                   sizes={mobileProjectCardSizes}
-                  quality={72}
+                  quality={75}
                   eager={index < eagerPreviewCount}
                 />
                 <span className={styles.projectTitleWrapper}>

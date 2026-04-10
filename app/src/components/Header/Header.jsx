@@ -146,25 +146,12 @@ const Header = ({ site }) => {
             </AnimationLink>
             <span className={styles.mobileMenuSuffix}>&nbsp;/</span>
           </div>
-          {isArchiveRoute ? (
-            <div className={styles.mobileMenuLine}>
-              <AnimationLink className={styles.activeNavLink} link="/archive">
-                Archive
-              </AnimationLink>
-              <span className={styles.mobileMenuSuffix}>&nbsp;• Columns [</span>
-              <button type="button" onClick={handleChangeColumns}>
-                Change
-              </button>
-              <span className={styles.mobileMenuSuffix}>]</span>
-            </div>
-          ) : (
-            <div className={styles.mobileMenuLine}>
-              <AnimationLink className={isActiveRoute("/archive") ? styles.activeNavLink : undefined} link="/archive">
-                Archive
-              </AnimationLink>
-              <span className={styles.mobileMenuSuffix}>&nbsp;/</span>
-            </div>
-          )}
+          <div className={styles.mobileMenuLine}>
+            <AnimationLink className={isActiveRoute("/archive") ? styles.activeNavLink : undefined} link="/archive">
+              Archive
+            </AnimationLink>
+            <span className={styles.mobileMenuSuffix}>&nbsp;/</span>
+          </div>
           {mounted && (
             <div className={styles.mobileThemeRow}>
               <button onClick={() => setTheme("light")} className={theme === "light" ? "active" : ""} type="button">

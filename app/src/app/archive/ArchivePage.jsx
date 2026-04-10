@@ -158,12 +158,13 @@ const ArchivePage = ({ archive }) => {
   const columnSizes = {
     1: "calc(100vw - (2 * var(--margin-page)))",
     2: "(max-width: 47.99rem) calc((100vw - 24px) / 2), calc((100vw - 24px) / 2)",
-    3: "(max-width: 900px) calc((100vw - 24px) / 2), calc((100vw - 32px) / 3)",
+    3: "(max-width: 900px) calc(((100vw - 24px) / 2) * 1.25), calc(((100vw - 32px) / 3) * 1.5)",
     4: "(max-width: 900px) calc((100vw - 24px) / 2), calc((100vw - 40px) / 4)",
     6: "(max-width: 900px) calc((100vw - 24px) / 3), calc((100vw - 56px) / 6)",
     12: "(max-width: 900px) calc((100vw - 40px) / 4), calc((100vw - 104px) / 12)",
   };
   const archiveImageSizes = columnSizes[columns] || "100vw";
+  const archiveGridQuality = columns === 3 ? 100 : 75;
 
   return (
     <main className={styles.main}>
@@ -182,7 +183,7 @@ const ArchivePage = ({ archive }) => {
               }
             }}
           >
-            <Medium medium={medium.medium} className={styles.archiveMedium} sizes={archiveImageSizes} quality={72} />
+            <Medium medium={medium.medium} className={styles.archiveMedium} sizes={archiveImageSizes} quality={archiveGridQuality} />
             <span className={styles.archiveIndex}>
               <span className={styles.indexInner}>{medium._index}</span>
             </span>
@@ -205,7 +206,7 @@ const ArchivePage = ({ archive }) => {
                   className={styles.fullscreenMedium}
                   medium={reversedGallery[activeIndex].medium}
                   sizes="100vw"
-                  quality={85}
+                  quality={100}
                   fit="contain"
                 />
               </div>
