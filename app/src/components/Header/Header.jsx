@@ -8,13 +8,25 @@ import { disableScroll, enableScroll } from "@/helpers/blockScrolling";
 
 import styles from "./Header.module.css";
 
+const getArchiveColumnOptions = () => {
+  if (typeof window === "undefined") return [12, 6, 4, 3];
+  return window.innerWidth < 768 ? [1, 2] : [12, 6, 4, 3];
+};
+
+const getDefaultArchiveColumns = () => {
+  if (typeof window === "undefined") return 6;
+  return window.innerWidth < 768 ? 2 : 6;
+};
+
 const Header = ({ site }) => {
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [now, setNow] = useState(new Date());
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const [projectsViewMode, setProjectsViewMode] = useState("list");
+  const [archiveColumns, setArchiveColumns] = useState(() => getDefaultArchiveColumns());
+  const [archiveColumnOptions, setArchiveColumnOptions] = useState(() => getArchiveColumnOptions());
 
   useEffect(() => {
     setMounted(true);
@@ -29,25 +41,27 @@ const Header = ({ site }) => {
   }, []);
 
   useEffect(() => {
-    setIsMobileMenuOpen(false);
-  }, [pathname]);
-
-  useEffect(() => {
-    if (!isMobileMenuOpen) {
-      enableScroll();
-      return undefined;
-    }
-
-    disableScroll();
-    return () => enableScroll();
-  }, [isMobileMenuOpen]);
-
-  useEffect(() => {
     if (typeof window === "undefined") return;
     const stored = window.localStorage.getItem("projects:view-mode");
     if (stored === "grid" || stored === "list") {
       setProjectsViewMode(stored);
     }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+
+    const applyArchiveColumnsUi = () => {
+      const nextOptions = getArchiveColumnOptions();
+      const nextDefault = getDefaultArchiveColumns();
+
+      setArchiveColumnOptions(nextOptions);
+      setArchiveColumns((prev) => (nextOptions.includes(prev) ? prev : nextDefault));
+    };
+
+    applyArchiveColumnsUi();
+    window.addEventListener("resize", applyArchiveColumnsUi);
+    return () => window.removeEventListener("resize", applyArchiveColumnsUi);
   }, []);
 
   const year = now.getFullYear();
@@ -73,9 +87,10 @@ const Header = ({ site }) => {
       ? styles.activeNavLinkClickable
       : undefined;
 
-  const handleChangeColumns = () => {
+  const handleSetArchiveColumns = (columns) => {
     if (typeof window === "undefined") return;
-    window.dispatchEvent(new CustomEvent("archive:change-columns"));
+    setArchiveColumns(columns);
+    window.dispatchEvent(new CustomEvent("archive:change-columns", { detail: { columns } }));
   };
 
   const setProjectsView = (mode) => {
@@ -110,18 +125,10 @@ const Header = ({ site }) => {
         <AnimationLink className={isActiveRoute("/archive") ? styles.activeNavLink : undefined} link="/archive">
           Archive
         </AnimationLink>{" "}
-        {isArchiveRoute && (
-          <>
-            <span>• Columns [</span>
-            <button type="button" onClick={handleChangeColumns}>
-              Change
-            </button>
-            <span>]</span>{" "}
-          </>
-        )}
         /{" "}
         {mounted && (
           <>
+            [
             <button onClick={() => setTheme("light")} className={theme === "light" ? "active" : ""} type="button">
               Light
             </button>
@@ -129,6 +136,7 @@ const Header = ({ site }) => {
             <button onClick={() => setTheme("dark")} className={theme === "dark" ? "active" : ""} type="button">
               Dark
             </button>
+            ]
           </>
         )}
       </div>
@@ -153,54 +161,22 @@ const Header = ({ site }) => {
         </div>
       ) : null}
 
-      <div className={styles.mobileControls}>
-        <button type="button" className={styles.mobileMenuButton} onClick={() => setIsMobileMenuOpen((value) => !value)}>
-          {isMobileMenuOpen ? "Close" : "Menu"}
-        </button>
-        {isArchiveRoute ? (
-          <>
-            <span className={styles.mobileControlsSuffix}>&nbsp;• Columns [</span>
-            <button type="button" className={styles.mobileColumnsButton} onClick={handleChangeColumns}>
-              Change
-            </button>
-            <span className={styles.mobileControlsSuffix}>]</span>
-          </>
-        ) : null}
-      </div>
-
-      {isMobileMenuOpen ? (
-        <nav className={styles.mobileMenuOverlay}>
-          <div className={styles.mobileMenuLine}>
-            <AnimationLink className={projectsLinkClassName} link="/projects">
-              Projects
-            </AnimationLink>
-            <span className={styles.mobileMenuSuffix}>&nbsp;/</span>
-          </div>
-          <div className={styles.mobileMenuLine}>
-            <AnimationLink className={isActiveRoute("/about") ? styles.activeNavLink : undefined} link="/about">
-              About
-            </AnimationLink>
-            <span className={styles.mobileMenuSuffix}>&nbsp;/</span>
-          </div>
-          <div className={styles.mobileMenuLine}>
-            <AnimationLink className={isActiveRoute("/archive") ? styles.activeNavLink : undefined} link="/archive">
-              Archive
-            </AnimationLink>
-            <span className={styles.mobileMenuSuffix}>&nbsp;/</span>
-          </div>
-          {mounted && (
-            <div className={styles.mobileThemeRow}>
-              <button onClick={() => setTheme("light")} className={theme === "light" ? "active" : ""} type="button">
-                Light
+      {isArchiveRoute ? (
+        <div className={styles.archiveColumnsToggle}>
+          <span>Columns:&nbsp;</span>
+          {archiveColumnOptions.map((column, index) => (
+            <span key={`archive-column-option-${column}`}>
+              <button
+                type="button"
+                onClick={() => handleSetArchiveColumns(column)}
+                className={archiveColumns === column ? "active" : ""}
+              >
+                {column}
               </button>
-              <span>&nbsp;-&nbsp;</span>
-              <button onClick={() => setTheme("dark")} className={theme === "dark" ? "active" : ""} type="button">
-                Dark
-              </button>
-              <span>&nbsp;/</span>
-            </div>
-          )}
-        </nav>
+              {index < archiveColumnOptions.length - 1 ? <span>&nbsp;–&nbsp;</span> : null}
+            </span>
+          ))}
+        </div>
       ) : null}
 
       <hr />

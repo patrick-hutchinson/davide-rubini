@@ -1,0 +1,142 @@
+.listTableSection {
+  width: 100%;
+}
+
+.listWrap {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.listTableCell {
+  vertical-align: top;
+}
+
+.listScrollWrap {
+  overflow-y: auto;
+  max-height: 90vh;
+}
+
+.listTable {
+  --list-index-width: 24px;
+  --list-gap: 4px;
+  --list-year-width: 52px;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.listTable th,
+.listTable td {
+  text-align: left;
+  vertical-align: top;
+  font-weight: normal;
+  padding: 0;
+}
+
+.listRow td {
+  display: table-cell;
+}
+
+.listIndex,
+.listYear,
+.listClient {
+  padding-right: var(--list-gap);
+}
+
+.listYear {
+  margin-right: var(--margin-page);
+}
+
+.listTitle a {
+  text-decoration: underline;
+  color: var(--link-color) !important;
+}
+
+.listTable th:nth-child(1),
+.listTable td:nth-child(1) {
+  width: var(--list-index-width);
+}
+
+.listTable th:nth-child(2),
+.listTable td:nth-child(2) {
+  width: calc(50vw - var(--list-index-width) - var(--list-gap) - var(--list-year-width) - (var(--margin-page) / 2));
+}
+
+.listTable th:nth-child(3),
+.listTable td:nth-child(3) {
+  width: var(--list-year-width);
+  text-align: left;
+}
+
+.listTable th:nth-child(4),
+.listTable td:nth-child(4) {
+}
+
+.previewCell {
+  width: 400px;
+  vertical-align: top;
+  padding-left: var(--margin-page);
+  position: relative;
+}
+
+.coverMedia {
+  display: none;
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  height: auto !important;
+  width: 100% !important;
+  z-index: 0;
+}
+
+.coverMediaStack {
+  display: none;
+  position: relative;
+  top: 0;
+  right: auto;
+  left: 0;
+  width: 400px;
+  height: auto;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.coverMediaLayer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.coverMediaLayerActive {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (min-width: 769px) {
+  .coverMedia {
+    display: block;
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    width: 400px !important;
+    height: auto !important;
+    z-index: 0;
+  }
+
+  .coverMediaStack {
+    display: block;
+  }
+}
+
+@media (max-width: 768px) {
+  .previewCell {
+    display: none;
+  }
+
+  .listTable th:nth-child(3),
+  .listTable td:nth-child(3),
+  .listTable th:nth-child(4),
+  .listTable td:nth-child(4) {
+    text-align: left;
+  }
+}

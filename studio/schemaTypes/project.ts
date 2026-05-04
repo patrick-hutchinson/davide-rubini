@@ -16,6 +16,15 @@ export const project = defineType({
       type: 'string',
     }),
     defineField({
+      name: 'categories',
+      type: 'array',
+      of: [{type: 'reference', to: [{type: 'category'}]}],
+      options: {
+        sortable: true,
+      },
+      validation: (Rule) => Rule.unique(),
+    }),
+    defineField({
       name: 'year',
       type: 'string',
     }),

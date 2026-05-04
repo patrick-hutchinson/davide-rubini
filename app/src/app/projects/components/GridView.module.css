@@ -1,0 +1,34 @@
+.gridViewSection {
+  box-sizing: border-box;
+  width: 100vw;
+  min-height: 100vh;
+}
+
+.gridView {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--margin-page);
+}
+
+.gridCard {
+  display: block;
+  text-decoration: none;
+}
+
+.gridCardTitle {
+  display: block;
+}
+
+.gridCardMedia {
+  width: 100%;
+  height: auto;
+  margin-bottom: 4px;
+}
+
+@media (min-width: 48rem) {
+  .gridView {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 8px;
+  }
+}
+

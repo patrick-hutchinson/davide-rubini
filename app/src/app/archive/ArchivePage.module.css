@@ -1,15 +1,13 @@
 main.main {
   box-sizing: border-box;
   width: 100%;
-  padding: var(--margin-page);
-  padding-top: var(--margin-text);
   overflow-x: clip;
 }
 .archiveContainer {
   display: grid;
   width: 100%;
   grid-template-columns: repeat(var(--archive-columns, 3), minmax(0, 1fr));
-  gap: var(--margin-page);
+  gap: calc(var(--margin-page) / 2);
   padding-bottom: var(--margin-page);
 }
 
@@ -19,35 +17,6 @@ main.main {
   width: 100%;
   aspect-ratio: 4 / 5;
   cursor: pointer;
-}
-
-.archiveMediumContainer:hover .archiveMedium {
-  opacity: 0;
-}
-
-.archiveMediumContainer:hover .archiveIndex {
-  opacity: 1;
-}
-
-.archiveIndex {
-  opacity: 0;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  background: transparent;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.indexInner::before {
-  content: "•";
-  margin-right: 0.5em;
-  text-decoration: none !important;
-  text-decoration-line: none !important;
-  text-decoration-thickness: none !important;
 }
 
 .fullscreenOverlay {

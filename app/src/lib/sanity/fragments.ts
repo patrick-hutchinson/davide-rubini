@@ -13,6 +13,7 @@ export const mediaAssetFragment = `{
     "lqip": select(_type == "imageAsset" => file.asset->metadata.lqip, true => null),
     "width": select(_type == "imageAsset" => file.asset->metadata.dimensions.width, true => null),
     "height": select(_type == "imageAsset" => file.asset->metadata.dimensions.height, true => null),
+    "altText": select(_type == "imageAsset" => altText, true => null),
 
 
     "status": select(_type == "videoAsset" => file.asset->status, true => null),

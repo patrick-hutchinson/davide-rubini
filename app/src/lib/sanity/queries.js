@@ -18,6 +18,10 @@ export const projectsQuery = `*[_type=="project"]{
   _id,
   title,
   client,
+  categories[]->{
+    _id,
+    name,
+  },
   year,
   description,
   credits[]{

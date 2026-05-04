@@ -1,4 +1,5 @@
 import {project} from './project'
+import {category} from './category'
 import {site} from './site'
 import {gallery} from './types/gallery'
 import {imageAsset} from './types/imageAsset'
@@ -12,6 +13,7 @@ import {about} from './pages/about'
 
 export const schemaTypes = [
   site,
+  category,
   project,
   portableText,
   gallery,

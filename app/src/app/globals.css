@@ -6,8 +6,8 @@
   --margin-page: 8px;
   --margin-text: 2em;
 
-  --header-height: 18.5px;
-  --content-height: calc(100vh - (2 * var(--margin-page)));
+  --header-height: 55px;
+  --content-height: calc(100dvh - (2 * var(--margin-page) - var(--header-height)));
 }
 
 html {
@@ -31,11 +31,7 @@ html.dark {
 
 a:visited,
 a:visited * {
-  color: var(--foreground) !important;
-}
-
-a:-webkit-any-link {
-  color: var(--foreground) !important;
+  color: var(--link-color);
 }
 
 .grid {

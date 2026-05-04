@@ -1,6 +1,6 @@
 import AnimationLink from "@/components/Animation/AnimationLink";
 import Medium from "@/components/Medium/Medium";
-import styles from "../ProjectsPage.module.css";
+import styles from "./GridView.module.css";
 
 const eagerPreviewCount = 8;
 

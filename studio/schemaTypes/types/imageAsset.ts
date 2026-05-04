@@ -24,14 +24,8 @@ export const imageAsset = defineType({
       options: {hotspot: true},
     }),
     defineField({
-      title: 'Title (Alt Text)',
+      title: 'Title (Displayed in the Archive)',
       name: 'altText',
-      type: 'string',
-    }),
-    defineField({
-      title: 'Copyright',
-      description: 'Inserisci qui il testo del copyright',
-      name: 'copyright',
       type: 'string',
     }),
   ],

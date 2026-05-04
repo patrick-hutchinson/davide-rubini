@@ -10,14 +10,14 @@
 .activeNavLink {
   font-weight: bold;
   text-decoration: none;
-  color: var(--foreground);
+  color: var(--foreground) !important;
   cursor: default;
 }
 
 .activeNavLinkClickable {
   font-weight: bold;
   text-decoration: none;
-  color: var(--foreground);
+  color: var(--foreground) !important;
   cursor: pointer;
 }
 
@@ -26,8 +26,9 @@ a.homeLink {
 }
 
 a.homeLink:visited,
-a.homeLink {
-  color: unset;
+a.homeLink,
+a.homeLink * {
+  color: var(--foreground) !important;
 }
 
 .desktopNav {
@@ -35,6 +36,10 @@ a.homeLink {
 }
 
 .projectsViewToggle {
+  display: none;
+}
+
+.archiveColumnsToggle {
   display: none;
 }
 
@@ -103,6 +108,14 @@ a.homeLink {
   }
 
   .projectsViewToggle {
+    display: block;
+    position: fixed;
+    top: var(--margin-page);
+    right: calc(var(--margin-page) + env(safe-area-inset-right, 0px));
+    z-index: 21;
+  }
+
+  .archiveColumnsToggle {
     display: block;
     position: fixed;
     top: var(--margin-page);

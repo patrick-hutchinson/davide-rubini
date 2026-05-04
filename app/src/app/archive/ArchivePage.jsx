@@ -11,22 +11,13 @@ const getAllowedColumns = () => {
   if (typeof window === "undefined") return [3, 4, 6, 12];
 
   const width = window.innerWidth;
-  const isLandscape = window.matchMedia("(orientation: landscape)").matches;
-
-  if (width < 768) {
-    return isLandscape ? [2, 3, 4] : [1, 2];
-  }
-
-  if (width < 1024) {
-    return isLandscape ? [3, 4, 6] : [2, 3, 4];
-  }
-
+  if (width < 768) return [1, 2];
   return [3, 4, 6, 12];
 };
 
 const getPreferredDefaultColumns = () => {
-  if (typeof window === "undefined") return 3;
-  return window.innerWidth >= 1024 ? 12 : 2;
+  if (typeof window === "undefined") return 6;
+  return window.innerWidth < 768 ? 2 : 6;
 };
 
 const ArchivePage = ({ archive }) => {
@@ -59,7 +50,17 @@ const ArchivePage = ({ archive }) => {
   }, []);
 
   useEffect(() => {
-    const onChangeColumns = () => {
+    const onChangeColumns = (event) => {
+      const nextColumns = event?.detail?.columns;
+
+      if (typeof nextColumns === "number") {
+        const allowed = getAllowedColumns();
+        if (allowed.includes(nextColumns)) {
+          setColumns(nextColumns);
+        }
+        return;
+      }
+
       changeColumns();
     };
 
@@ -183,55 +184,55 @@ const ArchivePage = ({ archive }) => {
               }
             }}
           >
-            <Medium medium={medium.medium} className={styles.archiveMedium} sizes={archiveImageSizes} quality={archiveGridQuality} />
-            <span className={styles.archiveIndex}>
-              <span className={styles.indexInner}>{medium._index}</span>
-            </span>
+            <Medium
+              medium={medium.medium}
+              className={styles.archiveMedium}
+              sizes={archiveImageSizes}
+              quality={archiveGridQuality}
+            />
           </div>
         ))}
       </div>
 
-      <AnimatePresence>
-        {activeIndex !== null && reversedGallery[activeIndex] && (
-          <motion.div
-            className={styles.fullscreenOverlay}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-          >
-            <div className={styles.fullscreenStage}>
-              <div className={styles.fullscreenMediumWrap}>
-                <Medium
-                  className={styles.fullscreenMedium}
-                  medium={reversedGallery[activeIndex].medium}
-                  sizes="100vw"
-                  quality={100}
-                  fit="contain"
-                />
-              </div>
+      {activeIndex !== null && reversedGallery[activeIndex] && (
+        <div
+          className={styles.fullscreenOverlay}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+        >
+          <div className={styles.fullscreenStage}>
+            <div className={styles.fullscreenMediumWrap}>
+              <Medium
+                className={styles.fullscreenMedium}
+                medium={reversedGallery[activeIndex].medium}
+                sizes="100vw"
+                quality={100}
+                fit="contain"
+                showPlaceholderOnMount
+              />
             </div>
+          </div>
 
-            <div className={styles.fullscreenMeta}>
-              <strong className={styles.fullscreenLabel}>
-                • {reversedGallery[activeIndex]._index} - {reversedGallery[activeIndex]?.altText || "Untitled"}
-              </strong>
-              <div className={styles.fullscreenControls}>
-                <button type="button" onClick={goPrev}>
-                  Prev
-                </button>
-                <button type="button" onClick={goNext}>
-                  Next
-                </button>
-                &nbsp;/
-                <button type="button" onClick={closeFullscreen}>
-                  Close
-                </button>
-              </div>
+          <div className={styles.fullscreenMeta}>
+            <div className={styles.fullscreenControls}>
+              {/* <button type="button" onClick={goPrev}>
+                ← Previous Image
+              </button>
+              <button type="button" onClick={goNext}>
+                Next Image →
+              </button>
+              &nbsp;/
+              <button type="button" onClick={closeFullscreen}>
+                Close
+              </button>
+              <span>&nbsp;•&nbsp;</span> */}
+              <div className={styles.fullscreenLabel}>{reversedGallery[activeIndex]?.medium?.altText || "Untitled"}</div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
+      )}
     </main>
   );
 };

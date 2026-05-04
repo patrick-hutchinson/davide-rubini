@@ -1,6 +1,6 @@
 import Medium from "@/components/Medium/Medium";
 import { useEffect, useMemo, useState } from "react";
-import styles from "../../ProjectsPage.module.css";
+import styles from "./ListView.module.css";
 
 import ListItem from "./components/ListItem";
 import ListHead from "./components/ListHead";

@@ -1,5 +1,5 @@
 import AnimationLink from "@/components/Animation/AnimationLink";
-import styles from "../../../ProjectsPage.module.css";
+import styles from "../ListView.module.css";
 
 const ListItem = ({ project, index, canHover, onMouseEnterProject, onMouseLeaveProject }) => {
   return (

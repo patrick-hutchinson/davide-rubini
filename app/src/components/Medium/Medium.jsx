@@ -3,7 +3,17 @@
 import ImageCompose from "./components/Image/ImageCompose";
 import VideoCompose from "./components/Video/VideoCompose";
 
-const Medium = ({ className, medium, eager = false, sizes, quality, fit = "cover", position = "center", placeholderDelay }) => {
+const Medium = ({
+  className,
+  medium,
+  eager = false,
+  sizes,
+  quality,
+  fit = "cover",
+  position = "center",
+  placeholderDelay,
+  showPlaceholderOnMount = false,
+}) => {
   if (!medium || (!medium.url && !medium.playbackId)) return undefined;
 
   switch (medium.type) {
@@ -18,6 +28,7 @@ const Medium = ({ className, medium, eager = false, sizes, quality, fit = "cover
           fit={fit}
           position={position}
           placeholderDelay={placeholderDelay}
+          showPlaceholderOnMount={showPlaceholderOnMount}
         />
       );
     case "video":

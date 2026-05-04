@@ -14,16 +14,27 @@ const ImageCompose = ({
   fit = "cover",
   position = "center",
   placeholderDelay,
+  showPlaceholderOnMount = false,
 }) => {
-  const [isLoaded, setIsLoaded] = useState(() => isImageLoaded(medium?.url));
+  const [isLoaded, setIsLoaded] = useState(() => (showPlaceholderOnMount ? false : isImageLoaded(medium?.url)));
 
   useEffect(() => {
-    setIsLoaded(isImageLoaded(medium?.url));
-  }, [medium?.url]);
+    setIsLoaded(showPlaceholderOnMount ? false : isImageLoaded(medium?.url));
+  }, [medium?.url, showPlaceholderOnMount]);
 
   return (
     <div className={`${styles.mediaContainer} ${className}`}>
-      {!isLoaded && <Placeholder medium={medium} isLoaded={isLoaded} sizes={sizes} delay={placeholderDelay} eager={eager} />}
+      {!isLoaded && (
+        <Placeholder
+          medium={medium}
+          isLoaded={isLoaded}
+          sizes={sizes}
+          delay={placeholderDelay}
+          eager={eager}
+          fit={fit}
+          position={position}
+        />
+      )}
       <Image
         medium={medium}
         setIsLoaded={setIsLoaded}
