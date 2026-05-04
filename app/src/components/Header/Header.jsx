@@ -14,6 +14,7 @@ const Header = ({ site }) => {
   const [mounted, setMounted] = useState(false);
   const [now, setNow] = useState(new Date());
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [projectsViewMode, setProjectsViewMode] = useState("list");
 
   useEffect(() => {
     setMounted(true);
@@ -41,6 +42,14 @@ const Header = ({ site }) => {
     return () => enableScroll();
   }, [isMobileMenuOpen]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const stored = window.localStorage.getItem("projects:view-mode");
+    if (stored === "grid" || stored === "list") {
+      setProjectsViewMode(stored);
+    }
+  }, []);
+
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, "0");
   const day = String(now.getDate()).padStart(2, "0");
@@ -67,6 +76,13 @@ const Header = ({ site }) => {
   const handleChangeColumns = () => {
     if (typeof window === "undefined") return;
     window.dispatchEvent(new CustomEvent("archive:change-columns"));
+  };
+
+  const setProjectsView = (mode) => {
+    if (typeof window === "undefined") return;
+    setProjectsViewMode(mode);
+    window.localStorage.setItem("projects:view-mode", mode);
+    window.dispatchEvent(new CustomEvent("projects:view-mode-change", { detail: { mode } }));
   };
 
   return (
@@ -109,13 +125,33 @@ const Header = ({ site }) => {
             <button onClick={() => setTheme("light")} className={theme === "light" ? "active" : ""} type="button">
               Light
             </button>
-            –
+            &nbsp;–&nbsp;
             <button onClick={() => setTheme("dark")} className={theme === "dark" ? "active" : ""} type="button">
               Dark
             </button>
           </>
         )}
       </div>
+
+      {isProjectsListRoute ? (
+        <div className={styles.projectsViewToggle}>
+          <button
+            type="button"
+            onClick={() => setProjectsView("grid")}
+            className={projectsViewMode === "grid" ? "active" : ""}
+          >
+            Grid
+          </button>
+          &nbsp;–&nbsp;
+          <button
+            type="button"
+            onClick={() => setProjectsView("list")}
+            className={projectsViewMode === "list" ? "active" : ""}
+          >
+            List
+          </button>
+        </div>
+      ) : null}
 
       <div className={styles.mobileControls}>
         <button type="button" className={styles.mobileMenuButton} onClick={() => setIsMobileMenuOpen((value) => !value)}>
@@ -166,6 +202,9 @@ const Header = ({ site }) => {
           )}
         </nav>
       ) : null}
+
+      <hr />
+      <br />
     </header>
   );
 };

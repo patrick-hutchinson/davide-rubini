@@ -9,7 +9,6 @@ import ScrollRestorationController from "@/controllers/ScrollRestorationControll
 import Header from "@/components/Header/Header";
 
 import "./globals.css";
-import "./fonts.css";
 
 const fallbackSite = {
   title: "Site",

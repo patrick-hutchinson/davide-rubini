@@ -1,13 +1,144 @@
+.listViewGrid {
+  align-items: start;
+}
+
+.listTableSection {
+  width: 100%;
+}
+
+.listWrap {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.listTableCell {
+  vertical-align: top;
+}
+
+.listScrollWrap {
+  overflow-y: auto;
+  max-height: 90vh;
+}
+
+.listTable {
+  --list-index-width: 24px;
+  --list-index-gap: 4px;
+  --list-year-width: 52px;
+  /* --list-client-width: 140px; */
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.listTable th,
+.listTable td {
+  text-align: left;
+  vertical-align: top;
+  font-weight: normal;
+  padding: 0;
+}
+
+.listRow td {
+  display: table-cell;
+}
+
+.listIndex,
+.listYear,
+.listClient {
+  white-space: nowrap;
+}
+
+.listTitle {
+  white-space: nowrap;
+}
+
+.listTitle a {
+  text-decoration: underline;
+  color: var(--link-color);
+}
+
+.listTable th:nth-child(1),
+.listTable td:nth-child(1) {
+  width: var(--list-index-width);
+  padding-right: var(--list-index-gap);
+}
+
+.listTable th:nth-child(2),
+.listTable td:nth-child(2) {
+  width: calc(50vw - var(--list-index-width) - var(--list-index-gap) - var(--list-year-width) - (var(--margin-page) / 2));
+}
+
+.listTable th:nth-child(3),
+.listTable td:nth-child(3) {
+  width: var(--list-year-width);
+  text-align: left;
+  padding-right: 0;
+}
+
+.listTable th:nth-child(4),
+.listTable td:nth-child(4) {
+  /* width: var(--list-client-width); */
+  /* padding-left: var(--margin-page); */
+  padding-right: 0;
+}
+
+.previewCell {
+  width: 400px;
+  vertical-align: top;
+  padding-left: var(--margin-page);
+  position: relative;
+}
+
 ul.projectContainer {
   grid-column: 1 / 13;
   padding-inline-start: 0;
   margin: 0;
-  margin-top: var(--margin-text);
   list-style: none;
+}
+
+.gridViewSection {
+  box-sizing: border-box;
+  width: 100vw;
+  min-height: 100vh;
+}
+
+.gridView {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--margin-page);
+}
+
+.gridCardMedia {
+  width: 100%;
+  height: auto;
+  margin-bottom: 4px;
 }
 
 .project {
   margin-bottom: var(--margin-page);
+}
+
+.projectHeader {
+  margin-bottom: var(--margin-page);
+}
+
+.projectHeader :global(.grid) {
+  display: block;
+}
+
+.projectHeaderTitleGroup {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 4px;
+}
+
+.projectHeaderIndex {
+  width: auto;
+}
+
+.projectHeaderYear,
+.projectHeaderClient {
+  display: none;
 }
 
 li.project > a {
@@ -15,33 +146,20 @@ li.project > a {
   text-decoration: none;
 }
 
-.mobileCover {
-  width: 100%;
-  height: auto;
-  margin-bottom: 2px;
-}
-
-li.project .projectTitleWrapper {
-  display: flex;
-  align-items: end;
+li.project .projectTitleGroup {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-items: baseline;
   gap: 4px;
 }
 
-li.project .projectTitleWrapper .title {
+li.project .title {
   text-decoration: underline;
+  color: var(--link-color);
 }
 
-.imageCount {
-  padding-bottom: 2px;
-  display: none;
-}
-
-li.project .projectTitleWrapper::before {
-  content: "•";
-  margin-right: 0.5em;
-  text-decoration: none !important;
-  text-decoration-line: none !important;
-  text-decoration-thickness: none !important;
+li.project .index {
+  width: auto;
 }
 
 .client,
@@ -51,19 +169,23 @@ li.project .projectTitleWrapper::before {
 
 .coverMedia {
   display: none;
-  position: absolute !important;
-  top: var(--margin-page) !important;
-  right: var(--margin-page) !important;
-  height: var(--content-height) !important;
-  width: auto !important;
-  z-index: -1;
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  height: auto !important;
+  width: 100% !important;
+  z-index: 0;
 }
 
 .coverMediaStack {
   display: none;
-  position: absolute;
-  inset: 0;
-  z-index: -1;
+  position: relative;
+  top: 0;
+  right: auto;
+  left: 0;
+  width: 400px;
+  height: auto;
+  z-index: 0;
   pointer-events: none;
 }
 
@@ -81,6 +203,11 @@ li.project .projectTitleWrapper::before {
 
 /* Common 2026 breakpoint set (mobile-first) */
 @media (min-width: 48rem) {
+  .gridView {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 8px;
+  }
+
   .project {
     margin-bottom: 0;
   }
@@ -89,11 +216,25 @@ li.project .projectTitleWrapper::before {
     display: grid;
   }
 
-  .mobileCover {
-    display: none;
+  .projectHeader :global(.grid) {
+    display: grid;
   }
 
-  li.project .projectTitleWrapper {
+  .projectHeaderTitleGroup {
+    grid-column: 1 / 7;
+  }
+
+  .projectHeaderYear {
+    display: inline;
+    grid-column: 7 / 8;
+  }
+
+  .projectHeaderClient {
+    display: inline;
+    grid-column: 8 / 11;
+  }
+
+  li.project .projectTitleGroup {
     grid-column: 1 / 7;
   }
 
@@ -103,48 +244,81 @@ li.project .projectTitleWrapper::before {
 
   .client {
     display: inline;
-    grid-column: 7 / 11;
-    text-decoration: underline;
+    grid-column: 8 / 11;
   }
 
   .year {
     display: inline;
-    grid-column: 12 / 13;
-    text-decoration: underline;
+    grid-column: 7 / 8;
   }
 }
 
 @media (min-width: 64rem) {
   .coverMedia {
     display: block;
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    width: 400px !important;
+    height: auto !important;
+    z-index: 0;
   }
 
   .coverMediaStack {
     display: block;
+  }
+
+  li.project .projectTitleGroup {
+    grid-column: 1 / 6;
+  }
+
+  .year {
+    grid-column: 6 / 7;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .client {
+    grid-column: 8 / 10;
+  }
+
+  .projectHeaderTitleGroup {
+    grid-column: 1 / 6;
+  }
+
+  .projectHeaderYear {
+    grid-column: 6 / 7;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .projectHeaderClient {
+    grid-column: 8 / 10;
   }
 }
 
 @media (min-width: 90rem) {
-  li.project .projectTitleWrapper {
-    grid-column: 1 / 6;
-  }
-
   .client {
-    grid-column: 6 / 10;
+    grid-column: 7 / 8;
   }
 
-  .year {
-    grid-column: 12 / 13;
+  .projectHeaderClient {
+    grid-column: 7 / 8;
   }
 }
 
-@media (min-width: 48rem) and (hover: hover) and (pointer: fine) {
-  .coverMedia {
-    display: block;
+@media (max-width: 63.99rem) {
+  .previewCell {
+    display: none;
   }
 
-  .coverMediaStack {
-    display: block;
+  .listTable th:nth-child(3),
+  .listTable td:nth-child(3),
+  .listTable th:nth-child(4),
+  .listTable td:nth-child(4) {
+    /* width: auto; */
+    text-align: left;
+    padding-right: 0;
   }
 }
 
@@ -255,27 +429,9 @@ li.project .projectTitleWrapper::before {
   margin-block-end: var(--margin-text);
 }
 
-li.creditRow::before {
-  content: "•";
-  position: absolute;
-  left: 0;
-  top: 0;
-  text-decoration: none !important;
-  text-decoration-line: none !important;
-  text-decoration-thickness: none !important;
-}
-
 li.creditRow {
   position: relative;
   padding-left: 1em;
-}
-
-.projectFooter .projectTitle::before {
-  content: "•";
-  margin-right: 0.5em;
-  text-decoration: none !important;
-  text-decoration-line: none !important;
-  text-decoration-thickness: none !important;
 }
 
 .backButton {

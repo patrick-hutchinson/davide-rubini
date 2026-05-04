@@ -1,8 +1,10 @@
 .header {
-  position: fixed;
+  position: relative;
   z-index: 20;
-  top: var(--margin-page);
-  left: var(--margin-page);
+  /* top: var(--margin-page); */
+  /* left: var(--margin-page); */
+  /* right: calc(var(--margin-page) + env(safe-area-inset-right, 0px)); */
+  width: auto;
 }
 
 .activeNavLink {
@@ -29,6 +31,10 @@ a.homeLink {
 }
 
 .desktopNav {
+  display: none;
+}
+
+.projectsViewToggle {
   display: none;
 }
 
@@ -94,6 +100,14 @@ a.homeLink {
 @media (min-width: 48rem) {
   .desktopNav {
     display: block;
+  }
+
+  .projectsViewToggle {
+    display: block;
+    position: fixed;
+    top: var(--margin-page);
+    right: calc(var(--margin-page) + env(safe-area-inset-right, 0px));
+    z-index: 21;
   }
 
   .mobileMeta {
