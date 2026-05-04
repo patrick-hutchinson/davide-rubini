@@ -1,5 +1,5 @@
 import Medium from "@/components/Medium/Medium";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "./ListView.module.css";
 
 import ListItem from "./components/ListItem";
@@ -8,6 +8,8 @@ import ListHead from "./components/ListHead";
 const ListView = ({ projects }) => {
   const [canHover, setCanHover] = useState(false);
   const [hoveredProjectId, setHoveredProjectId] = useState(null);
+  const [mobileClientColumnWidth, setMobileClientColumnWidth] = useState(null);
+  const listTableRef = useRef(null);
   const hoverPreviewProjects = useMemo(() => projects.filter((project) => project?.coverMedia?.medium), [projects]);
 
   useEffect(() => {
@@ -27,6 +29,60 @@ const ListView = ({ projects }) => {
     }
   }, [canHover]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+
+    const measureMobileClientColumnWidth = () => {
+      if (window.innerWidth >= 769) {
+        setMobileClientColumnWidth(null);
+        return;
+      }
+
+      const labels = ["Studio", ...projects.map((project) => `${project?.client ?? ""}`)].filter(Boolean);
+      if (labels.length === 0) {
+        setMobileClientColumnWidth(null);
+        return;
+      }
+
+      const sampleCell =
+        listTableRef.current?.querySelector("tbody td:nth-child(4)") ||
+        listTableRef.current?.querySelector("thead th:nth-child(4)") ||
+        listTableRef.current?.querySelector("td, th");
+
+      const computedStyle = sampleCell ? window.getComputedStyle(sampleCell) : window.getComputedStyle(document.body);
+      const measureEl = document.createElement("span");
+
+      measureEl.style.position = "absolute";
+      measureEl.style.visibility = "hidden";
+      measureEl.style.whiteSpace = "nowrap";
+      measureEl.style.pointerEvents = "none";
+      measureEl.style.fontFamily = computedStyle.fontFamily;
+      measureEl.style.fontSize = computedStyle.fontSize;
+      measureEl.style.fontWeight = computedStyle.fontWeight;
+      measureEl.style.fontStyle = computedStyle.fontStyle;
+      measureEl.style.fontVariant = computedStyle.fontVariant;
+      measureEl.style.letterSpacing = computedStyle.letterSpacing;
+      measureEl.style.textTransform = computedStyle.textTransform;
+
+      document.body.appendChild(measureEl);
+
+      let maxWidth = 0;
+      labels.forEach((label) => {
+        measureEl.textContent = label;
+        maxWidth = Math.max(maxWidth, measureEl.getBoundingClientRect().width);
+        console.log(maxWidth, "maxWidth");
+      });
+
+      document.body.removeChild(measureEl);
+
+      setMobileClientColumnWidth(Math.ceil(maxWidth + 2));
+    };
+
+    measureMobileClientColumnWidth();
+    window.addEventListener("resize", measureMobileClientColumnWidth);
+    return () => window.removeEventListener("resize", measureMobileClientColumnWidth);
+  }, [projects]);
+
   const handleMouseEnter = (project) => {
     if (!canHover) return;
     setHoveredProjectId(project?._id ?? null);
@@ -38,13 +94,16 @@ const ListView = ({ projects }) => {
   };
 
   return (
-    <section className={styles.listTableSection}>
+    <section
+      className={styles.listTableSection}
+      style={mobileClientColumnWidth ? { "--list-client-width": `${mobileClientColumnWidth}px` } : undefined}
+    >
       <table className={styles.listWrap}>
         <tbody>
           <tr>
             <td className={styles.listTableCell}>
               <div className={styles.listScrollWrap}>
-                <table className={styles.listTable}>
+                <table className={styles.listTable} ref={listTableRef}>
                   <ListHead />
                   <tbody>
                     {projects.map((project, index) => (
