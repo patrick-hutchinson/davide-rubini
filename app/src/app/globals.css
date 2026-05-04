@@ -6,12 +6,20 @@
   --margin-page: 8px;
   --spacing: 2em;
 
-  --header-height: 55px;
-  --content-height: calc(100dvh - (2 * var(--margin-page) - var(--header-height)));
+  --header-height: 88px;
+  --content-height: calc(100dvh - ((2 * var(--margin-page)) + var(--header-height)));
+}
+
+@media screen and (min-width: 769px) {
+  :root {
+    --header-height: 55px;
+  }
 }
 
 html {
   overscroll-behavior: none;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 html.dark {

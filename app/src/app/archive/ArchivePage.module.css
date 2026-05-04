@@ -14,8 +14,11 @@ main.main {
   position: relative;
   min-width: 0;
   width: 100%;
-  aspect-ratio: 4 / 5;
   cursor: pointer;
+}
+
+.archiveMedium {
+  object-position: top;
 }
 
 .fullscreenOverlay {

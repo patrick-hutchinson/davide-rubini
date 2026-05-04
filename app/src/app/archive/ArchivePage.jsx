@@ -160,7 +160,7 @@ const ArchivePage = ({ archive }) => {
         getImageResolutionUrl(medium, {
           width: fullscreenTargetWidth,
           quality: 100,
-        })
+        }),
       )
       .filter(Boolean);
 
@@ -200,6 +200,8 @@ const ArchivePage = ({ archive }) => {
               className={styles.archiveMedium}
               sizes={archiveImageSizes}
               quality={archiveGridQuality}
+              fit="contain"
+              position="top"
             />
           </div>
         ))}

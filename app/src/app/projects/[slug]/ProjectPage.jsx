@@ -75,7 +75,9 @@ const ProjectPage = ({ projects, project }) => {
 
   return (
     <div className={styles.projectPage}>
-      <div style={{ position: "fixed", top: "var(--margin-page)", right: "var(--margin-page)" }}>{scrollProgress}%</div>
+      <div style={{ position: "fixed", top: "var(--margin-page)", right: "var(--margin-page)", zIndex: 40 }}>
+        {scrollProgress}%
+      </div>
       <div className={styles.projectContent}>
         <strong>{project.title}</strong>
         <div>
