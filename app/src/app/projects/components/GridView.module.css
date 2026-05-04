@@ -6,7 +6,7 @@
 .gridView {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
-  gap: var(--margin-page);
+  gap: calc(var(--margin-page) / 2);
 }
 
 .gridCard {
@@ -23,7 +23,8 @@
 }
 
 .gridCardMedia {
+  display: block;
   width: 100%;
   height: auto;
-  margin-bottom: 4px;
+  margin-bottom: 0;
 }

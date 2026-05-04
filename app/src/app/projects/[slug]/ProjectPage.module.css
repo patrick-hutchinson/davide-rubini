@@ -21,12 +21,23 @@
 }
 
 .gallery .overview {
-  columns: 6;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: calc(var(--margin-page) / 2);
 }
-.gallery .overview > div,
+
 .gallery .stack > div {
-  margin-bottom: var(--margin-page);
+  margin-bottom: calc(var(--margin-page) / 2);
+}
+
+.overviewItem {
+  margin-bottom: 0;
+}
+
+.overviewMedia {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .projectFooter {
