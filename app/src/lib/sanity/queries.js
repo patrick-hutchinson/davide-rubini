@@ -3,7 +3,13 @@ import { mediaAssetFragment } from "./fragments";
 export const siteQuery = `*[_type=="site"][0]{
   title,
   owner,
-  site,
+  linkColor,
+  defaultTheme,
+  favicon{
+    asset->{
+      url
+    }
+  },
   description,
   address,
   email,

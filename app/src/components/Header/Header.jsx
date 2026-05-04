@@ -41,14 +41,6 @@ const Header = ({ site }) => {
   }, []);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const stored = window.localStorage.getItem("projects:view-mode");
-    if (stored === "grid" || stored === "list") {
-      setProjectsViewMode(stored);
-    }
-  }, []);
-
-  useEffect(() => {
     if (typeof window === "undefined") return undefined;
 
     const applyArchiveColumnsUi = () => {
@@ -96,7 +88,6 @@ const Header = ({ site }) => {
   const setProjectsView = (mode) => {
     if (typeof window === "undefined") return;
     setProjectsViewMode(mode);
-    window.localStorage.setItem("projects:view-mode", mode);
     window.dispatchEvent(new CustomEvent("projects:view-mode-change", { detail: { mode } }));
   };
 

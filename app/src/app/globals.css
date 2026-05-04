@@ -30,7 +30,8 @@ html.dark {
 }
 
 a:visited,
-a:visited * {
+a:visited *,
+a:-webkit-any-link {
   color: var(--link-color);
 }
 

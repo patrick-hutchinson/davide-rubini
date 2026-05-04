@@ -12,11 +12,6 @@ const ProjectsPage = ({ projects }) => {
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
 
-    const stored = window.localStorage.getItem("projects:view-mode");
-    if (stored === "grid" || stored === "list") {
-      setViewMode(stored);
-    }
-
     const onViewModeChange = (event) => {
       const nextMode = event?.detail?.mode;
       if (nextMode === "grid" || nextMode === "list") {

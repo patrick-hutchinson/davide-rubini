@@ -25,6 +25,42 @@ export const site = defineType({
       validation: (Rule) => Rule.max(160),
     }),
     defineField({
+      name: 'linkColor',
+      title: 'Link Color',
+      description: 'Hex color used for links on the website (example: #0050ff)',
+      type: 'string',
+      validation: (Rule) =>
+        Rule.regex(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/, {
+          name: 'hex color',
+          invert: false,
+        }),
+    }),
+    defineField({
+      name: 'defaultTheme',
+      title: 'Default Theme',
+      description: 'Initial theme used when visitors first load the site',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'System', value: 'system'},
+          {title: 'Light', value: 'light'},
+          {title: 'Dark', value: 'dark'},
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'system',
+    }),
+    defineField({
+      name: 'favicon',
+      title: 'Favicon Source Image',
+      description:
+        'Upload a square image (recommended 512x512 or larger). The site will generate all favicon sizes from this source.',
+      type: 'image',
+      options: {
+        hotspot: false,
+      },
+    }),
+    defineField({
       name: 'address',
       type: 'object',
       options: {
@@ -61,19 +97,6 @@ export const site = defineType({
     defineField({
       name: 'phone',
       type: 'string',
-    }),
-    defineField({
-      name: 'socials',
-      type: 'array',
-      of: [
-        {
-          type: 'object',
-          fields: [
-            {name: 'platform', title: 'Platform', type: 'string'},
-            {name: 'link', title: 'url', type: 'string'},
-          ],
-        },
-      ],
     }),
   ],
   preview: {

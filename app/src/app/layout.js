@@ -10,8 +10,16 @@ import Header from "@/components/Header/Header";
 import "./globals.css";
 
 const fallbackSite = {
-  title: "Site",
-  google_description: "",
+  title: "Davide Rubibi",
+  description: "",
+  linkColor: "#0050ff",
+  defaultTheme: "system",
+};
+
+const buildSanityImageUrl = (baseUrl, width, height = width) => {
+  if (!baseUrl) return null;
+  const separator = baseUrl.includes("?") ? "&" : "?";
+  return `${baseUrl}${separator}w=${width}&h=${height}&fit=crop&auto=format`;
 };
 
 export async function generateMetadata() {
@@ -24,28 +32,47 @@ export async function generateMetadata() {
     site = fallbackSite;
   }
 
+  const resolvedTitle = site?.title || fallbackSite.title;
+  const resolvedDescription = site?.description || fallbackSite.description;
+  const resolvedOwner = site?.owner || undefined;
+
+  const faviconBaseUrl = site?.favicon?.asset?.url;
+  const sanityIcons = faviconBaseUrl
+    ? [
+        { url: buildSanityImageUrl(faviconBaseUrl, 16), sizes: "16x16", type: "image/png" },
+        { url: buildSanityImageUrl(faviconBaseUrl, 32), sizes: "32x32", type: "image/png" },
+        { url: buildSanityImageUrl(faviconBaseUrl, 192), sizes: "192x192", type: "image/png" },
+        { url: buildSanityImageUrl(faviconBaseUrl, 512), sizes: "512x512", type: "image/png" },
+      ]
+    : null;
+
   return {
-    title: site.title,
-    description: site.google_description,
+    title: resolvedTitle,
+    description: resolvedDescription,
+    applicationName: resolvedTitle,
+    creator: resolvedOwner,
     icons: {
-      icon: [
+      icon: sanityIcons || [
         { url: "/icons/favicon/favicon.ico" },
         { url: "/icons/favicon/favicon-16x16.png", sizes: "16x16", type: "image/png" },
         { url: "/icons/favicon/favicon-32x32.png", sizes: "32x32", type: "image/png" },
         { url: "/icons/favicon/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
         { url: "/icons/favicon/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
       ],
-      shortcut: "/icons/favicon/favicon.ico",
+      apple: faviconBaseUrl
+        ? [{ url: buildSanityImageUrl(faviconBaseUrl, 180), sizes: "180x180", type: "image/png" }]
+        : undefined,
+      shortcut: faviconBaseUrl ? buildSanityImageUrl(faviconBaseUrl, 32) : "/icons/favicon/favicon.ico",
     },
     openGraph: {
-      title: site.title,
-      description: site.google_description,
+      title: resolvedTitle,
+      description: resolvedDescription,
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: site.title,
-      description: site.google_description,
+      title: resolvedTitle,
+      description: resolvedDescription,
     },
   };
 }
@@ -62,6 +89,11 @@ export default async function RootLayout({ children }) {
     site = fallbackSite;
   }
 
+  const resolvedDefaultTheme =
+    site?.defaultTheme === "light" || site?.defaultTheme === "dark" || site?.defaultTheme === "system"
+      ? site.defaultTheme
+      : fallbackSite.defaultTheme;
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -72,8 +104,8 @@ export default async function RootLayout({ children }) {
       </head>
       <DeviceProvider>
         <ScrollRestorationController />
-        <body>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <body style={{ "--link-color": site?.linkColor || fallbackSite.linkColor }}>
+          <ThemeProvider attribute="class" defaultTheme={resolvedDefaultTheme} enableSystem disableTransitionOnChange>
             <Header site={site} />
             {children}
           </ThemeProvider>
