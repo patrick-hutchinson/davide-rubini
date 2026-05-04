@@ -35,6 +35,10 @@ a.homeLink * {
   display: none;
 }
 
+.desktopHeaderRow {
+  display: none;
+}
+
 .projectsViewToggle {
   display: none;
 }
@@ -58,7 +62,18 @@ a.homeLink * {
   white-space: nowrap;
 }
 
+.mobileArchiveColumnsToggle {
+  white-space: nowrap;
+}
+
 @media screen and (min-width: 769px) {
+  .desktopHeaderRow {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    width: 100%;
+  }
+
   .desktopNav {
     display: block;
   }
@@ -73,10 +88,6 @@ a.homeLink * {
 
   .archiveColumnsToggle {
     display: block;
-    position: fixed;
-    top: var(--margin-page);
-    right: calc(var(--margin-page) + env(safe-area-inset-right, 0px));
-    z-index: 21;
   }
 
   .mobileMeta {
@@ -88,6 +99,10 @@ a.homeLink * {
   }
 
   .mobileProjectsViewToggle {
+    display: none;
+  }
+
+  .mobileArchiveColumnsToggle {
     display: none;
   }
 }

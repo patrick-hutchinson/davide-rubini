@@ -71,7 +71,7 @@ const Header = ({ site }) => {
   const hours24 = now.getHours();
   const minutes = String(now.getMinutes()).padStart(2, "0");
 
-  const period = hours24 >= 12 ? "pm" : "am";
+  const period = hours24 >= 12 ? "p.m." : "a.m.";
   const hours12 = String(hours24 % 12 || 12).padStart(2, "0");
 
   const date = `${year}–${month}–${day}`;
@@ -155,39 +155,75 @@ const Header = ({ site }) => {
               List
             </button>
           </div>
+        ) : isArchiveRoute ? (
+          <div className={styles.mobileArchiveColumnsToggle}>
+            <span>Columns:&nbsp;</span>
+            {archiveColumnOptions.map((column, index) => (
+              <span key={`mobile-archive-column-option-${column}`}>
+                <button
+                  type="button"
+                  onClick={() => handleSetArchiveColumns(column)}
+                  className={archiveColumns === column ? "active" : ""}
+                >
+                  {column}
+                </button>
+                {index < archiveColumnOptions.length - 1 ? <span>&nbsp;–&nbsp;</span> : null}
+              </span>
+            ))}
+          </div>
         ) : null}
       </div>
 
-      <div className={styles.desktopNav}>
-        <AnimationLink className={styles.homeLink} link="/">
-          <strong>{site.title}</strong>
-        </AnimationLink>{" "}
-        / {date} / {time} /{" "}
-        <AnimationLink className={projectsLinkClassName} link="/projects">
-          Projects
-        </AnimationLink>{" "}
-        /{" "}
-        <AnimationLink className={isActiveRoute("/about") ? styles.activeNavLink : undefined} link="/about">
-          About
-        </AnimationLink>{" "}
-        /{" "}
-        <AnimationLink className={isActiveRoute("/archive") ? styles.activeNavLink : undefined} link="/archive">
-          Archive
-        </AnimationLink>{" "}
-        /{" "}
-        {mounted && (
-          <>
-            [
-            <button onClick={() => setTheme("light")} className={theme === "light" ? "active" : ""} type="button">
-              Light
-            </button>
-            &nbsp;–&nbsp;
-            <button onClick={() => setTheme("dark")} className={theme === "dark" ? "active" : ""} type="button">
-              Dark
-            </button>
-            ]
-          </>
-        )}
+      <div className={styles.desktopHeaderRow}>
+        <div className={styles.desktopNav}>
+          <AnimationLink className={styles.homeLink} link="/">
+            <strong>{site.title}</strong>
+          </AnimationLink>{" "}
+          / {date} / {time} /{" "}
+          <AnimationLink className={projectsLinkClassName} link="/projects">
+            Projects
+          </AnimationLink>{" "}
+          /{" "}
+          <AnimationLink className={isActiveRoute("/about") ? styles.activeNavLink : undefined} link="/about">
+            About
+          </AnimationLink>{" "}
+          /{" "}
+          <AnimationLink className={isActiveRoute("/archive") ? styles.activeNavLink : undefined} link="/archive">
+            Archive
+          </AnimationLink>{" "}
+          /{" "}
+          {mounted && (
+            <>
+              [
+              <button onClick={() => setTheme("light")} className={theme === "light" ? "active" : ""} type="button">
+                Light
+              </button>
+              &nbsp;–&nbsp;
+              <button onClick={() => setTheme("dark")} className={theme === "dark" ? "active" : ""} type="button">
+                Dark
+              </button>
+              ]
+            </>
+          )}
+        </div>
+
+        {isArchiveRoute ? (
+          <div className={styles.archiveColumnsToggle}>
+            <span>Columns:&nbsp;</span>
+            {archiveColumnOptions.map((column, index) => (
+              <span key={`archive-column-option-${column}`}>
+                <button
+                  type="button"
+                  onClick={() => handleSetArchiveColumns(column)}
+                  className={archiveColumns === column ? "active" : ""}
+                >
+                  {column}
+                </button>
+                {index < archiveColumnOptions.length - 1 ? <span>&nbsp;–&nbsp;</span> : null}
+              </span>
+            ))}
+          </div>
+        ) : null}
       </div>
 
       {isProjectsListRoute ? (
@@ -207,24 +243,6 @@ const Header = ({ site }) => {
           >
             List
           </button>
-        </div>
-      ) : null}
-
-      {isArchiveRoute ? (
-        <div className={styles.archiveColumnsToggle}>
-          <span>Columns:&nbsp;</span>
-          {archiveColumnOptions.map((column, index) => (
-            <span key={`archive-column-option-${column}`}>
-              <button
-                type="button"
-                onClick={() => handleSetArchiveColumns(column)}
-                className={archiveColumns === column ? "active" : ""}
-              >
-                {column}
-              </button>
-              {index < archiveColumnOptions.length - 1 ? <span>&nbsp;–&nbsp;</span> : null}
-            </span>
-          ))}
         </div>
       ) : null}
 
