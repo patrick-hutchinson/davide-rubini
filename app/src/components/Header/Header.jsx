@@ -24,7 +24,7 @@ const Header = ({ site }) => {
   const [mounted, setMounted] = useState(false);
   const [now, setNow] = useState(new Date());
 
-  const [projectsViewMode, setProjectsViewMode] = useState("list");
+  const [projectsViewMode, setProjectsViewMode] = useState("grid");
   const [archiveColumns, setArchiveColumns] = useState(() => getDefaultArchiveColumns());
   const [archiveColumnOptions, setArchiveColumnOptions] = useState(() => getArchiveColumnOptions());
 
@@ -107,6 +107,55 @@ const Header = ({ site }) => {
           <strong>{site.title}</strong>
         </AnimationLink>{" "}
         / {date} / {time}
+      </div>
+
+      <div className={styles.mobileMenuRow}>
+        <div>
+          <AnimationLink className={projectsLinkClassName} link="/projects">
+            Projects
+          </AnimationLink>{" "}
+          /{" "}
+          <AnimationLink className={isActiveRoute("/about") ? styles.activeNavLink : undefined} link="/about">
+            About
+          </AnimationLink>{" "}
+          /{" "}
+          <AnimationLink className={isActiveRoute("/archive") ? styles.activeNavLink : undefined} link="/archive">
+            Archive
+          </AnimationLink>{" "}
+          /{" "}
+          {mounted && (
+            <>
+              [
+              <button onClick={() => setTheme("light")} className={theme === "light" ? "active" : ""} type="button">
+                Light
+              </button>
+              &nbsp;–&nbsp;
+              <button onClick={() => setTheme("dark")} className={theme === "dark" ? "active" : ""} type="button">
+                Dark
+              </button>
+              ]
+            </>
+          )}
+        </div>
+        {isProjectsListRoute ? (
+          <div className={styles.mobileProjectsViewToggle}>
+            <button
+              type="button"
+              onClick={() => setProjectsView("grid")}
+              className={projectsViewMode === "grid" ? "active" : ""}
+            >
+              Grid
+            </button>
+            &nbsp;–&nbsp;
+            <button
+              type="button"
+              onClick={() => setProjectsView("list")}
+              className={projectsViewMode === "list" ? "active" : ""}
+            >
+              List
+            </button>
+          </div>
+        ) : null}
       </div>
 
       <div className={styles.desktopNav}>

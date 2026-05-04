@@ -47,7 +47,18 @@ a.homeLink * {
   display: block;
 }
 
-@media (min-width: 48rem) {
+.mobileMenuRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--margin-page);
+}
+
+.mobileProjectsViewToggle {
+  white-space: nowrap;
+}
+
+@media screen and (min-width: 769px) {
   .desktopNav {
     display: block;
   }
@@ -69,6 +80,14 @@ a.homeLink * {
   }
 
   .mobileMeta {
+    display: none;
+  }
+
+  .mobileMenuRow {
+    display: none;
+  }
+
+  .mobileProjectsViewToggle {
     display: none;
   }
 }

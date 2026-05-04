@@ -4,7 +4,7 @@
   --link-color: #0050ff;
 
   --margin-page: 8px;
-  --margin-text: 2em;
+  --spacing: 2em;
 
   --header-height: 55px;
   --content-height: calc(100dvh - (2 * var(--margin-page) - var(--header-height)));
@@ -32,6 +32,18 @@ html.dark {
 a:visited,
 a:visited * {
   color: var(--link-color);
+}
+
+p {
+  margin: 0;
+}
+
+section {
+  margin-bottom: var(--spacing);
+}
+
+section:last-of-type {
+  margin-bottom: 0;
 }
 
 button {

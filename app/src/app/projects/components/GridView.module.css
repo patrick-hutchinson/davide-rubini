@@ -1,12 +1,11 @@
 .gridViewSection {
   box-sizing: border-box;
-  width: 100vw;
   min-height: 100vh;
 }
 
 .gridView {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: var(--margin-page);
 }
 
@@ -17,6 +16,10 @@
 
 .gridCardTitle {
   display: block;
+  color: var(--foreground) !important;
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 }
 
 .gridCardMedia {
@@ -24,11 +27,3 @@
   height: auto;
   margin-bottom: 4px;
 }
-
-@media (min-width: 48rem) {
-  .gridView {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    column-gap: 8px;
-  }
-}
-

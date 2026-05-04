@@ -11,8 +11,8 @@
 }
 
 .gallery {
-  margin-block-start: 2em;
-  margin-block-end: 2em;
+  margin-block-start: var(--spacing);
+  margin-block-end: var(--spacing);
 }
 
 .gallery .stack {
@@ -39,5 +39,5 @@
 }
 
 .description {
-  margin-block-end: 2em;
+  margin-block-end: var(--spacing);
 }

@@ -7,7 +7,7 @@ import ListView from "./components/ListView/ListView";
 
 const ProjectsPage = ({ projects }) => {
   const safeProjects = useMemo(() => (Array.isArray(projects) ? projects : []), [projects]);
-  const [viewMode, setViewMode] = useState("list");
+  const [viewMode, setViewMode] = useState("grid");
 
   useEffect(() => {
     if (typeof window === "undefined") return undefined;

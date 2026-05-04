@@ -9,18 +9,6 @@
 }
 
 .label {
-  margin: 0 0 var(--margin-page);
   font-size: inherit;
   font-weight: bold;
-}
-
-.list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.paragraph {
-  margin: 0;
-  white-space: pre-wrap;
 }
