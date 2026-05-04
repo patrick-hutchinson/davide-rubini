@@ -23,11 +23,11 @@
 .gallery .overview {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
-  gap: calc(var(--margin-page) / 2);
+  gap: var(--margin-page);
 }
 
 .gallery .stack > div {
-  margin-bottom: calc(var(--margin-page) / 2);
+  margin-bottom: var(--margin-page);
 }
 
 .overviewItem {

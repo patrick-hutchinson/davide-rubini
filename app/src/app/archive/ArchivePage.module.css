@@ -7,7 +7,7 @@ main.main {
   display: grid;
   width: 100%;
   grid-template-columns: repeat(var(--archive-columns, 3), minmax(0, 1fr));
-  gap: calc(var(--margin-page) / 2);
+  gap: var(--margin-page);
 }
 
 .archiveMediumContainer {
