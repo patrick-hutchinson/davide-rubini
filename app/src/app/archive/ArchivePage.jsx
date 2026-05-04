@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 
 import Medium from "@/components/Medium/Medium";
+import { getImageResolutionUrl } from "@/components/Medium/hooks/useImageResolution";
 import { preloadImage } from "@/lib/preloadImage";
 import styles from "./ArchivePage.module.css";
 
@@ -150,8 +151,18 @@ const ArchivePage = ({ archive }) => {
     const current = reversedGallery[activeIndex];
     const next = reversedGallery[(activeIndex + 1) % reversedGallery.length];
     const prev = reversedGallery[(activeIndex - 1 + reversedGallery.length) % reversedGallery.length];
+    const fullscreenTargetWidth = Math.max(1, Math.round(window.innerWidth * (window.devicePixelRatio || 1)));
 
-    const urls = [current, next, prev].map((item) => item?.medium?.url).filter(Boolean);
+    const urls = [current, next, prev]
+      .map((item) => item?.medium)
+      .filter(Boolean)
+      .map((medium) =>
+        getImageResolutionUrl(medium, {
+          width: fullscreenTargetWidth,
+          quality: 100,
+        })
+      )
+      .filter(Boolean);
 
     urls.forEach((url) => preloadImage(url));
   }, [activeIndex, reversedGallery]);

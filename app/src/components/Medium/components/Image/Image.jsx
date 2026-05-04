@@ -48,8 +48,9 @@ const Image = ({ medium, setIsLoaded, eager = false, sizes = "100vw", quality = 
           objectFit: fit,
           objectPosition: position,
         }}
-        onLoad={() => {
+        onLoad={(event) => {
           markImageLoaded(imageSource);
+          markImageLoaded(event?.currentTarget?.currentSrc);
           setIsLoaded?.(true);
         }}
       />

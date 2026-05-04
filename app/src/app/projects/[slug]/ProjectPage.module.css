@@ -10,12 +10,6 @@
   min-height: 0;
 }
 
-@media (min-width: 48rem) {
-  .desktopProjectPage {
-    display: block;
-  }
-}
-
 .gallery {
   margin-block-start: 2em;
   margin-block-end: 2em;
@@ -44,46 +38,6 @@
   padding-top: var(--margin-page);
 }
 
-.projectTitle {
-  display: inline-block;
-}
-
-.projectInfoOverlay {
-  position: absolute;
-  top: var(--margin-page);
-  left: var(--margin-page);
-  width: calc(100vw - (2 * var(--margin-page)));
-  height: calc(var(--content-height) - var(--margin-text));
-  z-index: 5;
-  background: var(--background);
-  padding-top: var(--margin-text);
-  overflow: auto;
-}
-
-.projectInfoInner {
-  display: block;
-}
-
-.projectInfoCover {
-  width: 210px;
-  height: auto;
-}
-
-.projectInfoText h3 {
-  margin: 0 0 var(--margin-page);
-}
-
 .description {
   margin-block-end: 2em;
-}
-
-li.creditRow {
-  position: relative;
-  padding-left: 1em;
-}
-
-.backButton {
-  position: absolute;
-  left: var(--margin-page);
-  top: calc(var(--margin-page) + var(--header-height) + var(--margin-text));
 }

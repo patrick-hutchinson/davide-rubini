@@ -42,10 +42,6 @@
   padding-right: var(--list-gap);
 }
 
-.listYear {
-  margin-right: var(--margin-page);
-}
-
 .listTitle a {
   text-decoration: underline;
   color: var(--link-color) !important;
@@ -65,10 +61,6 @@
 .listTable td:nth-child(3) {
   width: var(--list-year-width);
   text-align: left;
-}
-
-.listTable th:nth-child(4),
-.listTable td:nth-child(4) {
 }
 
 .previewCell {

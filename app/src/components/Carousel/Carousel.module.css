@@ -8,10 +8,6 @@
   overscroll-behavior: contain;
 }
 
-.carousel_outer {
-  cursor: grab;
-}
-
 .carousel_outer:active,
 .carousel_outer:active * {
   cursor: grabbing !important;
@@ -28,19 +24,4 @@
 
 .slide:last-child {
   margin-right: 0px;
-}
-
-@media screen and (min-width: 320px) {
-}
-
-/* iPads and other Tablets */
-@media screen and (min-width: 769px) {
-}
-
-/* Desktop */
-@media screen and (min-width: 1280px) {
-}
-
-/* Large Format Screens */
-@media screen and (min-width: 2560px) {
 }

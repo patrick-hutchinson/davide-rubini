@@ -34,12 +34,6 @@ a:visited * {
   color: var(--link-color);
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  column-gap: 8px;
-}
-
 button {
   all: unset; /* removes default button styles */
   cursor: pointer;
