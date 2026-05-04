@@ -12,7 +12,8 @@ import "./globals.css";
 const fallbackSite = {
   title: "Davide Rubibi",
   description: "",
-  linkColor: "#0050ff",
+  linkColorLight: "#0050ff",
+  linkColorDark: "#7aa7ff",
   defaultTheme: "system",
 };
 
@@ -94,6 +95,9 @@ export default async function RootLayout({ children }) {
       ? site.defaultTheme
       : fallbackSite.defaultTheme;
 
+  const resolvedLinkColorLight = site?.linkColorLight || fallbackSite.linkColorLight;
+  const resolvedLinkColorDark = site?.linkColorDark || fallbackSite.linkColorDark;
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -104,7 +108,12 @@ export default async function RootLayout({ children }) {
       </head>
       <DeviceProvider>
         <ScrollRestorationController />
-        <body style={{ "--link-color": site?.linkColor || fallbackSite.linkColor }}>
+        <body
+          style={{
+            "--link-color-light": resolvedLinkColorLight,
+            "--link-color-dark": resolvedLinkColorDark,
+          }}
+        >
           <ThemeProvider attribute="class" defaultTheme={resolvedDefaultTheme} enableSystem disableTransitionOnChange>
             <Header site={site} />
             {children}

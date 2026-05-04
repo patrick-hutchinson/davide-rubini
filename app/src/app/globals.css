@@ -1,7 +1,9 @@
 :root {
   --background: #ffffff;
   --foreground: #000000;
-  --link-color: #0050ff;
+  --link-color-light: #0050ff;
+  --link-color-dark: #7aa7ff;
+  --link-color: var(--link-color-light);
 
   --margin-page: 8px;
   --spacing: 2em;
@@ -17,7 +19,6 @@
 }
 
 html {
-  overscroll-behavior: none;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
@@ -25,16 +26,11 @@ html {
 html.dark {
   --background: #121212 !important;
   --foreground: #fbfbfb !important;
+  --link-color: var(--link-color-dark) !important;
 }
 
 * {
   box-sizing: border-box;
-}
-
-*,
-*::-webkit-scrollbar {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
 }
 
 a:visited,

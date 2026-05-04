@@ -25,9 +25,20 @@ export const site = defineType({
       validation: (Rule) => Rule.max(160),
     }),
     defineField({
-      name: 'linkColor',
-      title: 'Link Color',
-      description: 'Hex color used for links on the website (example: #0050ff)',
+      name: 'linkColorLight',
+      title: 'Link Color (Light)',
+      description: 'Hex color used for links when light mode is active (example: #0050ff)',
+      type: 'string',
+      validation: (Rule) =>
+        Rule.regex(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/, {
+          name: 'hex color',
+          invert: false,
+        }),
+    }),
+    defineField({
+      name: 'linkColorDark',
+      title: 'Link Color (Dark)',
+      description: 'Hex color used for links when dark mode is active (example: #66a3ff)',
       type: 'string',
       validation: (Rule) =>
         Rule.regex(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/, {
