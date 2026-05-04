@@ -4,7 +4,6 @@ import AnimationLink from "@/components/Animation/AnimationLink";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
-import { disableScroll, enableScroll } from "@/helpers/blockScrolling";
 
 import styles from "./Header.module.css";
 
@@ -27,6 +26,7 @@ const Header = ({ site }) => {
   const [projectsViewMode, setProjectsViewMode] = useState("grid");
   const [archiveColumns, setArchiveColumns] = useState(() => getDefaultArchiveColumns());
   const [archiveColumnOptions, setArchiveColumnOptions] = useState(() => getArchiveColumnOptions());
+  const [mobilePanel, setMobilePanel] = useState("menu");
 
   useEffect(() => {
     setMounted(true);
@@ -73,11 +73,16 @@ const Header = ({ site }) => {
   const isArchiveRoute = isActiveRoute("/archive");
   const isProjectsListRoute = pathname === "/projects";
   const isProjectDetailRoute = pathname?.startsWith("/projects/") && pathname !== "/projects";
+  const hasMobileViewPanel = isProjectsListRoute || isArchiveRoute;
   const projectsLinkClassName = isProjectsListRoute
     ? styles.activeNavLink
     : isProjectDetailRoute
       ? styles.activeNavLinkClickable
       : undefined;
+
+  useEffect(() => {
+    setMobilePanel("menu");
+  }, [pathname]);
 
   const handleSetArchiveColumns = (columns) => {
     if (typeof window === "undefined") return;
@@ -101,66 +106,96 @@ const Header = ({ site }) => {
       </div>
 
       <div className={styles.mobileMenuRow}>
-        <div>
-          <AnimationLink className={projectsLinkClassName} link="/projects">
-            Projects
-          </AnimationLink>{" "}
-          /{" "}
-          <AnimationLink className={isActiveRoute("/about") ? styles.activeNavLink : undefined} link="/about">
-            About
-          </AnimationLink>{" "}
-          /{" "}
-          <AnimationLink className={isActiveRoute("/archive") ? styles.activeNavLink : undefined} link="/archive">
-            Archive
-          </AnimationLink>{" "}
-          /{" "}
-          {mounted && (
+        <div className={styles.mobileLeftPanel}>
+          {mobilePanel === "menu" ? (
             <>
-              [
-              <button onClick={() => setTheme("light")} className={theme === "light" ? "active" : ""} type="button">
-                Light
+              <AnimationLink className={projectsLinkClassName} link="/projects">
+                Projects
+              </AnimationLink>{" "}
+              /{" "}
+              <AnimationLink className={isActiveRoute("/about") ? styles.activeNavLink : undefined} link="/about">
+                About
+              </AnimationLink>{" "}
+              /{" "}
+              <AnimationLink className={isActiveRoute("/archive") ? styles.activeNavLink : undefined} link="/archive">
+                Archive
+              </AnimationLink>{" "}
+              /{" "}
+              <button type="button" onClick={() => setMobilePanel((prev) => (prev === "theme" ? null : "theme"))}>
+                [Theme]
               </button>
-              &nbsp;–&nbsp;
-              <button onClick={() => setTheme("dark")} className={theme === "dark" ? "active" : ""} type="button">
-                Dark
+            </>
+          ) : mobilePanel === "theme" ? (
+            mounted ? (
+              <>
+                <button type="button" onClick={() => setMobilePanel((prev) => (prev === "menu" ? null : "menu"))}>
+                  [Menu]
+                </button>{" "}
+                /{" "}
+                <button onClick={() => setTheme("light")} className={theme === "light" ? "active" : ""} type="button">
+                  Light
+                </button>
+                &nbsp;–&nbsp;
+                <button onClick={() => setTheme("dark")} className={theme === "dark" ? "active" : ""} type="button">
+                  Dark
+                </button>
+              </>
+            ) : null
+          ) : (
+            <>
+              <button type="button" onClick={() => setMobilePanel("menu")}>
+                [Menu]
+              </button>{" "}
+              /{" "}
+              <button type="button" onClick={() => setMobilePanel("theme")}>
+                [Theme]
               </button>
-              ]
             </>
           )}
         </div>
-        {isProjectsListRoute ? (
-          <div className={styles.mobileProjectsViewToggle}>
-            <button
-              type="button"
-              onClick={() => setProjectsView("grid")}
-              className={projectsViewMode === "grid" ? "active" : ""}
-            >
-              Grid
-            </button>
-            &nbsp;–&nbsp;
-            <button
-              type="button"
-              onClick={() => setProjectsView("list")}
-              className={projectsViewMode === "list" ? "active" : ""}
-            >
-              List
-            </button>
-          </div>
-        ) : isArchiveRoute ? (
-          <div className={styles.mobileArchiveColumnsToggle}>
-            <span>Columns:&nbsp;</span>
-            {archiveColumnOptions.map((column, index) => (
-              <span key={`mobile-archive-column-option-${column}`}>
-                <button
-                  type="button"
-                  onClick={() => handleSetArchiveColumns(column)}
-                  className={archiveColumns === column ? "active" : ""}
-                >
-                  {column}
-                </button>
-                {index < archiveColumnOptions.length - 1 ? <span>&nbsp;–&nbsp;</span> : null}
-              </span>
-            ))}
+
+        {hasMobileViewPanel ? (
+          <div className={styles.mobileRightPanel}>
+            {mobilePanel === "view" ? (
+              isProjectsListRoute ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setProjectsView("grid")}
+                    className={projectsViewMode === "grid" ? "active" : ""}
+                  >
+                    Grid
+                  </button>
+                  &nbsp;–&nbsp;
+                  <button
+                    type="button"
+                    onClick={() => setProjectsView("list")}
+                    className={projectsViewMode === "list" ? "active" : ""}
+                  >
+                    List
+                  </button>
+                </>
+              ) : (
+                <>
+                  {archiveColumnOptions.map((column, index) => (
+                    <span key={`mobile-archive-column-option-${column}`}>
+                      <button
+                        type="button"
+                        onClick={() => handleSetArchiveColumns(column)}
+                        className={archiveColumns === column ? "active" : ""}
+                      >
+                        {column}
+                      </button>
+                      {index < archiveColumnOptions.length - 1 ? <span>&nbsp;–&nbsp;</span> : null}
+                    </span>
+                  ))}
+                </>
+              )
+            ) : (
+              <button type="button" onClick={() => setMobilePanel("view")}>
+                [View]
+              </button>
+            )}
           </div>
         ) : null}
       </div>

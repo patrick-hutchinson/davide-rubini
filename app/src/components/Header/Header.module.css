@@ -58,8 +58,13 @@ a.homeLink * {
   gap: var(--margin-page);
 }
 
-.mobileProjectsViewToggle {
+.mobileLeftPanel {
+  min-width: 0;
+}
+
+.mobileRightPanel {
   white-space: nowrap;
+  text-align: right;
 }
 
 .mobileArchiveColumnsToggle {
@@ -98,7 +103,7 @@ a.homeLink * {
     display: none;
   }
 
-  .mobileProjectsViewToggle {
+  .mobileRightPanel {
     display: none;
   }
 
