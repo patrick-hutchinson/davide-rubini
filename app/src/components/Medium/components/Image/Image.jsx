@@ -20,8 +20,9 @@ const Image = ({ medium, setIsLoaded, eager = false, sizes = "100vw", quality = 
   return (
     <div
       style={{
+        display: "block",
         width: "100%",
-        height: "100%",
+        height: "auto",
         aspectRatio: resolutionWidth / resolutionHeight,
         position: "relative",
       }}

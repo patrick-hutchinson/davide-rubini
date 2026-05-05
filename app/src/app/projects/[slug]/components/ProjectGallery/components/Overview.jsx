@@ -4,11 +4,23 @@ import styles from "../../../ProjectPage.module.css";
 
 const eagerPreviewCount = 8;
 
-const Overview = ({ gallery }) => {
+const Overview = ({ gallery, onOpenFullscreen }) => {
   return (
     <div className={styles.overview}>
       {gallery.map((medium, index) => (
-        <div key={medium?.medium?._id || `overview-${index}`} className={styles.overviewItem}>
+        <div
+          key={medium?.medium?._id || `overview-${index}`}
+          className={styles.overviewItem}
+          role="button"
+          tabIndex={0}
+          onClick={() => onOpenFullscreen(index)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              onOpenFullscreen(index);
+            }
+          }}
+        >
           <Medium
             className={styles.overviewMedia}
             medium={medium.medium}
