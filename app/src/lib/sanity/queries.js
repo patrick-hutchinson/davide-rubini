@@ -3,8 +3,19 @@ import { mediaAssetFragment } from "./fragments";
 export const siteQuery = `*[_type=="site"][0]{
   title,
   owner,
-  linkColorLight,
-  linkColorDark,
+  linkColors{
+    linkColorLight,
+    linkColorDark
+  },
+  themeColorsLight{
+    fontColorLight,
+    backgroundColorLight
+  },
+  themeColorsDark{
+    fontColorDark,
+    backgroundColorDark
+  },
+  placeholderType,
   defaultTheme,
   favicon{
     asset->{

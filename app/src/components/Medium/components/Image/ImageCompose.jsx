@@ -4,6 +4,7 @@ import { isImageLoaded } from "@/lib/preloadImage";
 import Image from "./Image";
 import styles from "../../Medium.module.css";
 import Placeholder from "../Placeholder";
+import PlaceholderSolid from "../PlaceholderSolid";
 
 const ImageCompose = ({
   medium,
@@ -17,15 +18,24 @@ const ImageCompose = ({
   showPlaceholderOnMount = false,
 }) => {
   const [isLoaded, setIsLoaded] = useState(() => (showPlaceholderOnMount ? false : isImageLoaded(medium?.url)));
+  const [resolvedPlaceholderType, setResolvedPlaceholderType] = useState("low_res_image");
 
   useEffect(() => {
     setIsLoaded(showPlaceholderOnMount ? false : isImageLoaded(medium?.url));
   }, [medium?.url, showPlaceholderOnMount]);
 
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const nextType = document.body?.dataset?.placeholderType;
+    setResolvedPlaceholderType(nextType === "solid_color" ? "solid_color" : "low_res_image");
+  }, []);
+
+  const PlaceholderComponent = resolvedPlaceholderType === "solid_color" ? PlaceholderSolid : Placeholder;
+
   return (
     <div className={`${styles.mediaContainer} ${className}`}>
       {!isLoaded && (
-        <Placeholder
+        <PlaceholderComponent
           medium={medium}
           isLoaded={isLoaded}
           sizes={sizes}

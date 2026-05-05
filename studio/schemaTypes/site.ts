@@ -25,27 +25,107 @@ export const site = defineType({
       validation: (Rule) => Rule.max(160),
     }),
     defineField({
-      name: 'linkColorLight',
-      title: 'Link Color (Light)',
-      description: 'Hex color used for links when light mode is active (example: #0050ff)',
-      type: 'string',
-      validation: (Rule) =>
-        Rule.regex(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/, {
-          name: 'hex color',
-          invert: false,
+      name: 'linkColors',
+      type: 'object',
+      options: {columns: 2},
+      fields: [
+        defineField({
+          name: 'linkColorLight',
+          title: 'Link Color (Light)',
+          description: 'Hex color used for links when light mode is active (example: #0050ff)',
+          type: 'string',
+          validation: (Rule) =>
+            Rule.regex(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/, {
+              name: 'hex color',
+              invert: false,
+            }),
         }),
+        defineField({
+          name: 'linkColorDark',
+          title: 'Link Color (Dark)',
+          description: 'Hex color used for links when dark mode is active (example: #66a3ff)',
+          type: 'string',
+          validation: (Rule) =>
+            Rule.regex(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/, {
+              name: 'hex color',
+              invert: false,
+            }),
+        }),
+      ],
     }),
     defineField({
-      name: 'linkColorDark',
-      title: 'Link Color (Dark)',
-      description: 'Hex color used for links when dark mode is active (example: #66a3ff)',
-      type: 'string',
-      validation: (Rule) =>
-        Rule.regex(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/, {
-          name: 'hex color',
-          invert: false,
+      name: 'themeColorsLight',
+      type: 'object',
+      options: {columns: 2},
+      fields: [
+        defineField({
+          name: 'fontColorLight',
+          title: 'Font Color (Light)',
+          description: 'Hex color used for links when light mode is active (example: #0050ff)',
+          type: 'string',
+          validation: (Rule) =>
+            Rule.regex(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/, {
+              name: 'hex color',
+              invert: false,
+            }),
         }),
+        defineField({
+          name: 'backgroundColorLight',
+          title: 'Background Color (Light)',
+          description: 'Hex color used for links when dark mode is active (example: #66a3ff)',
+          type: 'string',
+          validation: (Rule) =>
+            Rule.regex(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/, {
+              name: 'hex color',
+              invert: false,
+            }),
+        }),
+      ],
     }),
+    defineField({
+      name: 'themeColorsDark',
+      type: 'object',
+      options: {columns: 2},
+      fields: [
+        defineField({
+          name: 'fontColorDark',
+          title: 'Font Color (Dark)',
+          description: 'Hex color used for links when light mode is active (example: #0050ff)',
+          type: 'string',
+          validation: (Rule) =>
+            Rule.regex(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/, {
+              name: 'hex color',
+              invert: false,
+            }),
+        }),
+        defineField({
+          name: 'backgroundColorDark',
+          title: 'Background Color (Dark)',
+          description: 'Hex color used for links when dark mode is active (example: #66a3ff)',
+          type: 'string',
+          validation: (Rule) =>
+            Rule.regex(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/, {
+              name: 'hex color',
+              invert: false,
+            }),
+        }),
+      ],
+    }),
+    defineField({
+      name: 'placeholderType',
+      title: 'Placeholder Type',
+      description: 'Choose the media placeholder style used while images and videos load.',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Solid Color', value: 'solid_color'},
+          {title: 'Low Res Image', value: 'low_res_image'},
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'low_res_image',
+    }),
+
     defineField({
       name: 'defaultTheme',
       title: 'Default Theme',

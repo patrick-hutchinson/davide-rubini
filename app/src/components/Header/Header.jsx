@@ -99,10 +99,7 @@ const Header = ({ site }) => {
   return (
     <header className={styles.header}>
       <div className={styles.mobileMeta}>
-        <AnimationLink className={styles.homeLink} link="/">
-          <strong>{site.title}</strong>
-        </AnimationLink>{" "}
-        / {date} / {time}
+        <strong>{site.title}</strong>/ {date} / {time}
       </div>
 
       <div className={styles.mobileMenuRow}>
@@ -202,10 +199,7 @@ const Header = ({ site }) => {
 
       <div className={styles.desktopHeaderRow}>
         <div className={styles.desktopNav}>
-          <AnimationLink className={styles.homeLink} link="/">
-            <strong>{site.title}</strong>
-          </AnimationLink>{" "}
-          / {date} / {time} /{" "}
+          <strong>{site.title}</strong> / {date} / {time} /{" "}
           <AnimationLink className={projectsLinkClassName} link="/projects">
             Projects
           </AnimationLink>{" "}

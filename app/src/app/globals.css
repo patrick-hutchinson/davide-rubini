@@ -1,6 +1,11 @@
 :root {
-  --background: #ffffff;
-  --foreground: #000000;
+  --background-light: #ffffff;
+  --foreground-light: #000000;
+  --background-dark: #121212;
+  --foreground-dark: #fbfbfb;
+
+  --background: var(--background-light);
+  --foreground: var(--foreground-light);
   --link-color-light: #0050ff;
   --link-color-dark: #7aa7ff;
   --link-color: var(--link-color-light);
@@ -24,8 +29,8 @@ html {
 }
 
 html.dark {
-  --background: #121212 !important;
-  --foreground: #fbfbfb !important;
+  --background: var(--background-dark) !important;
+  --foreground: var(--foreground-dark) !important;
   --link-color: var(--link-color-dark) !important;
 }
 

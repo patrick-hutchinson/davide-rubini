@@ -12,8 +12,19 @@ import "./globals.css";
 const fallbackSite = {
   title: "Davide Rubibi",
   description: "",
-  linkColorLight: "#0050ff",
-  linkColorDark: "#7aa7ff",
+  linkColors: {
+    linkColorLight: "#0050ff",
+    linkColorDark: "#7aa7ff",
+  },
+  themeColorsLight: {
+    fontColorLight: "#000000",
+    backgroundColorLight: "#ffffff",
+  },
+  themeColorsDark: {
+    fontColorDark: "#fbfbfb",
+    backgroundColorDark: "#121212",
+  },
+  placeholderType: "low_res_image",
   defaultTheme: "system",
 };
 
@@ -94,9 +105,20 @@ export default async function RootLayout({ children }) {
     site?.defaultTheme === "light" || site?.defaultTheme === "dark" || site?.defaultTheme === "system"
       ? site.defaultTheme
       : fallbackSite.defaultTheme;
+  const resolvedPlaceholderType =
+    site?.placeholderType === "solid_color" || site?.placeholderType === "low_res_image"
+      ? site.placeholderType
+      : fallbackSite.placeholderType;
 
-  const resolvedLinkColorLight = site?.linkColorLight || fallbackSite.linkColorLight;
-  const resolvedLinkColorDark = site?.linkColorDark || fallbackSite.linkColorDark;
+  const resolvedLinkColorLight = site?.linkColors?.linkColorLight || fallbackSite.linkColors.linkColorLight;
+  const resolvedLinkColorDark = site?.linkColors?.linkColorDark || fallbackSite.linkColors.linkColorDark;
+  const resolvedForegroundLight =
+    site?.themeColorsLight?.fontColorLight || fallbackSite.themeColorsLight.fontColorLight;
+  const resolvedBackgroundLight =
+    site?.themeColorsLight?.backgroundColorLight || fallbackSite.themeColorsLight.backgroundColorLight;
+  const resolvedForegroundDark = site?.themeColorsDark?.fontColorDark || fallbackSite.themeColorsDark.fontColorDark;
+  const resolvedBackgroundDark =
+    site?.themeColorsDark?.backgroundColorDark || fallbackSite.themeColorsDark.backgroundColorDark;
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -109,9 +131,14 @@ export default async function RootLayout({ children }) {
       <DeviceProvider>
         <ScrollRestorationController />
         <body
+          data-placeholder-type={resolvedPlaceholderType}
           style={{
             "--link-color-light": resolvedLinkColorLight,
             "--link-color-dark": resolvedLinkColorDark,
+            "--foreground-light": resolvedForegroundLight,
+            "--background-light": resolvedBackgroundLight,
+            "--foreground-dark": resolvedForegroundDark,
+            "--background-dark": resolvedBackgroundDark,
           }}
         >
           <ThemeProvider attribute="class" defaultTheme={resolvedDefaultTheme} enableSystem disableTransitionOnChange>
