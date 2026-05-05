@@ -233,44 +233,46 @@ const Header = ({ site }) => {
           )}
         </div>
 
-        {isArchiveRoute ? (
-          <div className={styles.archiveColumnsToggle}>
-            <span>Columns:&nbsp;</span>
-            {archiveColumnOptions.map((column, index) => (
-              <span key={`archive-column-option-${column}`}>
-                <button
-                  type="button"
-                  onClick={() => handleSetArchiveColumns(column)}
-                  className={archiveColumns === column ? "active" : ""}
-                >
-                  {column}
-                </button>
-                {index < archiveColumnOptions.length - 1 ? <span>&nbsp;–&nbsp;</span> : null}
-              </span>
-            ))}
-          </div>
-        ) : null}
-      </div>
+        <div className={styles.desktopRightControl}>
+          {isArchiveRoute ? (
+            <div className={styles.archiveColumnsToggle}>
+              <span>Columns:&nbsp;</span>
+              {archiveColumnOptions.map((column, index) => (
+                <span key={`archive-column-option-${column}`}>
+                  <button
+                    type="button"
+                    onClick={() => handleSetArchiveColumns(column)}
+                    className={archiveColumns === column ? "active" : ""}
+                  >
+                    {column}
+                  </button>
+                  {index < archiveColumnOptions.length - 1 ? <span>&nbsp;–&nbsp;</span> : null}
+                </span>
+              ))}
+            </div>
+          ) : null}
 
-      {isProjectsListRoute ? (
-        <div className={styles.projectsViewToggle}>
-          <button
-            type="button"
-            onClick={() => setProjectsView("grid")}
-            className={projectsViewMode === "grid" ? "active" : ""}
-          >
-            Grid
-          </button>
-          &nbsp;–&nbsp;
-          <button
-            type="button"
-            onClick={() => setProjectsView("list")}
-            className={projectsViewMode === "list" ? "active" : ""}
-          >
-            List
-          </button>
+          {isProjectsListRoute ? (
+            <div className={styles.projectsViewToggle}>
+              <button
+                type="button"
+                onClick={() => setProjectsView("grid")}
+                className={projectsViewMode === "grid" ? "active" : ""}
+              >
+                Grid
+              </button>
+              &nbsp;–&nbsp;
+              <button
+                type="button"
+                onClick={() => setProjectsView("list")}
+                className={projectsViewMode === "list" ? "active" : ""}
+              >
+                List
+              </button>
+            </div>
+          ) : null}
         </div>
-      ) : null}
+      </div>
 
       <hr />
       <br />

@@ -39,6 +39,10 @@ a.homeLink * {
   display: none;
 }
 
+.desktopRightControl {
+  display: none;
+}
+
 .projectsViewToggle {
   display: none;
 }
@@ -83,12 +87,14 @@ a.homeLink * {
     display: block;
   }
 
+  .desktopRightControl {
+    display: block;
+    white-space: nowrap;
+    text-align: right;
+  }
+
   .projectsViewToggle {
     display: block;
-    position: fixed;
-    top: var(--margin-page);
-    right: calc(var(--margin-page) + env(safe-area-inset-right, 0px));
-    z-index: 21;
   }
 
   .archiveColumnsToggle {
