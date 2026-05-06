@@ -7,7 +7,7 @@ import PlaceholderSolid from "../PlaceholderSolid";
 
 import styles from "../../Medium.module.css";
 
-const VideoFrame = ({ medium, className }) => {
+const VideoFrame = ({ medium, className, fit = "cover" }) => {
   const videoRef = useRef(null);
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -33,8 +33,8 @@ const VideoFrame = ({ medium, className }) => {
   return (
     <div className={`${styles.mediaContainer} ${className}`}>
       <div ref={videoRef} className={styles.videoPlayer} style={{ aspectRatio: aspectRatio }}>
-        <PlaceholderComponent medium={medium} aspectRatio={aspectRatio} isLoaded={isLoaded} />
-        <Video medium={medium} playerState={playerState} />
+        <PlaceholderComponent medium={medium} aspectRatio={aspectRatio} isLoaded={isLoaded} fit={fit} />
+        <Video medium={medium} playerState={playerState} fit={fit} />
       </div>
     </div>
   );

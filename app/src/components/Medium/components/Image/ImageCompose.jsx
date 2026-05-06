@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { isImageLoaded } from "@/lib/preloadImage";
 
 import Image from "./Image";
@@ -21,7 +21,7 @@ const ImageCompose = ({
   const [isLoaded, setIsLoaded] = useState(() => (showPlaceholderOnMount ? false : isImageLoaded(medium?.url)));
   const [resolvedPlaceholderType, setResolvedPlaceholderType] = useState("low_res_image");
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setIsLoaded(showPlaceholderOnMount ? false : isImageLoaded(medium?.url));
   }, [medium?.url, showPlaceholderOnMount]);
 
@@ -47,8 +47,10 @@ const ImageCompose = ({
         />
       )}
       <Image
+        key={medium?.url}
         medium={medium}
         setIsLoaded={setIsLoaded}
+        isLoaded={isLoaded}
         eager={eager}
         sizes={sizes}
         quality={quality}

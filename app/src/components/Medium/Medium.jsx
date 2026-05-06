@@ -34,7 +34,7 @@ const Medium = ({
         />
       );
     case "video":
-      return <VideoCompose medium={medium} className={className} />;
+      return <VideoCompose medium={medium} className={className} fit={fit} />;
     default:
       return null;
   }

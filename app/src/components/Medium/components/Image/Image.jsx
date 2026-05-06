@@ -6,6 +6,7 @@ import NextImage from "next/image";
 const Image = ({
   medium,
   setIsLoaded,
+  isLoaded,
   eager = false,
   sizes = "100vw",
   quality = 75,
@@ -57,6 +58,7 @@ const Image = ({
           top: 0,
           objectFit: fit,
           objectPosition: position,
+          opacity: isLoaded ? 1 : 0,
         }}
         onLoad={(event) => {
           markImageLoaded(imageSource);
