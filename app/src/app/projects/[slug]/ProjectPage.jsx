@@ -57,8 +57,8 @@ const ProjectPage = ({ projects, project }) => {
   const currentIndex = safeProjects.findIndex((item) => item.slug.current === project?.slug?.current);
   const total = safeProjects.length;
 
-  const prevProject = total > 0 ? safeProjects[(currentIndex - 1 + total) % total] : null;
-  const nextProject = total > 0 ? safeProjects[(currentIndex + 1) % total] : null;
+  const prevProject = total > 0 ? safeProjects[(currentIndex - 1 + total) % total] : project;
+  const nextProject = total > 0 ? safeProjects[(currentIndex + 1) % total] : project;
 
   const galleryItems = Array.isArray(project?.gallery) ? project.gallery : [];
   const gallery = [project?.coverMedia, ...galleryItems].filter(Boolean);
@@ -66,9 +66,7 @@ const ProjectPage = ({ projects, project }) => {
   const credits = Array.isArray(project?.credits) ? project.credits : [];
 
   const categories = Array.isArray(project?.categories)
-    ? project.categories
-        .map((category) => (typeof category === "string" ? category : category?.name))
-        .filter(Boolean)
+    ? project.categories.map((category) => (typeof category === "string" ? category : category?.name)).filter(Boolean)
     : [];
 
   const handleScrollTop = () => window.scrollTo(0, 0);
@@ -108,26 +106,19 @@ const ProjectPage = ({ projects, project }) => {
             ))}
           </div>
         )}
-
-        <hr />
       </div>
 
-      <div className={styles.projectFooter}>
-        <div>
-          {prevProject ? (
+      <footer className={styles.projectFooter}>
+        <hr className={styles.footerDivider} />
+        <div className={styles.footerRow}>
+          <nav aria-label="Project navigation">
             <AnimationLink link={`/projects/${prevProject.slug.current}`}>← Previous Project</AnimationLink>
-          ) : (
-            "Prev"
-          )}
-          &nbsp;&nbsp;
-          {nextProject ? (
+            &nbsp;&nbsp;
             <AnimationLink link={`/projects/${nextProject.slug.current}`}>Next Project →</AnimationLink>
-          ) : (
-            "Next"
-          )}
+          </nav>
+          <button onClick={() => handleScrollTop()}>↑ top</button>
         </div>
-        <button onClick={() => handleScrollTop()}>↑ top</button>
-      </div>
+      </footer>
     </div>
   );
 };

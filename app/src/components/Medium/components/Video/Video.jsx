@@ -1,19 +1,16 @@
-import MuxPlayer from "@mux/mux-player-react";
-
-const Video = ({ medium, playerState, playerControls }) => {
+const Video = ({ medium, playerState }) => {
   if (!playerState.isInView) return null;
+  const hlsSource = `https://stream.mux.com/${medium.playbackId}.m3u8`;
 
   return (
-    <MuxPlayer
-      ref={playerControls.playerRef}
-      playbackId={medium.playbackId}
+    <video
+      src={hlsSource}
       autoPlay
       playsInline
-      controls={false}
+      controls
       loop
-      muted={playerControls.muted ?? true}
-      paused={playerControls.paused ? playerControls.paused : false}
-      fill
+      muted
+      preload="metadata"
       style={{
         position: "relative",
         opacity: 1,
@@ -22,10 +19,11 @@ const Video = ({ medium, playerState, playerControls }) => {
         height: "100%",
         objectFit: "cover",
       }}
+      onCanPlay={() => playerState.setIsLoaded(true)}
       onPlaying={() => playerState.setIsLoaded(true)}
-      onTimeUpdate={playerControls.onTimeUpdate}
-      onLoadedMetadata={playerControls.onLoadedMetadata}
-    />
+    >
+      <source src={hlsSource} type="application/x-mpegURL" />
+    </video>
   );
 };
 

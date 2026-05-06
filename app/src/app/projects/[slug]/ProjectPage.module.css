@@ -22,8 +22,9 @@
 
 .gallery .overview {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
   gap: var(--margin-page);
+  align-items: start;
 }
 
 .gallery .stack > div {
@@ -31,11 +32,20 @@
 }
 
 .stackItem {
+  cursor: default;
+}
+
+.stackItemClickable {
   cursor: pointer;
 }
 
 .overviewItem {
   margin-bottom: 0;
+  cursor: default;
+  align-self: start;
+}
+
+.overviewItemClickable {
   cursor: pointer;
 }
 
@@ -46,12 +56,20 @@
 }
 
 .projectFooter {
+  width: 100%;
+  padding-top: var(--margin-page);
+}
+
+.footerDivider {
+  width: 100%;
+}
+
+.footerRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
   gap: 5px;
-  padding-top: var(--margin-page);
 }
 
 .description {
