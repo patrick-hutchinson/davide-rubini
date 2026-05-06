@@ -21,8 +21,8 @@ const fallbackSite = {
     backgroundColorLight: "#ffffff",
   },
   themeColorsDark: {
-    fontColorDark: "#fbfbfb",
-    backgroundColorDark: "#121212",
+    fontColorDark: "#ffffff",
+    backgroundColorDark: "#000000",
   },
   placeholderType: "low_res_image",
   defaultTheme: "system",
@@ -112,8 +112,7 @@ export default async function RootLayout({ children }) {
 
   const resolvedLinkColorLight = site?.linkColors?.linkColorLight || fallbackSite.linkColors.linkColorLight;
   const resolvedLinkColorDark = site?.linkColors?.linkColorDark || fallbackSite.linkColors.linkColorDark;
-  const resolvedForegroundLight =
-    site?.themeColorsLight?.fontColorLight || fallbackSite.themeColorsLight.fontColorLight;
+  const resolvedForegroundLight = site?.themeColorsLight?.fontColorLight || fallbackSite.themeColorsLight.fontColorLight;
   const resolvedBackgroundLight =
     site?.themeColorsLight?.backgroundColorLight || fallbackSite.themeColorsLight.backgroundColorLight;
   const resolvedForegroundDark = site?.themeColorsDark?.fontColorDark || fallbackSite.themeColorsDark.fontColorDark;
@@ -121,7 +120,18 @@ export default async function RootLayout({ children }) {
     site?.themeColorsDark?.backgroundColorDark || fallbackSite.themeColorsDark.backgroundColorDark;
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      style={{
+        "--link-color-light": resolvedLinkColorLight,
+        "--link-color-dark": resolvedLinkColorDark,
+        "--foreground-light": resolvedForegroundLight,
+        "--background-light": resolvedBackgroundLight,
+        "--foreground-dark": resolvedForegroundDark,
+        "--background-dark": resolvedBackgroundDark,
+      }}
+    >
       <head>
         <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="" />
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />
@@ -130,17 +140,7 @@ export default async function RootLayout({ children }) {
       </head>
       <DeviceProvider>
         <ScrollRestorationController />
-        <body
-          data-placeholder-type={resolvedPlaceholderType}
-          style={{
-            "--link-color-light": resolvedLinkColorLight,
-            "--link-color-dark": resolvedLinkColorDark,
-            "--foreground-light": resolvedForegroundLight,
-            "--background-light": resolvedBackgroundLight,
-            "--foreground-dark": resolvedForegroundDark,
-            "--background-dark": resolvedBackgroundDark,
-          }}
-        >
+        <body data-placeholder-type={resolvedPlaceholderType}>
           <ThemeProvider attribute="class" defaultTheme={resolvedDefaultTheme} enableSystem disableTransitionOnChange>
             <Header site={site} />
             {children}

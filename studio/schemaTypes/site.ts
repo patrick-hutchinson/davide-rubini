@@ -72,7 +72,7 @@ export const site = defineType({
         defineField({
           name: 'backgroundColorLight',
           title: 'Background Color (Light)',
-          description: 'Hex color used for links when dark mode is active (example: #66a3ff)',
+          description: 'Hex color used for links when light mode is active (example: #66a3ff)',
           type: 'string',
           validation: (Rule) =>
             Rule.regex(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/, {
@@ -90,7 +90,7 @@ export const site = defineType({
         defineField({
           name: 'fontColorDark',
           title: 'Font Color (Dark)',
-          description: 'Hex color used for links when light mode is active (example: #0050ff)',
+          description: 'Hex color used for links when dark mode is active (example: #0050ff)',
           type: 'string',
           validation: (Rule) =>
             Rule.regex(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/, {

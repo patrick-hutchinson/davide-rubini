@@ -64,6 +64,19 @@ const ProjectPage = ({ projects, project }) => {
   const gallery = [project?.coverMedia, ...galleryItems].filter(Boolean);
 
   const credits = Array.isArray(project?.credits) ? project.credits : [];
+  const populatedCredits = credits
+    .map((credit) => {
+      const role = typeof credit?.role === "string" ? credit.role.trim() : "";
+      const entries = Array.isArray(credit?.entries)
+        ? credit.entries
+            .map((entry) => (typeof entry === "string" ? entry.trim() : ""))
+            .filter(Boolean)
+        : [];
+
+      if (!role || entries.length === 0) return null;
+      return { role, entries };
+    })
+    .filter(Boolean);
 
   const categories = Array.isArray(project?.categories)
     ? project.categories.map((category) => (typeof category === "string" ? category : category?.name)).filter(Boolean)
@@ -88,10 +101,10 @@ const ProjectPage = ({ projects, project }) => {
 
         <ProjectGallery gallery={gallery} />
 
-        {credits.length > 0 && (
+        {populatedCredits.length > 0 && (
           <div>
             Credits&nbsp;•&nbsp;
-            {credits.map((credit, index) => (
+            {populatedCredits.map((credit, index) => (
               <span key={`credit-${index}`}>
                 {credit?.role}:&nbsp;
                 {Array.isArray(credit?.entries) &&
