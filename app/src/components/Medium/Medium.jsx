@@ -13,6 +13,7 @@ const Medium = ({
   position = "center",
   placeholderDelay,
   showPlaceholderOnMount = false,
+  constrainToContainer = false,
 }) => {
   if (!medium || (!medium.url && !medium.playbackId)) return undefined;
 
@@ -29,6 +30,7 @@ const Medium = ({
           position={position}
           placeholderDelay={placeholderDelay}
           showPlaceholderOnMount={showPlaceholderOnMount}
+          constrainToContainer={constrainToContainer}
         />
       );
     case "video":

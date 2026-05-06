@@ -3,7 +3,16 @@ import { markImageLoaded } from "@/lib/preloadImage";
 
 import NextImage from "next/image";
 
-const Image = ({ medium, setIsLoaded, eager = false, sizes = "100vw", quality = 75, fit = "cover", position = "center" }) => {
+const Image = ({
+  medium,
+  setIsLoaded,
+  eager = false,
+  sizes = "100vw",
+  quality = 75,
+  fit = "cover",
+  position = "center",
+  constrainToContainer = false,
+}) => {
   const imageSource = medium.url;
 
   const resolutionWidth = medium.width;
@@ -22,7 +31,7 @@ const Image = ({ medium, setIsLoaded, eager = false, sizes = "100vw", quality = 
       style={{
         display: "block",
         width: "100%",
-        height: "auto",
+        height: constrainToContainer ? "100%" : "auto",
         aspectRatio: resolutionWidth / resolutionHeight,
         position: "relative",
       }}

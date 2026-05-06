@@ -150,6 +150,7 @@ const ProjectGallery = ({ gallery }) => {
                 quality={100}
                 fit="contain"
                 showPlaceholderOnMount
+                constrainToContainer
               />
             </div>
           </div>

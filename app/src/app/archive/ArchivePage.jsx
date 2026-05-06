@@ -224,6 +224,7 @@ const ArchivePage = ({ archive }) => {
                 quality={100}
                 fit="contain"
                 showPlaceholderOnMount
+                constrainToContainer
               />
             </div>
           </div>

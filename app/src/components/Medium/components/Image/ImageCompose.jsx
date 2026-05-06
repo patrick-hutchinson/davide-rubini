@@ -16,6 +16,7 @@ const ImageCompose = ({
   position = "center",
   placeholderDelay,
   showPlaceholderOnMount = false,
+  constrainToContainer = false,
 }) => {
   const [isLoaded, setIsLoaded] = useState(() => (showPlaceholderOnMount ? false : isImageLoaded(medium?.url)));
   const [resolvedPlaceholderType, setResolvedPlaceholderType] = useState("low_res_image");
@@ -53,6 +54,7 @@ const ImageCompose = ({
         quality={quality}
         fit={fit}
         position={position}
+        constrainToContainer={constrainToContainer}
       />
     </div>
   );
