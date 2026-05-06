@@ -11,11 +11,11 @@ const Stack = ({ gallery, onOpenFullscreen }) => {
           ? {
               role: "button",
               tabIndex: 0,
-              onClick: () => onOpenFullscreen(index),
+              onClick: () => onOpenFullscreen(medium),
               onKeyDown: (event) => {
                 if (event.key === "Enter" || event.key === " ") {
                   event.preventDefault();
-                  onOpenFullscreen(index);
+                  onOpenFullscreen(medium);
                 }
               },
             }

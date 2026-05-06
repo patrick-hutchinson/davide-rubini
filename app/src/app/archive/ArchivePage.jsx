@@ -79,13 +79,28 @@ const ArchivePage = ({ archive }) => {
         .reverse(),
     [gallery],
   );
+  const fullscreenGallery = useMemo(
+    () => reversedGallery.filter((item) => item?.medium?.type === "image"),
+    [reversedGallery],
+  );
+  const fullscreenCount = fullscreenGallery.length;
 
   const closeFullscreen = () => setActiveIndex(null);
-  const goNext = () => setActiveIndex((prev) => (prev + 1) % reversedGallery.length);
-  const goPrev = () => setActiveIndex((prev) => (prev - 1 + reversedGallery.length) % reversedGallery.length);
+  const goNext = () =>
+    setActiveIndex((prev) => {
+      const nextIndex = (prev + 1) % fullscreenCount;
+      console.log("[ArchivePage] goNext", { prevIndex: prev, nextIndex, fullscreenCount });
+      return nextIndex;
+    });
+  const goPrev = () =>
+    setActiveIndex((prev) => {
+      const nextIndex = (prev - 1 + fullscreenCount) % fullscreenCount;
+      console.log("[ArchivePage] goPrev", { prevIndex: prev, nextIndex, fullscreenCount });
+      return nextIndex;
+    });
 
   useEffect(() => {
-    if (activeIndex === null) return undefined;
+    if (activeIndex === null || fullscreenCount === 0) return undefined;
 
     const onKeyDown = (event) => {
       if (event.key === "Escape") {
@@ -101,10 +116,10 @@ const ArchivePage = ({ archive }) => {
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [activeIndex, reversedGallery.length]);
+  }, [activeIndex, fullscreenCount]);
 
   useEffect(() => {
-    if (activeIndex === null) return undefined;
+    if (activeIndex === null || fullscreenCount === 0) return undefined;
 
     let touchStartX = null;
     let touchStartY = null;
@@ -143,14 +158,14 @@ const ArchivePage = ({ archive }) => {
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchend", onTouchEnd);
     };
-  }, [activeIndex, reversedGallery.length]);
+  }, [activeIndex, fullscreenCount]);
 
   useEffect(() => {
-    if (activeIndex === null || reversedGallery.length === 0) return;
+    if (activeIndex === null || fullscreenCount === 0) return;
 
-    const current = reversedGallery[activeIndex];
-    const next = reversedGallery[(activeIndex + 1) % reversedGallery.length];
-    const prev = reversedGallery[(activeIndex - 1 + reversedGallery.length) % reversedGallery.length];
+    const current = fullscreenGallery[activeIndex];
+    const next = fullscreenGallery[(activeIndex + 1) % fullscreenCount];
+    const prev = fullscreenGallery[(activeIndex - 1 + fullscreenCount) % fullscreenCount];
     const fullscreenTargetWidth = Math.max(1, Math.round(window.innerWidth * (window.devicePixelRatio || 1)));
 
     const urls = [current, next, prev]
@@ -165,7 +180,29 @@ const ArchivePage = ({ archive }) => {
       .filter(Boolean);
 
     urls.forEach((url) => preloadImage(url));
-  }, [activeIndex, reversedGallery]);
+  }, [activeIndex, fullscreenCount, fullscreenGallery]);
+
+  const openFullscreenForImage = (item) => {
+    if (item?.medium?.type !== "image") return;
+    const imageIndex = fullscreenGallery.findIndex((entry) => entry?.medium?._id === item?.medium?._id);
+    if (imageIndex >= 0) {
+      console.log("[ArchivePage] openFullscreenForImage", {
+        selectedIndex: imageIndex,
+        selectedId: item?.medium?._id,
+        selectedAltText: item?.medium?.altText,
+      });
+      setActiveIndex(imageIndex);
+    }
+  };
+
+  useEffect(() => {
+    if (activeIndex === null) return;
+    console.log("[ArchivePage] activeIndex changed", {
+      activeIndex,
+      activeId: fullscreenGallery[activeIndex]?.medium?._id,
+      activeAltText: fullscreenGallery[activeIndex]?.medium?.altText,
+    });
+  }, [activeIndex, fullscreenGallery]);
 
   const columnSizes = {
     1: "calc(100vw - (2 * var(--margin-page)))",
@@ -181,17 +218,17 @@ const ArchivePage = ({ archive }) => {
   return (
     <main className={styles.main}>
       <div className={styles.archiveContainer} style={{ "--archive-columns": columns }}>
-        {reversedGallery.map((medium, index) => (
+        {reversedGallery.map((medium) => (
           <div
             key={medium.medium?._id ?? `${medium._index}`}
             className={styles.archiveMediumContainer}
-            role="button"
-            tabIndex={0}
-            onClick={() => setActiveIndex(index)}
+            role={medium?.medium?.type === "image" ? "button" : undefined}
+            tabIndex={medium?.medium?.type === "image" ? 0 : undefined}
+            onClick={() => openFullscreenForImage(medium)}
             onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") {
+              if (medium?.medium?.type === "image" && (event.key === "Enter" || event.key === " ")) {
                 event.preventDefault();
-                setActiveIndex(index);
+                openFullscreenForImage(medium);
               }
             }}
           >
@@ -207,7 +244,7 @@ const ArchivePage = ({ archive }) => {
         ))}
       </div>
 
-      {activeIndex !== null && reversedGallery[activeIndex] && (
+      {activeIndex !== null && fullscreenGallery[activeIndex] && (
         <div
           className={styles.fullscreenOverlay}
           initial={{ opacity: 0 }}
@@ -219,7 +256,7 @@ const ArchivePage = ({ archive }) => {
             <div className={styles.fullscreenMediumWrap}>
               <Medium
                 className={styles.fullscreenMedium}
-                medium={reversedGallery[activeIndex].medium}
+                medium={fullscreenGallery[activeIndex].medium}
                 sizes="100vw"
                 quality={100}
                 fit="contain"
@@ -242,7 +279,7 @@ const ArchivePage = ({ archive }) => {
                 Close
               </button>
               <span>&nbsp;•&nbsp;</span> */}
-              <div className={styles.fullscreenLabel}>{reversedGallery[activeIndex]?.medium?.altText || "Untitled"}</div>
+              <div className={styles.fullscreenLabel}>{fullscreenGallery[activeIndex]?.medium?.altText || "Untitled"}</div>
             </div>
           </div>
         </div>
