@@ -12,6 +12,14 @@
   position: relative;
 }
 
+.nativeVideo:fullscreen,
+.nativeVideo:-webkit-full-screen {
+  object-fit: contain !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: #000;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .videoPlayer:hover .videoControls {
     opacity: 1;

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import styles from "../../Medium.module.css";
 
 const Video = ({ medium, playerState, fit = "cover" }) => {
   if (!playerState.isInView) return null;
@@ -61,6 +62,7 @@ const Video = ({ medium, playerState, fit = "cover" }) => {
 
   return (
     <video
+      className={styles.nativeVideo}
       ref={videoRef}
       src={hlsSource}
       autoPlay
