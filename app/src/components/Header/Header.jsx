@@ -156,6 +156,7 @@ const Header = ({ site }) => {
             {mobilePanel === "view" ? (
               isProjectsListRoute ? (
                 <>
+                  [
                   <button
                     type="button"
                     onClick={() => setProjectsView("grid")}
@@ -171,6 +172,7 @@ const Header = ({ site }) => {
                   >
                     List
                   </button>
+                  ]
                 </>
               ) : (
                 <>
@@ -230,7 +232,7 @@ const Header = ({ site }) => {
         <div className={styles.desktopRightControl}>
           {isArchiveRoute ? (
             <div className={styles.archiveColumnsToggle}>
-              <span>Columns:&nbsp;</span>
+              [<span>Columns:&nbsp;</span>
               {archiveColumnOptions.map((column, index) => (
                 <span key={`archive-column-option-${column}`}>
                   <button
@@ -243,11 +245,13 @@ const Header = ({ site }) => {
                   {index < archiveColumnOptions.length - 1 ? <span>&nbsp;–&nbsp;</span> : null}
                 </span>
               ))}
+              ]
             </div>
           ) : null}
 
           {isProjectsListRoute ? (
             <div className={styles.projectsViewToggle}>
+              [
               <button
                 type="button"
                 onClick={() => setProjectsView("grid")}
@@ -263,6 +267,7 @@ const Header = ({ site }) => {
               >
                 List
               </button>
+              ]
             </div>
           ) : null}
         </div>

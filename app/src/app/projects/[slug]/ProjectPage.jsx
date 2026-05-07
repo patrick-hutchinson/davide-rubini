@@ -14,6 +14,7 @@ const ProjectPage = ({ projects, project }) => {
   const mobileStackSizes = "(max-width: 47.99rem) calc(100vw - 16px), 1px";
   const [showInfo, setShowInfo] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [isScrollable, setIsScrollable] = useState(false);
 
   useEffect(() => {
     if (!showInfo) return undefined;
@@ -35,10 +36,12 @@ const ProjectPage = ({ projects, project }) => {
       const maxScroll = doc.scrollHeight - doc.clientHeight;
 
       if (maxScroll <= 0) {
+        setIsScrollable(false);
         setScrollProgress(0);
         return;
       }
 
+      setIsScrollable(true);
       const nextProgress = Math.min(100, Math.max(0, Math.round((scrollTop / maxScroll) * 100)));
       setScrollProgress(nextProgress);
     };
@@ -46,10 +49,15 @@ const ProjectPage = ({ projects, project }) => {
     updateScrollProgress();
     window.addEventListener("scroll", updateScrollProgress, { passive: true });
     window.addEventListener("resize", updateScrollProgress);
+    const resizeObserver = new ResizeObserver(() => {
+      updateScrollProgress();
+    });
+    resizeObserver.observe(document.documentElement);
 
     return () => {
       window.removeEventListener("scroll", updateScrollProgress);
       window.removeEventListener("resize", updateScrollProgress);
+      resizeObserver.disconnect();
     };
   }, []);
 
@@ -86,9 +94,11 @@ const ProjectPage = ({ projects, project }) => {
 
   return (
     <div className={styles.projectPage}>
-      <div style={{ position: "fixed", top: "var(--margin-page)", right: "var(--margin-page)", zIndex: 40 }}>
-        {scrollProgress}%
-      </div>
+      {isScrollable ? (
+        <div style={{ position: "fixed", top: "var(--margin-page)", right: "var(--margin-page)", zIndex: 40 }}>
+          {scrollProgress}%
+        </div>
+      ) : null}
       <div className={styles.projectContent}>
         <strong>{project.title}</strong>
         <div>

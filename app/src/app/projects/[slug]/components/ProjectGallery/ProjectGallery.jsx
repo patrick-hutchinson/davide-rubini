@@ -16,10 +16,7 @@ const ProjectGallery = ({ gallery }) => {
   const isStack = viewMode === "stack";
   const isOverview = viewMode === "overview";
   const mediaGallery = useMemo(() => (Array.isArray(gallery) ? gallery.filter((item) => item?.medium) : []), [gallery]);
-  const fullscreenGallery = useMemo(
-    () => mediaGallery.filter((item) => item?.medium?.type === "image"),
-    [mediaGallery],
-  );
+  const fullscreenGallery = useMemo(() => mediaGallery.filter((item) => item?.medium?.type === "image"), [mediaGallery]);
   const fullscreenCount = fullscreenGallery.length;
 
   const closeFullscreen = () => setActiveIndex(null);
@@ -143,6 +140,7 @@ const ProjectGallery = ({ gallery }) => {
   return (
     <div className={styles.gallery}>
       <div style={{ marginBottom: "var(--margin-page)" }}>
+        [
         <button
           onClick={() => setViewMode("stack")}
           style={{
@@ -164,6 +162,7 @@ const ProjectGallery = ({ gallery }) => {
         >
           Overview
         </button>
+        ]
       </div>
 
       <div>
