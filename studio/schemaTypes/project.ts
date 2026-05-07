@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {orderRankField} from '@sanity/orderable-document-list'
 
 export const project = defineType({
   name: 'project',
@@ -72,6 +73,7 @@ export const project = defineType({
       },
       validation: (Rule) => Rule.required(),
     }),
+    orderRankField({type: 'project'}),
   ],
   preview: {
     select: {

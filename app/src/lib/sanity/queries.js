@@ -32,7 +32,7 @@ export const siteQuery = `*[_type=="site"][0]{
   },
 }`;
 
-export const projectsQuery = `*[_type=="project"]{
+export const projectsQuery = `*[_type=="project"] | order(orderRank asc, _createdAt desc){
   _id,
   title,
   client,
