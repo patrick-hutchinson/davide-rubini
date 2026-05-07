@@ -128,7 +128,7 @@ const Header = ({ site }) => {
                 <button type="button" onClick={() => setMobilePanel((prev) => (prev === "menu" ? null : "menu"))}>
                   [Menu]
                 </button>{" "}
-                /{" "}
+                / [
                 <button onClick={() => setTheme("light")} className={theme === "light" ? "active" : ""} type="button">
                   Light
                 </button>
@@ -136,6 +136,7 @@ const Header = ({ site }) => {
                 <button onClick={() => setTheme("dark")} className={theme === "dark" ? "active" : ""} type="button">
                   Dark
                 </button>
+                ]
               </>
             ) : null
           ) : (
