@@ -176,6 +176,7 @@ const Header = ({ site }) => {
                 </>
               ) : (
                 <>
+                  [
                   {archiveColumnOptions.map((column, index) => (
                     <span key={`mobile-archive-column-option-${column}`}>
                       <button
@@ -188,6 +189,7 @@ const Header = ({ site }) => {
                       {index < archiveColumnOptions.length - 1 ? <span>&nbsp;–&nbsp;</span> : null}
                     </span>
                   ))}
+                  ]
                 </>
               )
             ) : (
