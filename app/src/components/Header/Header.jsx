@@ -63,7 +63,7 @@ const Header = ({ site }) => {
   const hours24 = now.getHours();
   const minutes = String(now.getMinutes()).padStart(2, "0");
 
-  const period = hours24 >= 12 ? "p.m." : "a.m.";
+  const period = hours24 >= 12 ? "pm" : "am";
   const hours12 = String(hours24 % 12 || 12).padStart(2, "0");
 
   const date = `${year}–${month}–${day}`;
