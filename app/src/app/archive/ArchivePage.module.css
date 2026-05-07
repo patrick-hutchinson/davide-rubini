@@ -56,6 +56,9 @@ main.main {
 
 .fullscreenNavLeft,
 .fullscreenNavRight {
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
   position: fixed;
   top: 0;
   bottom: 0;
@@ -63,6 +66,8 @@ main.main {
   z-index: 51;
   background: transparent;
   border: 0;
+  outline: none;
+  user-select: none;
 }
 
 .fullscreenNavLeft {
