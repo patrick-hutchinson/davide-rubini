@@ -28,6 +28,15 @@ const Placeholder = ({ medium, isLoaded, delay = 0.5, fit = "cover", position = 
 
   if (!src) return null;
 
+  if (medium?.type === "video") {
+    console.log("[Placeholder] video cover image url", {
+      mediumId: medium?._id,
+      playbackId: medium?.playbackId,
+      vimeoUrl: medium?.vimeoUrl,
+      placeholderSrc: src,
+    });
+  }
+
   return (
     <img
       src={src}
