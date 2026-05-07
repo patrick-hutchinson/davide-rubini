@@ -178,6 +178,8 @@ const ProjectGallery = ({ gallery }) => {
           <button type="button" className={styles.fullscreenCloseButton} onClick={closeFullscreen}>
             Close
           </button>
+          <button type="button" className={styles.fullscreenNavLeft} onClick={goPrev} aria-label="Previous image" />
+          <button type="button" className={styles.fullscreenNavRight} onClick={goNext} aria-label="Next image" />
           <div className={styles.fullscreenStage}>
             <div className={styles.fullscreenMediumWrap}>
               <Medium

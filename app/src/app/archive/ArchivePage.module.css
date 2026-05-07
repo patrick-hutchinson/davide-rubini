@@ -51,14 +51,35 @@ main.main {
   position: fixed;
   top: var(--margin-page);
   right: var(--margin-page);
-  z-index: 52;
+  z-index: 53;
+}
+
+.fullscreenNavLeft,
+.fullscreenNavRight {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 50vw;
+  z-index: 51;
+  background: transparent;
+  border: 0;
+}
+
+.fullscreenNavLeft {
+  left: 0;
+  cursor: w-resize;
+}
+
+.fullscreenNavRight {
+  right: 0;
+  cursor: e-resize;
 }
 
 .fullscreenMeta {
   position: fixed;
   left: var(--margin-page);
   bottom: var(--margin-page);
-  z-index: 51;
+  z-index: 53;
   display: flex;
   align-items: center;
   justify-content: flex-end;
