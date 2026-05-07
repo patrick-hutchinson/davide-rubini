@@ -22,7 +22,7 @@
 
 .gallery .overview {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(33% - var(--margin-page))), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(50% - var(--margin-page))), 1fr));
   gap: var(--margin-page);
   align-items: start;
 }
