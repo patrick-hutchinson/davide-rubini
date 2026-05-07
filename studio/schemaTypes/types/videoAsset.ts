@@ -19,7 +19,26 @@ export const videoAsset = defineType({
         collapsible: false,
         collapsed: false,
       },
-      validation: (Rule) => Rule.required().error('No file attached!'),
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const parent = context?.parent as {vimeoUrl?: string} | undefined
+          const hasVimeoUrl = Boolean(parent?.vimeoUrl?.trim())
+          if (hasVimeoUrl) return true
+          return value ? true : 'No file attached!'
+        }),
+    }),
+    defineField({
+      name: 'vimeoUrl',
+      title: 'Vimeo URL',
+      type: 'url',
+      description: 'Optional Vimeo link. If provided, this can be used instead of a Mux file.',
+      validation: (Rule) =>
+        Rule.uri({scheme: ['http', 'https']}).custom((value, context) => {
+          const parent = context?.parent as {file?: unknown} | undefined
+          const hasFile = Boolean(parent?.file)
+          if (hasFile) return true
+          return value ? true : 'No file attached!'
+        }),
     }),
     defineField({
       title: 'Alt Text',
@@ -31,13 +50,15 @@ export const videoAsset = defineType({
   preview: {
     select: {
       file: 'file',
+      vimeoUrl: 'vimeoUrl',
       altText: 'altText',
       uploadedAt: 'file.asset._createdAt',
     },
-    prepare({file, altText, uploadedAt}) {
+    prepare({file, vimeoUrl, altText, uploadedAt}) {
       const title = altText?.trim() || 'Video'
       const hasFile = Boolean(file?.asset?._ref || file?.assetId || file?._ref)
-      const subtitle = hasFile ? `Caricato ${formatDate(uploadedAt)}` : 'No file attached!'
+      const hasVimeo = Boolean(vimeoUrl?.trim())
+      const subtitle = hasFile ? `Caricato ${formatDate(uploadedAt)}` : hasVimeo ? 'Vimeo linked' : 'No file attached!'
 
       return {
         title,

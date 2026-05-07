@@ -1,26 +1,43 @@
 import { useEffect, useRef } from "react";
 import styles from "../../Medium.module.css";
 
+const extractVimeoId = (vimeoUrl) => {
+  if (!vimeoUrl || typeof vimeoUrl !== "string") return null;
+
+  try {
+    const parsed = new URL(vimeoUrl);
+    const pathSegments = parsed.pathname.split("/").filter(Boolean);
+    for (let i = pathSegments.length - 1; i >= 0; i -= 1) {
+      if (/^\d+$/.test(pathSegments[i])) return pathSegments[i];
+    }
+  } catch {
+    // Fallback to regex parsing below.
+  }
+
+  const regexMatch = vimeoUrl.match(/(?:vimeo\.com\/(?:.*\/)?|player\.vimeo\.com\/video\/)(\d+)/);
+  return regexMatch?.[1] || null;
+};
+
 const Video = ({ medium, playerState, fit = "cover" }) => {
   if (!playerState.isInView) return null;
+  const vimeoId = extractVimeoId(medium?.vimeoUrl);
+  const isVimeo = Boolean(vimeoId);
   const hlsSource = `https://stream.mux.com/${medium.playbackId}.m3u8`;
   const videoRef = useRef(null);
 
   useEffect(() => {
+    if (isVimeo) return undefined;
+
     const video = videoRef.current;
     if (!video) return undefined;
 
     let hlsInstance = null;
+    let minAllowedLevelIndex = -1;
     let canceled = false;
 
     const tryAutoplay = () => {
-      video.muted = true;
-      const maybePlayPromise = video.play();
-      if (maybePlayPromise && typeof maybePlayPromise.catch === "function") {
-        maybePlayPromise.catch(() => {
-          // Browser blocked autoplay; user interaction will start playback.
-        });
-      }
+      // Autoplay disabled intentionally.
+      return;
     };
 
     const canPlayNativeHls =
@@ -104,7 +121,7 @@ const Video = ({ medium, playerState, fit = "cover" }) => {
       });
 
       if (canPlayNativeHls) {
-        console.log("[Video] Falling back to native HLS");
+        console.log("[Video] Falling back to native HLS (quality floor cannot be strictly enforced in native HLS)");
         video.src = hlsSource;
         video.load();
         tryAutoplay();
@@ -115,6 +132,7 @@ const Video = ({ medium, playerState, fit = "cover" }) => {
           if (canceled) return;
           const HlsCtor = hlsModule?.default;
           if (HlsCtor && HlsCtor.isSupported()) {
+            const MIN_START_HEIGHT = 720;
             hlsInstance = new HlsCtor({
               // Bias startup toward sharper renditions, while still allowing ABR to adapt.
               abrEwmaDefaultEstimate: 8_000_000,
@@ -127,11 +145,47 @@ const Video = ({ medium, playerState, fit = "cover" }) => {
             hlsInstance.on(HlsCtor.Events.MANIFEST_PARSED, () => {
               const levels = Array.isArray(hlsInstance.levels) ? hlsInstance.levels : [];
               if (levels.length > 0) {
-                // Start near the top (second-highest when available) to avoid low-res flashes.
-                const preferredStartLevel = Math.max(0, levels.length - 2);
+                const dpr = Math.max(1, window.devicePixelRatio || 1);
+                const effectiveTargetHeight = Math.round(window.innerHeight * dpr);
+
+                // Enforce a minimum quality floor (e.g. 720p) whenever possible.
+                minAllowedLevelIndex = levels.findIndex((level) => (level?.height || 0) >= MIN_START_HEIGHT);
+                if (minAllowedLevelIndex < 0) minAllowedLevelIndex = 0;
+
+                // Pick the highest level that doesn't overshoot the display need, but never below the floor.
+                let preferredStartLevel = minAllowedLevelIndex;
+                for (let i = levels.length - 1; i >= minAllowedLevelIndex; i -= 1) {
+                  const height = levels[i]?.height || 0;
+                  if (height <= effectiveTargetHeight) {
+                    preferredStartLevel = i;
+                    break;
+                  }
+                }
+
+                const minAllowedBitrate = levels[minAllowedLevelIndex]?.bitrate;
+                if (typeof minAllowedBitrate === "number" && minAllowedBitrate > 0) {
+                  hlsInstance.config.minAutoBitrate = minAllowedBitrate;
+                }
+
+                hlsInstance.startLevel = preferredStartLevel;
                 hlsInstance.nextAutoLevel = preferredStartLevel;
+
+                console.log("[Video] HLS quality floor + startup level", {
+                  minAllowedLevelIndex,
+                  minAllowedHeight: levels[minAllowedLevelIndex]?.height,
+                  preferredStartLevel,
+                  preferredStartHeight: levels[preferredStartLevel]?.height,
+                  effectiveTargetHeight,
+                });
               }
               tryAutoplay();
+            });
+
+            hlsInstance.on(HlsCtor.Events.LEVEL_SWITCHING, (_event, data) => {
+              if (typeof data?.level !== "number") return;
+              if (minAllowedLevelIndex >= 0 && data.level < minAllowedLevelIndex) {
+                hlsInstance.nextAutoLevel = minAllowedLevelIndex;
+              }
             });
             return;
           }
@@ -151,14 +205,34 @@ const Video = ({ medium, playerState, fit = "cover" }) => {
         hlsInstance.destroy();
       }
     };
-  }, [hlsSource]);
+  }, [hlsSource, isVimeo, medium?.playbackId, medium?.staticRenditions]);
+
+  if (isVimeo) {
+    const vimeoSrc = `https://player.vimeo.com/video/${vimeoId}?autoplay=0&muted=0&loop=1&title=0&byline=0&portrait=0`;
+    return (
+      <iframe
+        src={vimeoSrc}
+        title={medium?.altText || "Vimeo video"}
+        allow="autoplay; fullscreen; picture-in-picture"
+        allowFullScreen
+        style={{
+          position: "relative",
+          opacity: 1,
+          zIndex: 0,
+          width: "100%",
+          height: "100%",
+          border: 0,
+        }}
+        onLoad={() => playerState.setIsLoaded(true)}
+      />
+    );
+  }
 
   return (
     <video
       className={styles.nativeVideo}
       ref={videoRef}
       src={hlsSource}
-      autoPlay
       playsInline
       controls
       loop

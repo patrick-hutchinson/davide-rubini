@@ -17,7 +17,10 @@ const VideoFrame = ({ medium, className, fit = "cover" }) => {
 
   // Calculate the media's width upon loading
 
-  const [aspectWidth, aspectHeight] = medium.aspect_ratio.split(":");
+  const [aspectWidth = 16, aspectHeight = 9] =
+    typeof medium?.aspect_ratio === "string" && medium.aspect_ratio.includes(":")
+      ? medium.aspect_ratio.split(":").map(Number)
+      : [16, 9];
   const aspectRatio = aspectWidth / aspectHeight;
 
   const playerState = { isLoaded, setIsLoaded, isInView };

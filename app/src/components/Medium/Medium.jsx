@@ -15,7 +15,7 @@ const Medium = ({
   showPlaceholderOnMount = false,
   constrainToContainer = false,
 }) => {
-  if (!medium || (!medium.url && !medium.playbackId)) return undefined;
+  if (!medium || (!medium.url && !medium.playbackId && !medium.vimeoUrl)) return undefined;
 
   switch (medium.type) {
     case "image":
@@ -34,7 +34,7 @@ const Medium = ({
         />
       );
     case "video":
-      if (!medium.playbackId) return undefined;
+      if (!medium.playbackId && !medium.vimeoUrl) return undefined;
       return <VideoCompose medium={medium} className={className} fit={fit} />;
     default:
       return null;

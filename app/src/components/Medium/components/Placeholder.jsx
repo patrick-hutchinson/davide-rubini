@@ -1,9 +1,32 @@
 const Placeholder = ({ medium, isLoaded, delay = 0.5, fit = "cover", position = "center" }) => {
   let src;
+  const extractVimeoId = (vimeoUrl) => {
+    if (!vimeoUrl || typeof vimeoUrl !== "string") return null;
+
+    try {
+      const parsed = new URL(vimeoUrl);
+      const pathSegments = parsed.pathname.split("/").filter(Boolean);
+      for (let i = pathSegments.length - 1; i >= 0; i -= 1) {
+        if (/^\d+$/.test(pathSegments[i])) return pathSegments[i];
+      }
+    } catch {
+      // Fallback to regex parsing below.
+    }
+
+    const regexMatch = vimeoUrl.match(/(?:vimeo\.com\/(?:.*\/)?|player\.vimeo\.com\/video\/)(\d+)/);
+    return regexMatch?.[1] || null;
+  };
 
   medium.type === "image"
     ? (src = `${medium.url}?w=20&auto=format`)
-    : (src = `https://image.mux.com/${medium.playbackId}/thumbnail.jpg?width=50`);
+    : medium.vimeoUrl
+      ? (src = (() => {
+          const vimeoId = extractVimeoId(medium.vimeoUrl);
+          return vimeoId ? `https://vumbnail.com/${vimeoId}.jpg` : "";
+        })())
+      : (src = `https://image.mux.com/${medium.playbackId}/thumbnail.jpg?width=50`);
+
+  if (!src) return null;
 
   return (
     <img

@@ -19,6 +19,7 @@ export const mediaAssetFragment = `{
     "status": select(_type == "videoAsset" => file.asset->status, true => null),
     "assetId": select(_type == "videoAsset" => file.asset->assetId, true => null),
     "playbackId": select(_type == "videoAsset" => file.asset->playbackId, true => null),
+    "vimeoUrl": select(_type == "videoAsset" => vimeoUrl, true => null),
     "aspect_ratio": select(_type == "videoAsset" => file.asset->data.aspect_ratio,
       true => null
     ),
