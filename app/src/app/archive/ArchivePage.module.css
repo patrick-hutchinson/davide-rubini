@@ -47,6 +47,13 @@ main.main {
   height: 100%;
 }
 
+.fullscreenCloseButton {
+  position: fixed;
+  top: var(--margin-page);
+  right: var(--margin-page);
+  z-index: 52;
+}
+
 .fullscreenMeta {
   position: fixed;
   left: var(--margin-page);

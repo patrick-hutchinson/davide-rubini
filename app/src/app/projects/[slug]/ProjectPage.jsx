@@ -76,9 +76,7 @@ const ProjectPage = ({ projects, project }) => {
     .map((credit) => {
       const role = typeof credit?.role === "string" ? credit.role.trim() : "";
       const entries = Array.isArray(credit?.entries)
-        ? credit.entries
-            .map((entry) => (typeof entry === "string" ? entry.trim() : ""))
-            .filter(Boolean)
+        ? credit.entries.map((entry) => (typeof entry === "string" ? entry.trim() : "")).filter(Boolean)
         : [];
 
       if (!role || entries.length === 0) return null;
@@ -106,6 +104,8 @@ const ProjectPage = ({ projects, project }) => {
           {categories.length > 0 && <span>—{categories.join(", ")}</span>}
           <span>—{project.client}</span>
         </div>
+
+        <br />
 
         <Text text={project.description} className={styles.description} />
 

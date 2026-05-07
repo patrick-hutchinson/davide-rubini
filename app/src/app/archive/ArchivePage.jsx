@@ -252,6 +252,9 @@ const ArchivePage = ({ archive }) => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
         >
+          <button type="button" className={styles.fullscreenCloseButton} onClick={closeFullscreen}>
+            Close
+          </button>
           <div className={styles.fullscreenStage}>
             <div className={styles.fullscreenMediumWrap}>
               <Medium

@@ -22,7 +22,7 @@
 
 .gallery .overview {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(33% - var(--margin-page))), 1fr));
   gap: var(--margin-page);
   align-items: start;
 }
@@ -102,6 +102,13 @@
   height: 100%;
 }
 
+.fullscreenCloseButton {
+  position: fixed;
+  top: var(--margin-page);
+  right: var(--margin-page);
+  z-index: 52;
+}
+
 .fullscreenMeta {
   position: fixed;
   left: var(--margin-page);
@@ -121,4 +128,10 @@
 
 .fullscreenLabel {
   white-space: nowrap;
+}
+
+@media screen and (min-width: 960px) {
+  .gallery .overview {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+  }
 }

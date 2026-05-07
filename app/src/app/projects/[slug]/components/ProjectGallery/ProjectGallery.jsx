@@ -175,6 +175,9 @@ const ProjectGallery = ({ gallery }) => {
 
       {activeIndex !== null && fullscreenGallery[activeIndex] && (
         <div className={styles.fullscreenOverlay}>
+          <button type="button" className={styles.fullscreenCloseButton} onClick={closeFullscreen}>
+            Close
+          </button>
           <div className={styles.fullscreenStage}>
             <div className={styles.fullscreenMediumWrap}>
               <Medium
