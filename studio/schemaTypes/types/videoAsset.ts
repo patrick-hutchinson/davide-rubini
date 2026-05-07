@@ -19,6 +19,7 @@ export const videoAsset = defineType({
         collapsible: false,
         collapsed: false,
       },
+      validation: (Rule) => Rule.required().error('No file attached!'),
     }),
     defineField({
       title: 'Alt Text',
@@ -26,23 +27,17 @@ export const videoAsset = defineType({
       type: 'string',
       description: 'Importante per SEO e accessibilità',
     }),
-    defineField({
-      name: 'copyright',
-      title: 'Copyright',
-      type: 'string',
-      description: 'Inserisci qui il testo del copyright',
-    }),
   ],
   preview: {
     select: {
       file: 'file',
       altText: 'altText',
-      copyright: 'copyright',
       uploadedAt: 'file.asset._createdAt',
     },
-    prepare({file, altText, copyright, uploadedAt}) {
+    prepare({file, altText, uploadedAt}) {
       const title = altText?.trim() || 'Video'
-      const subtitle = copyright?.trim() || `Caricato ${formatDate(uploadedAt)}`
+      const hasFile = Boolean(file?.asset?._ref || file?.assetId || file?._ref)
+      const subtitle = hasFile ? `Caricato ${formatDate(uploadedAt)}` : 'No file attached!'
 
       return {
         title,

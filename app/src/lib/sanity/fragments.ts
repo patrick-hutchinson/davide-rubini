@@ -22,6 +22,10 @@ export const mediaAssetFragment = `{
     "aspect_ratio": select(_type == "videoAsset" => file.asset->data.aspect_ratio,
       true => null
     ),
+    "staticRenditions": select(
+      _type == "videoAsset" => coalesce(file.asset->static_renditions, file.asset->data.static_renditions),
+      true => null
+    ),
 
 
     "copyright": select(

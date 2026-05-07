@@ -34,6 +34,7 @@ const Medium = ({
         />
       );
     case "video":
+      if (!medium.playbackId) return undefined;
       return <VideoCompose medium={medium} className={className} fit={fit} />;
     default:
       return null;
