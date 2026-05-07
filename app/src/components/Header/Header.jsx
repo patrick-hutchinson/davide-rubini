@@ -99,7 +99,7 @@ const Header = ({ site }) => {
   return (
     <header className={styles.header}>
       <div className={styles.mobileMeta}>
-        <strong>{site.title}</strong>/ {date} / {time}
+        <strong>{site.title}</strong> / {date} / {time}
       </div>
 
       <div className={styles.mobileMenuRow}>
