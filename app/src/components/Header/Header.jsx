@@ -90,6 +90,11 @@ const Header = ({ site }) => {
     window.dispatchEvent(new CustomEvent("archive:change-columns", { detail: { columns } }));
   };
 
+  useEffect(() => {
+    if (typeof window === "undefined" || !isArchiveRoute) return;
+    window.dispatchEvent(new CustomEvent("archive:change-columns", { detail: { columns: archiveColumns } }));
+  }, [archiveColumns, isArchiveRoute]);
+
   const setProjectsView = (mode) => {
     if (typeof window === "undefined") return;
     setProjectsViewMode(mode);

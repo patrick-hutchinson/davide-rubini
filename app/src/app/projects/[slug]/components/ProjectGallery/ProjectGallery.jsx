@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { preloadImage } from "@/lib/preloadImage";
 import { getImageResolutionUrl } from "@/components/Medium/hooks/useImageResolution";
+import { disableScroll, enableScroll } from "@/helpers/blockScrolling";
 import Medium from "@/components/Medium/Medium";
 
 import Stack from "./components/Stack";
@@ -9,7 +10,6 @@ import Overview from "./components/Overview";
 import styles from "../../ProjectPage.module.css";
 
 const ProjectGallery = ({ gallery }) => {
-  const SWIPE_THRESHOLD_PX = 36;
   const [viewMode, setViewMode] = useState("stack");
   const [activeIndex, setActiveIndex] = useState(null);
 
@@ -65,46 +65,14 @@ const ProjectGallery = ({ gallery }) => {
   }, [activeIndex, fullscreenCount]);
 
   useEffect(() => {
-    if (activeIndex === null || fullscreenCount === 0) return undefined;
+    if (activeIndex !== null) {
+      disableScroll();
+      return () => enableScroll();
+    }
 
-    let touchStartX = null;
-    let touchStartY = null;
-
-    const onTouchStart = (event) => {
-      const touch = event.touches?.[0];
-      if (!touch) return;
-      touchStartX = touch.clientX;
-      touchStartY = touch.clientY;
-    };
-
-    const onTouchEnd = (event) => {
-      const touch = event.changedTouches?.[0];
-      if (!touch || touchStartX === null || touchStartY === null) return;
-
-      const deltaX = touch.clientX - touchStartX;
-      const deltaY = touch.clientY - touchStartY;
-      const isHorizontalSwipe = Math.abs(deltaX) > Math.abs(deltaY);
-
-      if (isHorizontalSwipe && Math.abs(deltaX) >= SWIPE_THRESHOLD_PX) {
-        if (deltaX < 0) {
-          goNext();
-        } else {
-          goPrev();
-        }
-      }
-
-      touchStartX = null;
-      touchStartY = null;
-    };
-
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchend", onTouchEnd, { passive: true });
-
-    return () => {
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchend", onTouchEnd);
-    };
-  }, [activeIndex, fullscreenCount]);
+    enableScroll();
+    return undefined;
+  }, [activeIndex]);
 
   useEffect(() => {
     if (activeIndex === null || fullscreenCount === 0) return;

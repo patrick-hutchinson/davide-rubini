@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import Medium from "@/components/Medium/Medium";
 import { getImageResolutionUrl } from "@/components/Medium/hooks/useImageResolution";
+import { disableScroll, enableScroll } from "@/helpers/blockScrolling";
 import { preloadImage } from "@/lib/preloadImage";
 import styles from "./ArchivePage.module.css";
 
@@ -22,7 +23,6 @@ const getPreferredDefaultColumns = () => {
 };
 
 const ArchivePage = ({ archive }) => {
-  const SWIPE_THRESHOLD_PX = 36;
   const [columns, setColumns] = useState(() => getPreferredDefaultColumns());
   const [activeIndex, setActiveIndex] = useState(null);
   const gallery = Array.isArray(archive?.gallery) ? archive.gallery : [];
@@ -119,46 +119,14 @@ const ArchivePage = ({ archive }) => {
   }, [activeIndex, fullscreenCount]);
 
   useEffect(() => {
-    if (activeIndex === null || fullscreenCount === 0) return undefined;
+    if (activeIndex !== null) {
+      disableScroll();
+      return () => enableScroll();
+    }
 
-    let touchStartX = null;
-    let touchStartY = null;
-
-    const onTouchStart = (event) => {
-      const touch = event.touches?.[0];
-      if (!touch) return;
-      touchStartX = touch.clientX;
-      touchStartY = touch.clientY;
-    };
-
-    const onTouchEnd = (event) => {
-      const touch = event.changedTouches?.[0];
-      if (!touch || touchStartX === null || touchStartY === null) return;
-
-      const deltaX = touch.clientX - touchStartX;
-      const deltaY = touch.clientY - touchStartY;
-      const isHorizontalSwipe = Math.abs(deltaX) > Math.abs(deltaY);
-
-      if (isHorizontalSwipe && Math.abs(deltaX) >= SWIPE_THRESHOLD_PX) {
-        if (deltaX < 0) {
-          goNext();
-        } else {
-          goPrev();
-        }
-      }
-
-      touchStartX = null;
-      touchStartY = null;
-    };
-
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchend", onTouchEnd, { passive: true });
-
-    return () => {
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchend", onTouchEnd);
-    };
-  }, [activeIndex, fullscreenCount]);
+    enableScroll();
+    return undefined;
+  }, [activeIndex]);
 
   useEffect(() => {
     if (activeIndex === null || fullscreenCount === 0) return;
@@ -204,16 +172,10 @@ const ArchivePage = ({ archive }) => {
     });
   }, [activeIndex, fullscreenGallery]);
 
-  const columnSizes = {
-    1: "calc(100vw - (2 * var(--margin-page)))",
-    2: "(max-width: 47.99rem) calc((100vw - 24px) / 2), calc((100vw - 24px) / 2)",
-    3: "(max-width: 900px) calc(((100vw - 24px) / 2) * 1.25), calc(((100vw - 32px) / 3) * 1.5)",
-    4: "(max-width: 900px) calc((100vw - 24px) / 2), calc((100vw - 40px) / 4)",
-    6: "(max-width: 900px) calc((100vw - 24px) / 3), calc((100vw - 56px) / 6)",
-    12: "(max-width: 900px) calc((100vw - 40px) / 4), calc((100vw - 104px) / 12)",
-  };
-  const archiveImageSizes = columnSizes[columns] || "100vw";
-  const archiveGridQuality = columns === 3 ? 100 : 75;
+  // Keep image requests stable across column toggles to prevent flicker from source re-selection.
+  const archiveImageSizes =
+    "(max-width: 47.99rem) calc((100vw - 24px) / 2), (max-width: 79.99rem) calc((100vw - 40px) / 4), calc((100vw - 56px) / 6)";
+  const archiveGridQuality = 100;
 
   return (
     <main className={styles.main}>
