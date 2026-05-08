@@ -37,6 +37,11 @@
   padding: 0;
 }
 
+.listHeadButton {
+  all: unset;
+  cursor: pointer;
+}
+
 .listRow td {
   display: table-cell;
 }

@@ -9,8 +9,59 @@ const ListView = ({ projects }) => {
   const [canHover, setCanHover] = useState(false);
   const [hoveredProjectId, setHoveredProjectId] = useState(null);
   const [mobileClientColumnWidth, setMobileClientColumnWidth] = useState(null);
+  const [sortConfig, setSortConfig] = useState({ key: "index", direction: "asc" });
   const listTableRef = useRef(null);
   const hoverPreviewProjects = useMemo(() => projects.filter((project) => project?.coverMedia?.medium), [projects]);
+  const sortedProjects = useMemo(() => {
+    const withOriginalIndex = projects.map((project, originalIndex) => ({ project, originalIndex }));
+    const collator = new Intl.Collator(undefined, { sensitivity: "base", numeric: true });
+
+    withOriginalIndex.sort((a, b) => {
+      const titleA = `${a.project?.title ?? ""}`;
+      const titleB = `${b.project?.title ?? ""}`;
+      const clientA = `${a.project?.client ?? ""}`;
+      const clientB = `${b.project?.client ?? ""}`;
+      const yearA = Number(a.project?.year) || 0;
+      const yearB = Number(b.project?.year) || 0;
+
+      switch (sortConfig.key) {
+        case "title": {
+          const titleCompare = collator.compare(titleA, titleB);
+          if (titleCompare !== 0) return sortConfig.direction === "asc" ? titleCompare : -titleCompare;
+          return a.originalIndex - b.originalIndex;
+        }
+        case "year": {
+          const yearCompare = yearA - yearB;
+          if (yearCompare !== 0) return sortConfig.direction === "asc" ? yearCompare : -yearCompare;
+          return collator.compare(titleA, titleB);
+        }
+        case "studio": {
+          const studioCompare = collator.compare(clientA, clientB);
+          if (studioCompare !== 0) return sortConfig.direction === "asc" ? studioCompare : -studioCompare;
+          return collator.compare(titleA, titleB);
+        }
+        case "index":
+        default: {
+          const indexCompare = a.originalIndex - b.originalIndex;
+          return sortConfig.direction === "asc" ? indexCompare : -indexCompare;
+        }
+      }
+    });
+
+    return withOriginalIndex;
+  }, [projects, sortConfig]);
+
+  const handleSort = (key) => {
+    setSortConfig((prev) => {
+      if (prev.key === key) {
+        return {
+          key,
+          direction: prev.direction === "asc" ? "desc" : "asc",
+        };
+      }
+      return { key, direction: "asc" };
+    });
+  };
 
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
@@ -104,13 +155,13 @@ const ListView = ({ projects }) => {
             <td className={styles.listTableCell}>
               <div className={styles.listScrollWrap}>
                 <table className={styles.listTable} ref={listTableRef}>
-                  <ListHead />
+                  <ListHead sortConfig={sortConfig} onSort={handleSort} />
                   <tbody>
-                    {projects.map((project, index) => (
+                    {sortedProjects.map(({ project, originalIndex }) => (
                       <ListItem
                         key={project._id}
                         project={project}
-                        index={index}
+                        index={originalIndex}
                         canHover={canHover}
                         onMouseEnterProject={handleMouseEnter}
                         onMouseLeaveProject={handleMouseLeave}
