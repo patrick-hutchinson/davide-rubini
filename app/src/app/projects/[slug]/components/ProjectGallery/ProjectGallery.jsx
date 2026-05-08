@@ -229,6 +229,7 @@ const ProjectGallery = ({ gallery }) => {
                 fit="contain"
                 showPlaceholderOnMount
                 constrainToContainer
+                enableGestureZoom
               />
             </div>
           </div>

@@ -303,6 +303,7 @@ const ArchivePage = ({ archive }) => {
                 fit="contain"
                 showPlaceholderOnMount
                 constrainToContainer
+                enableGestureZoom
               />
             </div>
           </div>
