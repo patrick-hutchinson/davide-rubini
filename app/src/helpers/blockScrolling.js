@@ -47,6 +47,7 @@ export const disableScroll = () => {
 
   window.addEventListener("DOMMouseScroll", preventDefault, false);
   window.addEventListener("wheel", preventDefault, options);
+  window.addEventListener("touchmove", preventDefault, options);
   window.addEventListener("keydown", preventDefaultForScrollKeys, false);
 };
 
@@ -61,5 +62,6 @@ export const enableScroll = () => {
 
   window.removeEventListener("DOMMouseScroll", preventDefault, false);
   window.removeEventListener("wheel", preventDefault, options);
+  window.removeEventListener("touchmove", preventDefault, options);
   window.removeEventListener("keydown", preventDefaultForScrollKeys, false);
 };
