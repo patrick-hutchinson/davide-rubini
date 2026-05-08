@@ -25,6 +25,7 @@ const getPreferredDefaultColumns = () => {
 const ArchivePage = ({ archive }) => {
   const [columns, setColumns] = useState(() => getPreferredDefaultColumns());
   const [activeIndex, setActiveIndex] = useState(null);
+  const [cursorDirection, setCursorDirection] = useState("right");
   const mediumItemRefs = useRef(new Map());
   const gallery = Array.isArray(archive?.gallery) ? archive.gallery : [];
   if (gallery.length === 0) return null;
@@ -133,6 +134,19 @@ const ArchivePage = ({ archive }) => {
       console.log("[ArchivePage] goPrev", { prevIndex: prev, nextIndex, fullscreenCount });
       return nextIndex;
     });
+
+  const handleFullscreenPointerMove = (event) => {
+    setCursorDirection(event.clientX < window.innerWidth / 2 ? "left" : "right");
+  };
+
+  const handleFullscreenClick = (event) => {
+    if (event.defaultPrevented) return;
+    if (event.clientX < window.innerWidth / 2) {
+      goPrev();
+      return;
+    }
+    goNext();
+  };
 
   useEffect(() => {
     if (activeIndex === null || fullscreenCount === 0) return undefined;
@@ -259,17 +273,26 @@ const ArchivePage = ({ archive }) => {
 
       {activeIndex !== null && fullscreenGallery[activeIndex] && (
         <div
-          className={styles.fullscreenOverlay}
+          className={`${styles.fullscreenOverlay} ${
+            cursorDirection === "left" ? styles.fullscreenOverlayPrev : styles.fullscreenOverlayNext
+          }`}
+          onMouseMove={handleFullscreenPointerMove}
+          onClick={handleFullscreenClick}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
         >
-          <button type="button" className={styles.fullscreenCloseButton} onClick={closeFullscreen}>
+          <button
+            type="button"
+            className={styles.fullscreenCloseButton}
+            onClick={(event) => {
+              event.stopPropagation();
+              closeFullscreen();
+            }}
+          >
             Close
           </button>
-          <button type="button" className={styles.fullscreenNavLeft} onClick={goPrev} aria-label="Previous image" />
-          <button type="button" className={styles.fullscreenNavRight} onClick={goNext} aria-label="Next image" />
           <div className={styles.fullscreenStage}>
             <div className={styles.fullscreenMediumWrap}>
               <Medium
@@ -284,7 +307,12 @@ const ArchivePage = ({ archive }) => {
             </div>
           </div>
 
-          <div className={styles.fullscreenMeta}>
+          <div
+            className={styles.fullscreenMeta}
+            onClick={(event) => {
+              event.stopPropagation();
+            }}
+          >
             <div className={styles.fullscreenControls}>
               {/* <button type="button" onClick={goPrev}>
                 ← Previous Image

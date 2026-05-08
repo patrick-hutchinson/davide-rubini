@@ -83,6 +83,14 @@
   background: var(--background);
 }
 
+.fullscreenOverlayPrev {
+  cursor: w-resize;
+}
+
+.fullscreenOverlayNext {
+  cursor: e-resize;
+}
+
 .fullscreenStage {
   height: 100dvh;
   display: flex;
@@ -107,32 +115,6 @@
   top: var(--margin-page);
   right: var(--margin-page);
   z-index: 53;
-}
-
-.fullscreenNavLeft,
-.fullscreenNavRight {
-  -webkit-appearance: none;
-  appearance: none;
-  -webkit-tap-highlight-color: transparent;
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  width: 50vw;
-  z-index: 51;
-  background: transparent;
-  border: 0;
-  outline: none;
-  user-select: none;
-}
-
-.fullscreenNavLeft {
-  left: 0;
-  cursor: w-resize;
-}
-
-.fullscreenNavRight {
-  right: 0;
-  cursor: e-resize;
 }
 
 .fullscreenMeta {

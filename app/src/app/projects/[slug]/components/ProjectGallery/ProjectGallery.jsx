@@ -12,6 +12,7 @@ import styles from "../../ProjectPage.module.css";
 const ProjectGallery = ({ gallery }) => {
   const [viewMode, setViewMode] = useState("stack");
   const [activeIndex, setActiveIndex] = useState(null);
+  const [cursorDirection, setCursorDirection] = useState("right");
   const mediumItemRefs = useRef(new Map());
 
   const isStack = viewMode === "stack";
@@ -67,6 +68,19 @@ const ProjectGallery = ({ gallery }) => {
       console.log("[ProjectGallery] goPrev", { prevIndex: prev, nextIndex, fullscreenCount });
       return nextIndex;
     });
+
+  const handleFullscreenPointerMove = (event) => {
+    setCursorDirection(event.clientX < window.innerWidth / 2 ? "left" : "right");
+  };
+
+  const handleFullscreenClick = (event) => {
+    if (event.defaultPrevented) return;
+    if (event.clientX < window.innerWidth / 2) {
+      goPrev();
+      return;
+    }
+    goNext();
+  };
   const openFullscreenForImage = (mediumItem) => {
     if (mediumItem?.medium?.type !== "image") return;
     const imageIndex = fullscreenGallery.findIndex((item) => item?.medium?._id === mediumItem?.medium?._id);
@@ -188,12 +202,23 @@ const ProjectGallery = ({ gallery }) => {
       </div>
 
       {activeIndex !== null && fullscreenGallery[activeIndex] && (
-        <div className={styles.fullscreenOverlay}>
-          <button type="button" className={styles.fullscreenCloseButton} onClick={closeFullscreen}>
+        <div
+          className={`${styles.fullscreenOverlay} ${
+            cursorDirection === "left" ? styles.fullscreenOverlayPrev : styles.fullscreenOverlayNext
+          }`}
+          onMouseMove={handleFullscreenPointerMove}
+          onClick={handleFullscreenClick}
+        >
+          <button
+            type="button"
+            className={styles.fullscreenCloseButton}
+            onClick={(event) => {
+              event.stopPropagation();
+              closeFullscreen();
+            }}
+          >
             Close
           </button>
-          <button type="button" className={styles.fullscreenNavLeft} onClick={goPrev} aria-label="Previous image" />
-          <button type="button" className={styles.fullscreenNavRight} onClick={goNext} aria-label="Next image" />
           <div className={styles.fullscreenStage}>
             <div className={styles.fullscreenMediumWrap}>
               <Medium
@@ -208,7 +233,12 @@ const ProjectGallery = ({ gallery }) => {
             </div>
           </div>
 
-          <div className={styles.fullscreenMeta}>
+          <div
+            className={styles.fullscreenMeta}
+            onClick={(event) => {
+              event.stopPropagation();
+            }}
+          >
             <div className={styles.fullscreenControls}>
               <div className={styles.fullscreenLabel}>{fullscreenGallery[activeIndex]?.medium?.altText || "Untitled"}</div>
             </div>
