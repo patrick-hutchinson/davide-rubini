@@ -101,6 +101,20 @@ const Header = ({ site }) => {
     window.dispatchEvent(new CustomEvent("projects:view-mode-change", { detail: { mode } }));
   };
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    setProjectsViewMode("grid");
+
+    if (!isProjectsListRoute) return;
+
+    const rafId = window.requestAnimationFrame(() => {
+      window.dispatchEvent(new CustomEvent("projects:view-mode-change", { detail: { mode: "grid" } }));
+    });
+
+    return () => window.cancelAnimationFrame(rafId);
+  }, [pathname, isProjectsListRoute]);
+
   return (
     <header className={styles.header}>
       <div className={styles.mobileMeta}>
