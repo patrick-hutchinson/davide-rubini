@@ -50,6 +50,15 @@ a:-webkit-any-link {
   color: var(--link-color);
 }
 
+a[x-apple-data-detectors],
+a[x-apple-data-detectors]:visited,
+a[x-apple-data-detectors]:hover,
+a[x-apple-data-detectors]:active {
+  color: inherit !important;
+  text-decoration: none !important;
+  border-bottom: 0 !important;
+}
+
 p {
   margin: 0;
 }

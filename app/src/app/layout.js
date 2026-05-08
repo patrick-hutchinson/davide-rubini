@@ -133,6 +133,7 @@ export default async function RootLayout({ children }) {
       }}
     >
       <head>
+        <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
         <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="" />
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />
         <link rel="preconnect" href="https://image.mux.com" crossOrigin="" />
