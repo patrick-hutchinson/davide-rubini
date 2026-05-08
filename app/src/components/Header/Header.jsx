@@ -95,6 +95,21 @@ const Header = ({ site }) => {
     window.dispatchEvent(new CustomEvent("archive:change-columns", { detail: { columns: archiveColumns } }));
   }, [archiveColumns, isArchiveRoute]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const nextDefaultColumns = getDefaultArchiveColumns();
+    setArchiveColumns(nextDefaultColumns);
+
+    if (!isArchiveRoute) return;
+
+    const rafId = window.requestAnimationFrame(() => {
+      window.dispatchEvent(new CustomEvent("archive:change-columns", { detail: { columns: nextDefaultColumns } }));
+    });
+
+    return () => window.cancelAnimationFrame(rafId);
+  }, [pathname, isArchiveRoute]);
+
   const setProjectsView = (mode) => {
     if (typeof window === "undefined") return;
     setProjectsViewMode(mode);
