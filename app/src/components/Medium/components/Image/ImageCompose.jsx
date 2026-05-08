@@ -17,7 +17,6 @@ const ImageCompose = ({
   placeholderDelay,
   showPlaceholderOnMount = false,
   constrainToContainer = false,
-  enableGestureZoom = false,
 }) => {
   const [isLoaded, setIsLoaded] = useState(() => (showPlaceholderOnMount ? false : isImageLoaded(medium?.url)));
   const [resolvedPlaceholderType, setResolvedPlaceholderType] = useState("low_res_image");
@@ -58,7 +57,6 @@ const ImageCompose = ({
         fit={fit}
         position={position}
         constrainToContainer={constrainToContainer}
-        enableGestureZoom={enableGestureZoom}
       />
     </div>
   );

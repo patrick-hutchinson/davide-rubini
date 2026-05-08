@@ -5,7 +5,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import Medium from "@/components/Medium/Medium";
 import { getImageResolutionUrl } from "@/components/Medium/hooks/useImageResolution";
-import { disableScroll, enableScroll } from "@/helpers/blockScrolling";
 import { preloadImage } from "@/lib/preloadImage";
 import styles from "./ArchivePage.module.css";
 
@@ -168,16 +167,6 @@ const ArchivePage = ({ archive }) => {
   }, [activeIndex, fullscreenCount]);
 
   useEffect(() => {
-    if (activeIndex !== null) {
-      disableScroll();
-      return () => enableScroll();
-    }
-
-    enableScroll();
-    return undefined;
-  }, [activeIndex]);
-
-  useEffect(() => {
     if (activeIndex === null || fullscreenCount === 0) return;
 
     const current = fullscreenGallery[activeIndex];
@@ -303,7 +292,6 @@ const ArchivePage = ({ archive }) => {
                 fit="contain"
                 showPlaceholderOnMount
                 constrainToContainer
-                enableGestureZoom
               />
             </div>
           </div>

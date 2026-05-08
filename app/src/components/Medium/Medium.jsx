@@ -14,7 +14,6 @@ const Medium = ({
   placeholderDelay,
   showPlaceholderOnMount = false,
   constrainToContainer = false,
-  enableGestureZoom = false,
 }) => {
   if (!medium || (!medium.url && !medium.playbackId && !medium.vimeoUrl)) return undefined;
 
@@ -32,7 +31,6 @@ const Medium = ({
           placeholderDelay={placeholderDelay}
           showPlaceholderOnMount={showPlaceholderOnMount}
           constrainToContainer={constrainToContainer}
-          enableGestureZoom={enableGestureZoom}
         />
       );
     case "video":
