@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { preloadImage } from "@/lib/preloadImage";
 import { getImageResolutionUrl } from "@/components/Medium/hooks/useImageResolution";
 import { disableScroll, enableScroll } from "@/helpers/blockScrolling";
@@ -12,6 +12,7 @@ import styles from "../../ProjectPage.module.css";
 const ProjectGallery = ({ gallery }) => {
   const [viewMode, setViewMode] = useState("stack");
   const [activeIndex, setActiveIndex] = useState(null);
+  const mediumItemRefs = useRef(new Map());
 
   const isStack = viewMode === "stack";
   const isOverview = viewMode === "overview";
@@ -19,7 +20,41 @@ const ProjectGallery = ({ gallery }) => {
   const fullscreenGallery = useMemo(() => mediaGallery.filter((item) => item?.medium?.type === "image"), [mediaGallery]);
   const fullscreenCount = fullscreenGallery.length;
 
-  const closeFullscreen = () => setActiveIndex(null);
+  const setMediumItemRef = useCallback((mediumId, node) => {
+    if (!mediumId) return;
+    if (node) {
+      mediumItemRefs.current.set(mediumId, node);
+      return;
+    }
+
+    mediumItemRefs.current.delete(mediumId);
+  }, []);
+
+  const syncScrollToFullscreenIndex = useCallback(
+    (index) => {
+      if (typeof window === "undefined" || index === null || index < 0) return;
+
+      const mediumId = fullscreenGallery[index]?.medium?._id;
+      if (!mediumId) return;
+
+      const node = mediumItemRefs.current.get(mediumId);
+      if (!node) return;
+
+      node.scrollIntoView({
+        behavior: "auto",
+        block: "center",
+        inline: "nearest",
+      });
+    },
+    [fullscreenGallery],
+  );
+
+  const closeFullscreen = () => {
+    if (activeIndex !== null) {
+      syncScrollToFullscreenIndex(activeIndex);
+    }
+    setActiveIndex(null);
+  };
   const goNext = () =>
     setActiveIndex((prev) => {
       const nextIndex = (prev + 1) % fullscreenCount;
@@ -98,6 +133,17 @@ const ProjectGallery = ({ gallery }) => {
 
   useEffect(() => {
     if (activeIndex === null) return;
+
+    syncScrollToFullscreenIndex(activeIndex);
+    const rafId = window.requestAnimationFrame(() => {
+      syncScrollToFullscreenIndex(activeIndex);
+    });
+
+    return () => window.cancelAnimationFrame(rafId);
+  }, [activeIndex, syncScrollToFullscreenIndex]);
+
+  useEffect(() => {
+    if (activeIndex === null) return;
     console.log("[ProjectGallery] activeIndex changed", {
       activeIndex,
       activeId: fullscreenGallery[activeIndex]?.medium?._id,
@@ -135,9 +181,9 @@ const ProjectGallery = ({ gallery }) => {
 
       <div>
         {viewMode === "stack" ? (
-          <Stack gallery={mediaGallery} onOpenFullscreen={openFullscreenForImage} />
+          <Stack gallery={mediaGallery} onOpenFullscreen={openFullscreenForImage} registerItemRef={setMediumItemRef} />
         ) : (
-          <Overview gallery={mediaGallery} onOpenFullscreen={openFullscreenForImage} />
+          <Overview gallery={mediaGallery} onOpenFullscreen={openFullscreenForImage} registerItemRef={setMediumItemRef} />
         )}
       </div>
 

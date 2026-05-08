@@ -2,7 +2,7 @@ import Medium from "@/components/Medium/Medium";
 
 import styles from "../../../ProjectPage.module.css";
 
-const Stack = ({ gallery, onOpenFullscreen }) => {
+const Stack = ({ gallery, onOpenFullscreen, registerItemRef }) => {
   return (
     <div className={styles.stack}>
       {gallery.map((medium, index) => {
@@ -25,6 +25,7 @@ const Stack = ({ gallery, onOpenFullscreen }) => {
         <div
           key={medium?.medium?._id || `stack-${index}`}
           className={`${styles.stackItem} ${isImage ? styles.stackItemClickable : ""}`}
+          ref={(node) => registerItemRef?.(medium?.medium?._id, node)}
           {...interactiveProps}
         >
           <Medium medium={medium.medium} />

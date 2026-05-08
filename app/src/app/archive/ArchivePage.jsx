@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import Medium from "@/components/Medium/Medium";
 import { getImageResolutionUrl } from "@/components/Medium/hooks/useImageResolution";
@@ -25,6 +25,7 @@ const getPreferredDefaultColumns = () => {
 const ArchivePage = ({ archive }) => {
   const [columns, setColumns] = useState(() => getPreferredDefaultColumns());
   const [activeIndex, setActiveIndex] = useState(null);
+  const mediumItemRefs = useRef(new Map());
   const gallery = Array.isArray(archive?.gallery) ? archive.gallery : [];
   if (gallery.length === 0) return null;
 
@@ -85,7 +86,41 @@ const ArchivePage = ({ archive }) => {
   );
   const fullscreenCount = fullscreenGallery.length;
 
-  const closeFullscreen = () => setActiveIndex(null);
+  const setMediumItemRef = useCallback((mediumId, node) => {
+    if (!mediumId) return;
+    if (node) {
+      mediumItemRefs.current.set(mediumId, node);
+      return;
+    }
+
+    mediumItemRefs.current.delete(mediumId);
+  }, []);
+
+  const syncScrollToFullscreenIndex = useCallback(
+    (index) => {
+      if (typeof window === "undefined" || index === null || index < 0) return;
+
+      const mediumId = fullscreenGallery[index]?.medium?._id;
+      if (!mediumId) return;
+
+      const node = mediumItemRefs.current.get(mediumId);
+      if (!node) return;
+
+      node.scrollIntoView({
+        behavior: "auto",
+        block: "center",
+        inline: "nearest",
+      });
+    },
+    [fullscreenGallery],
+  );
+
+  const closeFullscreen = () => {
+    if (activeIndex !== null) {
+      syncScrollToFullscreenIndex(activeIndex);
+    }
+    setActiveIndex(null);
+  };
   const goNext = () =>
     setActiveIndex((prev) => {
       const nextIndex = (prev + 1) % fullscreenCount;
@@ -150,6 +185,17 @@ const ArchivePage = ({ archive }) => {
     urls.forEach((url) => preloadImage(url));
   }, [activeIndex, fullscreenCount, fullscreenGallery]);
 
+  useEffect(() => {
+    if (activeIndex === null) return;
+
+    syncScrollToFullscreenIndex(activeIndex);
+    const rafId = window.requestAnimationFrame(() => {
+      syncScrollToFullscreenIndex(activeIndex);
+    });
+
+    return () => window.cancelAnimationFrame(rafId);
+  }, [activeIndex, syncScrollToFullscreenIndex]);
+
   const openFullscreenForImage = (item) => {
     if (item?.medium?.type !== "image") return;
     const imageIndex = fullscreenGallery.findIndex((entry) => entry?.medium?._id === item?.medium?._id);
@@ -184,24 +230,29 @@ const ArchivePage = ({ archive }) => {
           <div
             key={medium.medium?._id ?? `${medium._index}`}
             className={styles.archiveMediumContainer}
-            role={medium?.medium?.type === "image" ? "button" : undefined}
-            tabIndex={medium?.medium?.type === "image" ? 0 : undefined}
-            onClick={() => openFullscreenForImage(medium)}
-            onKeyDown={(event) => {
-              if (medium?.medium?.type === "image" && (event.key === "Enter" || event.key === " ")) {
-                event.preventDefault();
-                openFullscreenForImage(medium);
-              }
-            }}
+            ref={(node) => setMediumItemRef(medium?.medium?._id, node)}
           >
-            <Medium
-              medium={medium.medium}
-              className={styles.archiveMedium}
-              sizes={archiveImageSizes}
-              quality={archiveGridQuality}
-              fit="contain"
-              position="top"
-            />
+            {medium?.medium?.type === "image" ? (
+              <button type="button" className={styles.archiveMediumButton} onClick={() => openFullscreenForImage(medium)}>
+                <Medium
+                  medium={medium.medium}
+                  className={styles.archiveMedium}
+                  sizes={archiveImageSizes}
+                  quality={archiveGridQuality}
+                  fit="contain"
+                  position="top"
+                />
+              </button>
+            ) : (
+              <Medium
+                medium={medium.medium}
+                className={styles.archiveMedium}
+                sizes={archiveImageSizes}
+                quality={archiveGridQuality}
+                fit="contain"
+                position="top"
+              />
+            )}
           </div>
         ))}
       </div>
