@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { preloadImage } from "@/lib/preloadImage";
 import { getImageResolutionUrl } from "@/components/Medium/hooks/useImageResolution";
+import { disableScroll, enableScroll } from "@/helpers/blockScrolling";
 import Medium from "@/components/Medium/Medium";
 
 import Stack from "./components/Stack";
@@ -111,6 +112,16 @@ const ProjectGallery = ({ gallery }) => {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [activeIndex, fullscreenCount]);
+
+  useEffect(() => {
+    if (activeIndex !== null) {
+      disableScroll();
+      return () => enableScroll();
+    }
+
+    enableScroll();
+    return undefined;
+  }, [activeIndex]);
 
   useEffect(() => {
     if (activeIndex === null || fullscreenCount === 0) return;

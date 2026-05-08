@@ -2,6 +2,8 @@ const keys = { 37: 1, 38: 1, 39: 1, 40: 1, 32: 1 };
 let scrollLockCount = 0;
 let previousHtmlOverflow = "";
 let previousBodyOverflow = "";
+let previousHtmlOverscrollBehavior = "";
+let previousBodyOverscrollBehavior = "";
 
 const preventDefault = (e) => e.preventDefault();
 
@@ -12,42 +14,21 @@ const preventDefaultForScrollKeys = (e) => {
   }
 };
 
-const supportsPassive = (() => {
-  if (typeof window === "undefined") return false;
-  let passiveSupported = false;
-  try {
-    window.addEventListener(
-      "test",
-      null,
-      Object.defineProperty({}, "passive", {
-        get() {
-          passiveSupported = true;
-          return true;
-        },
-      }),
-    );
-  } catch (_) {
-    // ignore errors
-  }
-  return passiveSupported;
-})();
-
-const options = supportsPassive ? { passive: false } : false;
-
 export const disableScroll = () => {
   if (typeof window === "undefined") return;
 
   if (scrollLockCount === 0) {
     previousHtmlOverflow = document.documentElement.style.overflow;
     previousBodyOverflow = document.body.style.overflow;
+    previousHtmlOverscrollBehavior = document.documentElement.style.overscrollBehavior;
+    previousBodyOverscrollBehavior = document.body.style.overscrollBehavior;
     document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
+    document.documentElement.style.overscrollBehavior = "none";
+    document.body.style.overscrollBehavior = "none";
   }
   scrollLockCount += 1;
 
-  window.addEventListener("DOMMouseScroll", preventDefault, false);
-  window.addEventListener("wheel", preventDefault, options);
-  window.addEventListener("touchmove", preventDefault, options);
   window.addEventListener("keydown", preventDefaultForScrollKeys, false);
 };
 
@@ -58,10 +39,9 @@ export const enableScroll = () => {
   if (scrollLockCount === 0) {
     document.documentElement.style.overflow = previousHtmlOverflow;
     document.body.style.overflow = previousBodyOverflow;
+    document.documentElement.style.overscrollBehavior = previousHtmlOverscrollBehavior;
+    document.body.style.overscrollBehavior = previousBodyOverscrollBehavior;
   }
 
-  window.removeEventListener("DOMMouseScroll", preventDefault, false);
-  window.removeEventListener("wheel", preventDefault, options);
-  window.removeEventListener("touchmove", preventDefault, options);
   window.removeEventListener("keydown", preventDefaultForScrollKeys, false);
 };
