@@ -239,15 +239,26 @@ const ArchivePage = ({ archive }) => {
 
   return (
     <main className={styles.main}>
-      <div className={styles.archiveContainer} style={{ "--archive-columns": columns }}>
-        {reversedGallery.map((medium) => (
-          <div
-            key={medium.medium?._id ?? `${medium._index}`}
-            className={styles.archiveMediumContainer}
-            ref={(node) => setMediumItemRef(medium?.medium?._id, node)}
-          >
-            {medium?.medium?.type === "image" ? (
-              <button type="button" className={styles.archiveMediumButton} onClick={() => openFullscreenForImage(medium)}>
+      <div className={activeIndex !== null ? styles.backgroundHidden : undefined}>
+        <div className={styles.archiveContainer} style={{ "--archive-columns": columns }}>
+          {reversedGallery.map((medium) => (
+            <div
+              key={medium.medium?._id ?? `${medium._index}`}
+              className={styles.archiveMediumContainer}
+              ref={(node) => setMediumItemRef(medium?.medium?._id, node)}
+            >
+              {medium?.medium?.type === "image" ? (
+                <button type="button" className={styles.archiveMediumButton} onClick={() => openFullscreenForImage(medium)}>
+                  <Medium
+                    medium={medium.medium}
+                    className={styles.archiveMedium}
+                    sizes={archiveImageSizes}
+                    quality={archiveGridQuality}
+                    fit="contain"
+                    position="top"
+                  />
+                </button>
+              ) : (
                 <Medium
                   medium={medium.medium}
                   className={styles.archiveMedium}
@@ -256,19 +267,10 @@ const ArchivePage = ({ archive }) => {
                   fit="contain"
                   position="top"
                 />
-              </button>
-            ) : (
-              <Medium
-                medium={medium.medium}
-                className={styles.archiveMedium}
-                sizes={archiveImageSizes}
-                quality={archiveGridQuality}
-                fit="contain"
-                position="top"
-              />
-            )}
-          </div>
-        ))}
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
       {activeIndex !== null && fullscreenGallery[activeIndex] && (

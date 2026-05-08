@@ -167,38 +167,40 @@ const ProjectGallery = ({ gallery }) => {
 
   return (
     <div className={styles.gallery}>
-      <div style={{ marginBottom: "var(--margin-page)" }}>
-        [
-        <button
-          onClick={() => setViewMode("stack")}
-          style={{
-            fontWeight: isStack && "bold",
-            color: isStack ? "var(--foreground)" : "var(--link-color)",
-            textDecoration: isStack ? "none" : "underline",
-          }}
-        >
-          Stack
-        </button>
-        <span>&nbsp;–&nbsp;</span>
-        <button
-          onClick={() => setViewMode("overview")}
-          style={{
-            fontWeight: isOverview && "bold",
-            color: isOverview ? "var(--foreground)" : "var(--link-color)",
-            textDecoration: isOverview ? "none" : "underline",
-          }}
-        >
-          Overview
-        </button>
-        ]
-      </div>
+      <div className={activeIndex !== null ? styles.backgroundHidden : undefined}>
+        <div style={{ marginBottom: "var(--margin-page)" }}>
+          [
+          <button
+            onClick={() => setViewMode("stack")}
+            style={{
+              fontWeight: isStack && "bold",
+              color: isStack ? "var(--foreground)" : "var(--link-color)",
+              textDecoration: isStack ? "none" : "underline",
+            }}
+          >
+            Stack
+          </button>
+          <span>&nbsp;–&nbsp;</span>
+          <button
+            onClick={() => setViewMode("overview")}
+            style={{
+              fontWeight: isOverview && "bold",
+              color: isOverview ? "var(--foreground)" : "var(--link-color)",
+              textDecoration: isOverview ? "none" : "underline",
+            }}
+          >
+            Overview
+          </button>
+          ]
+        </div>
 
-      <div>
-        {viewMode === "stack" ? (
-          <Stack gallery={mediaGallery} onOpenFullscreen={openFullscreenForImage} registerItemRef={setMediumItemRef} />
-        ) : (
-          <Overview gallery={mediaGallery} onOpenFullscreen={openFullscreenForImage} registerItemRef={setMediumItemRef} />
-        )}
+        <div>
+          {viewMode === "stack" ? (
+            <Stack gallery={mediaGallery} onOpenFullscreen={openFullscreenForImage} registerItemRef={setMediumItemRef} />
+          ) : (
+            <Overview gallery={mediaGallery} onOpenFullscreen={openFullscreenForImage} registerItemRef={setMediumItemRef} />
+          )}
+        </div>
       </div>
 
       {activeIndex !== null && fullscreenGallery[activeIndex] && (

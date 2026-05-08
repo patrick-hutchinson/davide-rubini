@@ -3,6 +3,12 @@ main.main {
   width: 100%;
   overflow-x: clip;
 }
+
+.backgroundHidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .archiveContainer {
   display: grid;
   width: 100%;

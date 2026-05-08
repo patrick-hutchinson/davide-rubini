@@ -76,6 +76,11 @@
   margin-block-end: var(--spacing);
 }
 
+.backgroundHidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .fullscreenOverlay {
   position: fixed;
   inset: 0;
