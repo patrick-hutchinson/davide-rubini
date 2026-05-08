@@ -78,7 +78,10 @@
 
 .fullscreenOverlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: var(--fullscreen-vw, 100dvw);
+  height: var(--fullscreen-vh, 100dvh);
   z-index: 50;
   background: var(--background);
 }
@@ -92,7 +95,7 @@
 }
 
 .fullscreenStage {
-  height: 100dvh;
+  height: var(--fullscreen-vh, 100dvh);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -101,8 +104,8 @@
 }
 
 .fullscreenMediumWrap {
-  width: calc(100dvw - (2 * var(--margin-page)));
-  height: calc(100dvh - (2 * var(--margin-page)) - (16px * 4));
+  width: calc(var(--fullscreen-vw, 100dvw) - (2 * var(--margin-page)));
+  height: calc(var(--fullscreen-vh, 100dvh) - (2 * var(--margin-page)) - (16px * 4));
 }
 
 .fullscreenMedium {

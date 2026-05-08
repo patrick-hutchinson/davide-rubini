@@ -200,6 +200,44 @@ const ArchivePage = ({ archive }) => {
   }, [activeIndex, fullscreenCount, fullscreenGallery]);
 
   useEffect(() => {
+    if (activeIndex === null || typeof window === "undefined" || typeof document === "undefined") return undefined;
+
+    const root = document.documentElement;
+    const vv = window.visualViewport;
+    let rafId = null;
+
+    const applyViewportSize = () => {
+      const viewportHeight = vv?.height ?? window.innerHeight;
+      const viewportWidth = vv?.width ?? window.innerWidth;
+      root.style.setProperty("--fullscreen-vh", `${viewportHeight}px`);
+      root.style.setProperty("--fullscreen-vw", `${viewportWidth}px`);
+    };
+
+    const queueApply = () => {
+      if (rafId !== null) window.cancelAnimationFrame(rafId);
+      rafId = window.requestAnimationFrame(applyViewportSize);
+    };
+
+    applyViewportSize();
+    queueApply();
+
+    window.addEventListener("resize", queueApply);
+    window.addEventListener("orientationchange", queueApply);
+    vv?.addEventListener("resize", queueApply);
+    vv?.addEventListener("scroll", queueApply);
+
+    return () => {
+      window.removeEventListener("resize", queueApply);
+      window.removeEventListener("orientationchange", queueApply);
+      vv?.removeEventListener("resize", queueApply);
+      vv?.removeEventListener("scroll", queueApply);
+      if (rafId !== null) window.cancelAnimationFrame(rafId);
+      root.style.removeProperty("--fullscreen-vh");
+      root.style.removeProperty("--fullscreen-vw");
+    };
+  }, [activeIndex]);
+
+  useEffect(() => {
     if (activeIndex === null) return;
 
     syncScrollToFullscreenIndex(activeIndex);
