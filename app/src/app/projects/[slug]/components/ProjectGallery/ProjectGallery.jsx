@@ -94,6 +94,7 @@ const ProjectGallery = ({ gallery }) => {
     if (mediumItem?.medium?.type !== "image") return;
     const imageIndex = fullscreenGallery.findIndex((item) => item?.medium?._id === mediumItem?.medium?._id);
     if (imageIndex >= 0) {
+      setCursorIndicator({ visible: false, x: 0, y: 0, direction: "right" });
       console.log("[ProjectGallery] openFullscreenForImage", {
         selectedIndex: imageIndex,
         selectedId: mediumItem?.medium?._id,
@@ -173,6 +174,11 @@ const ProjectGallery = ({ gallery }) => {
       activeAltText: fullscreenGallery[activeIndex]?.medium?.altText,
     });
   }, [activeIndex, fullscreenGallery]);
+
+  useEffect(() => {
+    if (activeIndex !== null) return;
+    setCursorIndicator({ visible: false, x: 0, y: 0, direction: "right" });
+  }, [activeIndex]);
 
   return (
     <div className={styles.gallery}>

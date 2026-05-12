@@ -223,6 +223,7 @@ const ArchivePage = ({ archive }) => {
     if (item?.medium?.type !== "image") return;
     const imageIndex = fullscreenGallery.findIndex((entry) => entry?.medium?._id === item?.medium?._id);
     if (imageIndex >= 0) {
+      setCursorIndicator({ visible: false, x: 0, y: 0, direction: "right" });
       console.log("[ArchivePage] openFullscreenForImage", {
         selectedIndex: imageIndex,
         selectedId: item?.medium?._id,
@@ -240,6 +241,11 @@ const ArchivePage = ({ archive }) => {
       activeAltText: fullscreenGallery[activeIndex]?.medium?.altText,
     });
   }, [activeIndex, fullscreenGallery]);
+
+  useEffect(() => {
+    if (activeIndex !== null) return;
+    setCursorIndicator({ visible: false, x: 0, y: 0, direction: "right" });
+  }, [activeIndex]);
 
   // Keep image requests stable across column toggles to prevent flicker from source re-selection.
   const archiveImageSizes =

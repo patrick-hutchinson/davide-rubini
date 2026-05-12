@@ -55,7 +55,7 @@ main.main {
 .fullscreenStage {
   height: 100dvh;
   display: flex;
-  /* justify-content: center; */
+  justify-content: center;
   align-items: center;
   padding: var(--margin-page);
   box-sizing: border-box;
@@ -65,7 +65,7 @@ main.main {
 
 .fullscreenMediumWrap {
   width: calc(100dvw - (2 * var(--margin-page)));
-  height: calc(100dvh - (2 * var(--margin-page)) - (16px * 2));
+  height: calc(100dvh - (2 * var(--margin-page)) - (16px * 3));
 }
 
 .fullscreenMedium {
