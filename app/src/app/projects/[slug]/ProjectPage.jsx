@@ -113,10 +113,9 @@ const ProjectPage = ({ projects, project }) => {
 
         {populatedCredits.length > 0 && (
           <div>
-            Credits&nbsp;•&nbsp;
             {populatedCredits.map((credit, index) => (
               <span key={`credit-${index}`}>
-                {credit?.role}:&nbsp;
+                <strong>{credit?.role}:&nbsp;</strong>
                 {Array.isArray(credit?.entries) &&
                   credit.entries.map((entry, entryIndex) => (
                     <span key={`credit-${index}-entry-${entryIndex}`}>
@@ -132,14 +131,14 @@ const ProjectPage = ({ projects, project }) => {
       </div>
 
       <footer className={styles.projectFooter}>
-        <hr className={styles.footerDivider} />
+        {/* <hr className={styles.footerDivider} /> */}
         <div className={styles.footerRow}>
           <nav aria-label="Project navigation">
             <AnimationLink link={`/projects/${prevProject.slug.current}`}>← Previous Project</AnimationLink>
             &nbsp;&nbsp;
             <AnimationLink link={`/projects/${nextProject.slug.current}`}>Next Project →</AnimationLink>
           </nav>
-          <button onClick={() => handleScrollTop()}>↑ top</button>
+          <button onClick={() => handleScrollTop()}>↑ Top</button>
         </div>
       </footer>
     </div>

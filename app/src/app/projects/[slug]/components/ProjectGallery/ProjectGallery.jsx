@@ -12,7 +12,7 @@ import styles from "../../ProjectPage.module.css";
 const ProjectGallery = ({ gallery }) => {
   const [viewMode, setViewMode] = useState("stack");
   const [activeIndex, setActiveIndex] = useState(null);
-  const [cursorDirection, setCursorDirection] = useState("right");
+  const [cursorIndicator, setCursorIndicator] = useState({ visible: false, x: 0, y: 0, direction: "right" });
   const mediumItemRefs = useRef(new Map());
 
   const isStack = viewMode === "stack";
@@ -69,10 +69,6 @@ const ProjectGallery = ({ gallery }) => {
       return nextIndex;
     });
 
-  const handleFullscreenPointerMove = (event) => {
-    setCursorDirection(event.clientX < window.innerWidth / 2 ? "left" : "right");
-  };
-
   const handleFullscreenClick = (event) => {
     if (event.defaultPrevented) return;
     if (event.clientX < window.innerWidth / 2) {
@@ -80,6 +76,19 @@ const ProjectGallery = ({ gallery }) => {
       return;
     }
     goNext();
+  };
+
+  const handleFullscreenMouseMove = (event) => {
+    setCursorIndicator({
+      visible: true,
+      x: event.clientX - 16,
+      y: event.clientY - 16,
+      direction: event.clientX < window.innerWidth / 2 ? "left" : "right",
+    });
+  };
+
+  const handleFullscreenMouseLeave = () => {
+    setCursorIndicator((prev) => ({ ...prev, visible: false }));
   };
   const openFullscreenForImage = (mediumItem) => {
     if (mediumItem?.medium?.type !== "image") return;
@@ -205,12 +214,22 @@ const ProjectGallery = ({ gallery }) => {
 
       {activeIndex !== null && fullscreenGallery[activeIndex] && (
         <div
-          className={`${styles.fullscreenOverlay} ${
-            cursorDirection === "left" ? styles.fullscreenOverlayPrev : styles.fullscreenOverlayNext
-          }`}
-          onMouseMove={handleFullscreenPointerMove}
+          className={styles.fullscreenOverlay}
+          onMouseMove={handleFullscreenMouseMove}
+          onMouseLeave={handleFullscreenMouseLeave}
           onClick={handleFullscreenClick}
         >
+          {cursorIndicator.visible ? (
+            <div
+              className={styles.fullscreenCursorArrow}
+              style={{
+                left: `${cursorIndicator.x}px`,
+                top: `${cursorIndicator.y}px`,
+              }}
+            >
+              {cursorIndicator.direction === "left" ? "←" : "→"}
+            </div>
+          ) : null}
           <button
             type="button"
             className={styles.fullscreenCloseButton}
@@ -242,7 +261,7 @@ const ProjectGallery = ({ gallery }) => {
             }}
           >
             <div className={styles.fullscreenControls}>
-              <div className={styles.fullscreenLabel}>{fullscreenGallery[activeIndex]?.medium?.altText || "Untitled"}</div>
+              <div className={styles.fullscreenLabel}>{fullscreenGallery[activeIndex]?.medium?.altText || ""}</div>
             </div>
           </div>
         </div>

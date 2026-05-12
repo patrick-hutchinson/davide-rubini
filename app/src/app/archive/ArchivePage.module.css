@@ -42,26 +42,30 @@ main.main {
   background: var(--background);
 }
 
-.fullscreenOverlayPrev {
-  cursor: w-resize;
-}
-
-.fullscreenOverlayNext {
-  cursor: e-resize;
+.fullscreenCursorArrow {
+  position: fixed;
+  transform: translate(10px, 10px);
+  color: var(--link-color);
+  text-decoration: underline;
+  z-index: 52;
+  pointer-events: none;
+  line-height: 1;
 }
 
 .fullscreenStage {
   height: 100dvh;
   display: flex;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
   padding: var(--margin-page);
   box-sizing: border-box;
+
+  cursor: none !important;
 }
 
 .fullscreenMediumWrap {
   width: calc(100dvw - (2 * var(--margin-page)));
-  height: calc(100dvh - (2 * var(--margin-page)) - (16px * 4));
+  height: calc(100dvh - (2 * var(--margin-page)) - (16px * 2));
 }
 
 .fullscreenMedium {

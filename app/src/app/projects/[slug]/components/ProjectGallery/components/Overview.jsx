@@ -24,20 +24,20 @@ const Overview = ({ gallery, onOpenFullscreen, registerItemRef }) => {
           : {};
 
         return (
-        <div
-          key={medium?.medium?._id || `overview-${index}`}
-          className={`${styles.overviewItem} ${isImage ? styles.overviewItemClickable : ""}`}
-          ref={(node) => registerItemRef?.(medium?.medium?._id, node)}
-          {...interactiveProps}
-        >
-          <Medium
-            className={styles.overviewMedia}
-            medium={medium.medium}
-            sizes="(max-width: 47.99rem) calc((100vw - 24px) / 2), calc((100vw - 56px) / 6)"
-            quality={75}
-            eager={index < eagerPreviewCount}
-          />
-        </div>
+          <div
+            key={medium?.medium?._id || `overview-${index}`}
+            className={`${styles.overviewItem} ${isImage ? styles.overviewItemClickable : ""}`}
+            ref={(node) => registerItemRef?.(medium?.medium?._id, node)}
+            {...interactiveProps}
+          >
+            <Medium
+              className={styles.overviewMedia}
+              medium={medium.medium}
+              sizes="(max-width: 47.99rem) calc((100vw - 24px) / 2), calc((100vw - 56px) / 6)"
+              quality={75}
+              eager={index < eagerPreviewCount}
+            />
+          </div>
         );
       })}
     </div>

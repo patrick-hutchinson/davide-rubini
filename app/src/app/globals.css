@@ -59,6 +59,12 @@ a[x-apple-data-detectors]:active {
   border-bottom: 0 !important;
 }
 
+hr {
+  color: transparent;
+  background: transparent;
+  border-color: transparent;
+}
+
 p {
   margin: 0;
 }

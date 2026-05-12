@@ -8,8 +8,8 @@ import { usePathname } from "next/navigation";
 import styles from "./Header.module.css";
 
 const getArchiveColumnOptions = () => {
-  if (typeof window === "undefined") return [12, 6, 4, 3];
-  return window.innerWidth < 768 ? [1, 2] : [12, 6, 4, 3];
+  if (typeof window === "undefined") return [12, 6, 3];
+  return window.innerWidth < 768 ? [1, 2] : [12, 6, 3];
 };
 
 const getDefaultArchiveColumns = () => {

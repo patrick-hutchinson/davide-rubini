@@ -25,7 +25,7 @@ const getPreferredDefaultColumns = () => {
 const ArchivePage = ({ archive }) => {
   const [columns, setColumns] = useState(() => getPreferredDefaultColumns());
   const [activeIndex, setActiveIndex] = useState(null);
-  const [cursorDirection, setCursorDirection] = useState("right");
+  const [cursorIndicator, setCursorIndicator] = useState({ visible: false, x: 0, y: 0, direction: "right" });
   const mediumItemRefs = useRef(new Map());
   const gallery = Array.isArray(archive?.gallery) ? archive.gallery : [];
   if (gallery.length === 0) return null;
@@ -135,10 +135,6 @@ const ArchivePage = ({ archive }) => {
       return nextIndex;
     });
 
-  const handleFullscreenPointerMove = (event) => {
-    setCursorDirection(event.clientX < window.innerWidth / 2 ? "left" : "right");
-  };
-
   const handleFullscreenClick = (event) => {
     if (event.defaultPrevented) return;
     if (event.clientX < window.innerWidth / 2) {
@@ -146,6 +142,19 @@ const ArchivePage = ({ archive }) => {
       return;
     }
     goNext();
+  };
+
+  const handleFullscreenMouseMove = (event) => {
+    setCursorIndicator({
+      visible: true,
+      x: event.clientX - 16,
+      y: event.clientY - 16,
+      direction: event.clientX < window.innerWidth / 2 ? "left" : "right",
+    });
+  };
+
+  const handleFullscreenMouseLeave = () => {
+    setCursorIndicator((prev) => ({ ...prev, visible: false }));
   };
 
   useEffect(() => {
@@ -275,16 +284,26 @@ const ArchivePage = ({ archive }) => {
 
       {activeIndex !== null && fullscreenGallery[activeIndex] && (
         <div
-          className={`${styles.fullscreenOverlay} ${
-            cursorDirection === "left" ? styles.fullscreenOverlayPrev : styles.fullscreenOverlayNext
-          }`}
-          onMouseMove={handleFullscreenPointerMove}
+          className={styles.fullscreenOverlay}
+          onMouseMove={handleFullscreenMouseMove}
+          onMouseLeave={handleFullscreenMouseLeave}
           onClick={handleFullscreenClick}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
         >
+          {cursorIndicator.visible ? (
+            <div
+              className={styles.fullscreenCursorArrow}
+              style={{
+                left: `${cursorIndicator.x}px`,
+                top: `${cursorIndicator.y}px`,
+              }}
+            >
+              {cursorIndicator.direction === "left" ? "←" : "→"}
+            </div>
+          ) : null}
           <button
             type="button"
             className={styles.fullscreenCloseButton}
@@ -327,7 +346,7 @@ const ArchivePage = ({ archive }) => {
                 Close
               </button>
               <span>&nbsp;•&nbsp;</span> */}
-              <div className={styles.fullscreenLabel}>{fullscreenGallery[activeIndex]?.medium?.altText || "Untitled"}</div>
+              <div className={styles.fullscreenLabel}>{fullscreenGallery[activeIndex]?.medium?.altText || ""}</div>
             </div>
           </div>
         </div>

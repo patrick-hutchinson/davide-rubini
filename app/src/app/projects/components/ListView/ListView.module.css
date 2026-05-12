@@ -67,6 +67,8 @@
 .listTable th:nth-child(1),
 .listTable td:nth-child(1) {
   width: var(--list-index-width);
+  padding-right: 8px;
+  text-align: right;
 }
 
 .listTable th:nth-child(2),
