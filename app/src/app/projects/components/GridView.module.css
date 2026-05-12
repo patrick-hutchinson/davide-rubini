@@ -5,7 +5,7 @@
 
 .gridView {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--margin-page);
 }
 
@@ -31,4 +31,22 @@
   width: 100%;
   height: auto;
   margin-bottom: 0;
+}
+
+@media screen and (min-width: 769px) {
+  .gridView {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media screen and (min-width: 769px) and (max-aspect-ratio: 4/3) {
+  .gridView {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media screen and (min-width: 769px) and (min-aspect-ratio: 16/10) {
+  .gridView {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }

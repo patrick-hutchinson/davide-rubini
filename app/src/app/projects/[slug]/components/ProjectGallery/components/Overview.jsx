@@ -33,7 +33,7 @@ const Overview = ({ gallery, onOpenFullscreen, registerItemRef }) => {
             <Medium
               className={styles.overviewMedia}
               medium={medium.medium}
-              sizes="(max-width: 47.99rem) calc((100vw - 24px) / 2), calc((100vw - 56px) / 6)"
+              sizes="(max-width: 59.99rem) calc((100vw - 24px) / 2), (min-width: 60rem) and (min-aspect-ratio: 16/10) calc((100vw - 56px) / 6), (min-width: 60rem) and (min-aspect-ratio: 3/2) calc((100vw - 48px) / 5), (min-width: 60rem) and (max-aspect-ratio: 4/3) calc((100vw - 32px) / 3), calc((100vw - 40px) / 4)"
               quality={75}
               eager={index < eagerPreviewCount}
             />
