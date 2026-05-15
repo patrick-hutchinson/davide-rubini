@@ -1,7 +1,7 @@
 import { useViewport } from "@/context/ViewportContext";
 import styles from "../FullscreenImageView.module.css";
 
-import { useRef, useState, useEffect, useLayoutEffect } from "react";
+import { useRef, useState, useLayoutEffect } from "react";
 
 const FullscreenCaption = ({ caption, onHeightChange, onInteractiveHover }) => {
   const { viewportWidth } = useViewport();
@@ -51,7 +51,7 @@ const FullscreenCaption = ({ caption, onHeightChange, onInteractiveHover }) => {
     </>
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!measureCaption.current || !measureMore.current) return;
 
     const captionWidth = measureText(caption);
