@@ -52,6 +52,12 @@ main.main {
   line-height: 1;
 }
 
+@media (hover: none), (pointer: coarse) {
+  .fullscreenCursorArrow {
+    display: none;
+  }
+}
+
 .fullscreenStage {
   height: 100dvh;
   display: flex;
@@ -92,7 +98,8 @@ main.main {
 }
 
 .fullscreenLabel {
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .fullscreenControls {
