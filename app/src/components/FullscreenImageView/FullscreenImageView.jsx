@@ -11,12 +11,12 @@ import FullscreenCaption from "./components/FullscreenCaption";
 
 const FullscreenImageView = ({ items, activeIndex, onClose, onPrev, onNext, caption }) => {
   const { isTouch } = useContext(DeviceContext);
-  const [cursorIndicator, setCursorIndicator] = useState({ x: 0, y: 0, direction: "right" });
+  const [cursorIndicator, setCursorIndicator] = useState({ visible: false, x: 0, y: 0, direction: "right" });
   const [captionExtraSpace, setCaptionExtraSpace] = useState(0);
 
   useEffect(() => {
     if (activeIndex !== null) return;
-    setCursorIndicator({ x: 0, y: 0, direction: "right" });
+    setCursorIndicator({ visible: false, x: 0, y: 0, direction: "right" });
     setCaptionExtraSpace(0);
   }, [activeIndex]);
 
@@ -33,6 +33,7 @@ const FullscreenImageView = ({ items, activeIndex, onClose, onPrev, onNext, capt
 
   const handleMouseMove = (event) => {
     setCursorIndicator({
+      visible: true,
       x: event.clientX - 16,
       y: event.clientY - 16,
       direction: event.clientX < window.innerWidth / 2 ? "left" : "right",
@@ -51,7 +52,7 @@ const FullscreenImageView = ({ items, activeIndex, onClose, onPrev, onNext, capt
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
     >
-      {!isTouch ? (
+      {!isTouch && cursorIndicator.visible ? (
         <div
           className={styles.fullscreenCursorArrow}
           style={{
@@ -93,7 +94,11 @@ const FullscreenImageView = ({ items, activeIndex, onClose, onPrev, onNext, capt
         }}
       >
         <div className={styles.fullscreenControls}>
-          <FullscreenCaption caption={caption} onHeightChange={setCaptionExtraSpace} />
+          <FullscreenCaption
+            caption={caption}
+            onHeightChange={setCaptionExtraSpace}
+            onInteractiveHover={() => setCursorIndicator((prev) => ({ ...prev, visible: false }))}
+          />
         </div>
       </div>
     </div>

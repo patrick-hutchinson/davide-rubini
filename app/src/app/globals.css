@@ -44,10 +44,13 @@ html.dark {
   box-sizing: border-box;
 }
 
+a,
 a:visited,
 a:visited *,
 a:-webkit-any-link {
   color: var(--link-color);
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 a[x-apple-data-detectors],

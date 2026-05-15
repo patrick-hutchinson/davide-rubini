@@ -3,7 +3,7 @@ import styles from "../FullscreenImageView.module.css";
 
 import { useRef, useState, useEffect, useLayoutEffect } from "react";
 
-const FullscreenCaption = ({ caption, onHeightChange }) => {
+const FullscreenCaption = ({ caption, onHeightChange, onInteractiveHover }) => {
   const { viewportWidth } = useViewport();
 
   const [displayCaption, setDisplayCaption] = useState(caption);
@@ -21,13 +21,33 @@ const FullscreenCaption = ({ caption, onHeightChange }) => {
 
   const CollapsedCaption = ({ trimmed }) => (
     <>
-      {trimmed}... <a onClick={() => setDisplayCaption(<FullCaption />)}>(more)</a>
+      {trimmed}...{" "}
+      <a
+        onMouseEnter={() => onInteractiveHover?.()}
+        onMouseMove={(event) => {
+          event.stopPropagation();
+          onInteractiveHover?.();
+        }}
+        onClick={() => setDisplayCaption(<FullCaption />)}
+      >
+        (more)
+      </a>
     </>
   );
 
   const FullCaption = () => (
     <>
-      {caption} <a onClick={() => setDisplayCaption(<CollapsedCaption trimmed={trimmedRef.current} />)}>(less)</a>
+      {caption}{" "}
+      <a
+        onMouseEnter={() => onInteractiveHover?.()}
+        onMouseMove={(event) => {
+          event.stopPropagation();
+          onInteractiveHover?.();
+        }}
+        onClick={() => setDisplayCaption(<CollapsedCaption trimmed={trimmedRef.current} />)}
+      >
+        (less)
+      </a>
     </>
   );
 
