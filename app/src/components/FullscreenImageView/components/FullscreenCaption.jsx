@@ -95,7 +95,12 @@ const FullscreenCaption = ({ caption, onHeightChange, onInteractiveHover }) => {
 
     const update = () => {
       const height = Math.ceil(node.getBoundingClientRect().height);
-      onHeightChange(height);
+      const computed = window.getComputedStyle(node);
+      const parsedLineHeight = Number.parseFloat(computed.lineHeight);
+      const fallbackLineHeight = Number.parseFloat(computed.fontSize) * 1.2;
+      const singleLineHeight = Math.ceil(Number.isFinite(parsedLineHeight) ? parsedLineHeight : fallbackLineHeight);
+      const extraHeight = Math.max(0, height - singleLineHeight);
+      onHeightChange(extraHeight);
     };
 
     update();
