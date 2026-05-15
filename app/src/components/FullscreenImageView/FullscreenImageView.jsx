@@ -66,6 +66,11 @@ const FullscreenImageView = ({ items, activeIndex, onClose, onPrev, onNext, capt
       <button
         type="button"
         className={styles.fullscreenCloseButton}
+        onMouseEnter={() => setCursorIndicator((prev) => ({ ...prev, visible: false }))}
+        onMouseMove={(event) => {
+          event.stopPropagation();
+          setCursorIndicator((prev) => ({ ...prev, visible: false }));
+        }}
         onClick={(event) => {
           event.stopPropagation();
           onClose?.();
