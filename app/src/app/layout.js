@@ -8,6 +8,7 @@ import ScrollRestorationController from "@/controllers/ScrollRestorationControll
 import Header from "@/components/Header/Header";
 
 import "./globals.css";
+import { ViewportProvider } from "@/context/ViewportContext";
 
 const fallbackSite = {
   title: "Davide Rubibi",
@@ -139,15 +140,17 @@ export default async function RootLayout({ children }) {
         <link rel="preconnect" href="https://image.mux.com" crossOrigin="" />
         <link rel="dns-prefetch" href="https://image.mux.com" />
       </head>
-      <DeviceProvider>
-        <ScrollRestorationController />
-        <body data-placeholder-type={resolvedPlaceholderType}>
-          <ThemeProvider attribute="class" defaultTheme={resolvedDefaultTheme} enableSystem disableTransitionOnChange>
-            <Header site={site} />
-            {children}
-          </ThemeProvider>
-        </body>
-      </DeviceProvider>
+      <ViewportProvider>
+        <DeviceProvider>
+          <ScrollRestorationController />
+          <body data-placeholder-type={resolvedPlaceholderType}>
+            <ThemeProvider attribute="class" defaultTheme={resolvedDefaultTheme} enableSystem disableTransitionOnChange>
+              <Header site={site} />
+              {children}
+            </ThemeProvider>
+          </body>
+        </DeviceProvider>
+      </ViewportProvider>
     </html>
   );
 }

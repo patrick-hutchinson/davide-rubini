@@ -1,0 +1,79 @@
+.fullscreenOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--background);
+}
+
+.fullscreenCursorArrow {
+  position: fixed;
+  transform: translate(10px, 10px);
+  color: var(--link-color);
+  text-decoration: underline;
+  z-index: 52;
+  pointer-events: none;
+  line-height: 1;
+}
+
+.measureCaption,
+.measureMore {
+  white-space: nowrap;
+  position: absolute;
+  left: 0px;
+  visibility: hidden;
+}
+
+.fullscreenStage {
+  height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: var(--margin-page);
+  padding-top: calc(var(--margin-page) * 3);
+  box-sizing: border-box;
+  cursor: none !important;
+}
+
+.fullscreenMediumWrap {
+  width: calc(100dvw - (2 * var(--margin-page)));
+  height: calc(100dvh - (2 * var(--margin-page)) - (16px * 2) - var(--fullscreen-caption-space, 0px));
+}
+
+.fullscreenMedium {
+  width: 100%;
+  height: 100%;
+}
+
+.fullscreenCloseButton {
+  position: fixed;
+  top: var(--margin-page);
+  right: var(--margin-page);
+  z-index: 53;
+}
+
+.fullscreenMeta {
+  position: fixed;
+  left: var(--margin-page);
+  bottom: calc(var(--margin-page) + env(safe-area-inset-bottom, 0px));
+  z-index: 53;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--margin-page);
+}
+
+.fullscreenControls {
+  display: flex;
+  align-items: center;
+  gap: var(--margin-page);
+}
+
+.fullscreenLabel {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.fullscreencaption {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}

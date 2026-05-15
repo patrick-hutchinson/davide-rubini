@@ -1,8 +1,8 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import FullscreenImageView from "@/components/FullscreenImageView/FullscreenImageView";
 import Medium from "@/components/Medium/Medium";
 import { getImageResolutionUrl } from "@/components/Medium/hooks/useImageResolution";
 import { disableScroll, enableScroll } from "@/helpers/blockScrolling";
@@ -25,7 +25,6 @@ const getPreferredDefaultColumns = () => {
 const ArchivePage = ({ archive }) => {
   const [columns, setColumns] = useState(() => getPreferredDefaultColumns());
   const [activeIndex, setActiveIndex] = useState(null);
-  const [cursorIndicator, setCursorIndicator] = useState({ visible: false, x: 0, y: 0, direction: "right" });
   const mediumItemRefs = useRef(new Map());
   const gallery = Array.isArray(archive?.gallery) ? archive.gallery : [];
   if (gallery.length === 0) return null;
@@ -135,28 +134,6 @@ const ArchivePage = ({ archive }) => {
       return nextIndex;
     });
 
-  const handleFullscreenClick = (event) => {
-    if (event.defaultPrevented) return;
-    if (event.clientX < window.innerWidth / 2) {
-      goPrev();
-      return;
-    }
-    goNext();
-  };
-
-  const handleFullscreenMouseMove = (event) => {
-    setCursorIndicator({
-      visible: true,
-      x: event.clientX - 16,
-      y: event.clientY - 16,
-      direction: event.clientX < window.innerWidth / 2 ? "left" : "right",
-    });
-  };
-
-  const handleFullscreenMouseLeave = () => {
-    setCursorIndicator((prev) => ({ ...prev, visible: false }));
-  };
-
   useEffect(() => {
     if (activeIndex === null || fullscreenCount === 0) return undefined;
 
@@ -223,7 +200,6 @@ const ArchivePage = ({ archive }) => {
     if (item?.medium?.type !== "image") return;
     const imageIndex = fullscreenGallery.findIndex((entry) => entry?.medium?._id === item?.medium?._id);
     if (imageIndex >= 0) {
-      setCursorIndicator({ visible: false, x: 0, y: 0, direction: "right" });
       console.log("[ArchivePage] openFullscreenForImage", {
         selectedIndex: imageIndex,
         selectedId: item?.medium?._id,
@@ -241,11 +217,6 @@ const ArchivePage = ({ archive }) => {
       activeAltText: fullscreenGallery[activeIndex]?.medium?.altText,
     });
   }, [activeIndex, fullscreenGallery]);
-
-  useEffect(() => {
-    if (activeIndex !== null) return;
-    setCursorIndicator({ visible: false, x: 0, y: 0, direction: "right" });
-  }, [activeIndex]);
 
   // Keep image requests stable across column toggles to prevent flicker from source re-selection.
   const archiveImageSizes =
@@ -288,80 +259,14 @@ const ArchivePage = ({ archive }) => {
         </div>
       </div>
 
-      {activeIndex !== null && fullscreenGallery[activeIndex] && (
-        <div
-          className={styles.fullscreenOverlay}
-          onMouseMove={handleFullscreenMouseMove}
-          onMouseLeave={handleFullscreenMouseLeave}
-          onClick={handleFullscreenClick}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
-        >
-          {cursorIndicator.visible ? (
-            <div
-              className={styles.fullscreenCursorArrow}
-              style={{
-                left: `${cursorIndicator.x}px`,
-                top: `${cursorIndicator.y}px`,
-              }}
-            >
-              {cursorIndicator.direction === "left" ? "←" : "→"}
-            </div>
-          ) : null}
-          <button
-            type="button"
-            className={styles.fullscreenCloseButton}
-            onMouseEnter={() => setCursorIndicator((prev) => ({ ...prev, visible: false }))}
-            onMouseMove={(event) => {
-              event.stopPropagation();
-              setCursorIndicator((prev) => ({ ...prev, visible: false }));
-            }}
-            onClick={(event) => {
-              event.stopPropagation();
-              closeFullscreen();
-            }}
-          >
-            Close
-          </button>
-          <div className={styles.fullscreenStage}>
-            <div className={styles.fullscreenMediumWrap}>
-              <Medium
-                className={styles.fullscreenMedium}
-                medium={fullscreenGallery[activeIndex].medium}
-                sizes="100vw"
-                quality={100}
-                fit="contain"
-                showPlaceholderOnMount
-                constrainToContainer
-              />
-            </div>
-          </div>
-
-          <div
-            className={styles.fullscreenMeta}
-            onClick={(event) => {
-              event.stopPropagation();
-            }}
-          >
-            <div className={styles.fullscreenControls}>
-              {/* <button type="button" onClick={goPrev}>
-                ← Previous Image
-              </button>
-              <button type="button" onClick={goNext}>
-                Next Image →
-              </button>
-              &nbsp;/
-              <button type="button" onClick={closeFullscreen}>
-                Close
-              </button>
-              <span>&nbsp;•&nbsp;</span> */}
-              <div className={styles.fullscreenLabel}>{fullscreenGallery[activeIndex]?.medium?.altText || ""}</div>
-            </div>
-          </div>
-        </div>
-      )}
+      <FullscreenImageView
+        items={fullscreenGallery}
+        activeIndex={activeIndex}
+        onClose={closeFullscreen}
+        onPrev={goPrev}
+        onNext={goNext}
+        caption={fullscreenGallery[activeIndex]?.medium?.altText || ""}
+      />
     </main>
   );
 };
