@@ -24,7 +24,12 @@
   white-space: nowrap;
   overflow-x: hidden;
   text-overflow: ellipsis;
+  text-decoration: none !important;
 }
+/* .gridCardTitle *,
+* .gridCardTitle {
+  text-decoration: none !important;
+} */
 
 .gridCardMedia {
   display: block;

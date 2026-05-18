@@ -46,8 +46,8 @@ html.dark {
 
 a,
 a:visited,
-a:visited *,
-a:-webkit-any-link {
+/* a:-webkit-any-link, */
+a:visited * {
   color: var(--link-color);
   text-decoration: underline;
   cursor: pointer;
