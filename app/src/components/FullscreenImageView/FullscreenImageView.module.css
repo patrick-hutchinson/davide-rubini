@@ -55,7 +55,7 @@
 .fullscreenMeta {
   position: fixed;
   left: var(--margin-page);
-  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--fullscreen-viewport-bottom-inset, 0px));
+  bottom: calc(var(--margin-page) + env(safe-area-inset-bottom, 0px) + var(--fullscreen-viewport-bottom-inset, 0px));
   z-index: 53;
   display: flex;
   align-items: center;
@@ -77,10 +77,4 @@
 .fullscreencaption {
   white-space: normal;
   overflow-wrap: anywhere;
-}
-
-@media screen and (min-width: 769px) {
-  .fullscreenMeta {
-    bottom: calc(var(--margin-page) + env(safe-area-inset-bottom, 0px) + var(--fullscreen-viewport-bottom-inset, 0px));
-  }
 }
