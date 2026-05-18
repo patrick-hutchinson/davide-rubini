@@ -14,7 +14,6 @@ const FullscreenImageView = ({ items, activeIndex, onClose, onPrev, onNext, capt
   const [cursorIndicator, setCursorIndicator] = useState({ visible: false, x: 0, y: 0, direction: "right" });
   const [captionRequiredExtra, setCaptionRequiredExtra] = useState(0);
   const [captionExtraSpace, setCaptionExtraSpace] = useState(0);
-  const [viewportBottomInset, setViewportBottomInset] = useState(0);
   const mediumWrapRef = useRef(null);
 
   useEffect(() => {
@@ -22,41 +21,6 @@ const FullscreenImageView = ({ items, activeIndex, onClose, onPrev, onNext, capt
     setCursorIndicator({ visible: false, x: 0, y: 0, direction: "right" });
     setCaptionRequiredExtra(0);
     setCaptionExtraSpace(0);
-    setViewportBottomInset(0);
-  }, [activeIndex]);
-
-  useEffect(() => {
-    if (activeIndex === null || typeof window === "undefined") return undefined;
-
-    const vv = window.visualViewport;
-    let rafId = null;
-
-    const updateViewportInset = () => {
-      const nextInset = vv
-        ? Math.max(0, window.innerHeight - (vv.offsetTop + vv.height))
-        : 0;
-      setViewportBottomInset(Math.round(nextInset));
-    };
-
-    const queueUpdate = () => {
-      if (rafId !== null) window.cancelAnimationFrame(rafId);
-      rafId = window.requestAnimationFrame(updateViewportInset);
-    };
-
-    updateViewportInset();
-    window.addEventListener("resize", queueUpdate);
-    window.addEventListener("orientationchange", queueUpdate);
-    vv?.addEventListener("resize", queueUpdate);
-    vv?.addEventListener("scroll", queueUpdate);
-
-    return () => {
-      window.removeEventListener("resize", queueUpdate);
-      window.removeEventListener("orientationchange", queueUpdate);
-      vv?.removeEventListener("resize", queueUpdate);
-      vv?.removeEventListener("scroll", queueUpdate);
-      if (rafId !== null) window.cancelAnimationFrame(rafId);
-      setViewportBottomInset(0);
-    };
   }, [activeIndex]);
 
   useLayoutEffect(() => {
@@ -70,23 +34,25 @@ const FullscreenImageView = ({ items, activeIndex, onClose, onPrev, onNext, capt
     const computeExtraSpace = () => {
       if (!mediumWrapRef.current) return;
       if (!captionRequiredExtra || captionRequiredExtra <= 0) {
-        setCaptionExtraSpace(0);
+        setCaptionExtraSpace((prev) => (prev === 0 ? prev : 0));
         return;
       }
       if (!aspectRatio) {
-        setCaptionExtraSpace(captionRequiredExtra);
+        const next = Math.ceil(captionRequiredExtra);
+        setCaptionExtraSpace((prev) => (prev === next ? prev : next));
         return;
       }
 
       const currentWrapWidth = mediumWrapRef.current.clientWidth;
       const currentWrapHeight = mediumWrapRef.current.clientHeight;
-      const baseWrapHeight = currentWrapHeight + captionExtraSpace;
-
-      const renderedHeight = Math.min(baseWrapHeight, currentWrapWidth / aspectRatio);
-      const naturalBottomSlack = Math.max(0, (baseWrapHeight - renderedHeight) / 2);
-      const requiredExtra = Math.max(0, captionRequiredExtra - naturalBottomSlack);
-
-      setCaptionExtraSpace(Math.ceil(requiredExtra));
+      setCaptionExtraSpace((prev) => {
+        const baseWrapHeight = currentWrapHeight + prev;
+        const renderedHeight = Math.min(baseWrapHeight, currentWrapWidth / aspectRatio);
+        const naturalBottomSlack = Math.max(0, (baseWrapHeight - renderedHeight) / 2);
+        const requiredExtra = Math.max(0, captionRequiredExtra - naturalBottomSlack);
+        const next = Math.ceil(requiredExtra);
+        return next === prev ? prev : next;
+      });
     };
 
     computeExtraSpace();
@@ -98,7 +64,7 @@ const FullscreenImageView = ({ items, activeIndex, onClose, onPrev, onNext, capt
       observer.disconnect();
       window.removeEventListener("resize", computeExtraSpace);
     };
-  }, [activeIndex, captionRequiredExtra, items, captionExtraSpace]);
+  }, [activeIndex, captionRequiredExtra, items]);
 
   if (activeIndex === null || !items?.[activeIndex]) return null;
 
@@ -129,7 +95,6 @@ const FullscreenImageView = ({ items, activeIndex, onClose, onPrev, onNext, capt
       className={styles.fullscreenOverlay}
       style={{
         "--fullscreen-caption-space": `${captionExtraSpace}px`,
-        "--fullscreen-viewport-bottom-inset": `${viewportBottomInset}px`,
       }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
