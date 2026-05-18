@@ -1,9 +1,7 @@
 .header {
   position: relative;
   z-index: 20;
-  /* top: var(--margin-page); */
-  /* left: var(--margin-page); */
-  /* right: calc(var(--margin-page) + env(safe-area-inset-right, 0px)); */
+
   width: auto;
 }
 
