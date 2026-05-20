@@ -124,13 +124,11 @@ const ArchivePage = ({ archive }) => {
   const goNext = () =>
     setActiveIndex((prev) => {
       const nextIndex = (prev + 1) % fullscreenCount;
-      console.log("[ArchivePage] goNext", { prevIndex: prev, nextIndex, fullscreenCount });
       return nextIndex;
     });
   const goPrev = () =>
     setActiveIndex((prev) => {
       const nextIndex = (prev - 1 + fullscreenCount) % fullscreenCount;
-      console.log("[ArchivePage] goPrev", { prevIndex: prev, nextIndex, fullscreenCount });
       return nextIndex;
     });
 
@@ -200,22 +198,12 @@ const ArchivePage = ({ archive }) => {
     if (item?.medium?.type !== "image") return;
     const imageIndex = fullscreenGallery.findIndex((entry) => entry?.medium?._id === item?.medium?._id);
     if (imageIndex >= 0) {
-      console.log("[ArchivePage] openFullscreenForImage", {
-        selectedIndex: imageIndex,
-        selectedId: item?.medium?._id,
-        selectedAltText: item?.medium?.altText,
-      });
       setActiveIndex(imageIndex);
     }
   };
 
   useEffect(() => {
     if (activeIndex === null) return;
-    console.log("[ArchivePage] activeIndex changed", {
-      activeIndex,
-      activeId: fullscreenGallery[activeIndex]?.medium?._id,
-      activeAltText: fullscreenGallery[activeIndex]?.medium?.altText,
-    });
   }, [activeIndex, fullscreenGallery]);
 
   // Keep image requests stable across column toggles to prevent flicker from source re-selection.

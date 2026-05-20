@@ -15,7 +15,7 @@
   line-height: 1;
 }
 
-.measureCaption,
+.measureCaptionLength,
 .measureMore {
   white-space: nowrap;
   position: absolute;
@@ -23,21 +23,25 @@
   visibility: hidden;
 }
 
-.fullscreenStage {
-  height: 100dvh;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: var(--margin-page);
-  padding-top: 30px;
-  padding-bottom: var(--fullscreen-caption-space, 0px);
-  box-sizing: border-box;
-  cursor: none !important;
+.measureCaptionHeight {
+  position: absolute;
+  left: 0px;
+  visibility: hidden;
 }
 
-.fullscreenMediumWrap {
-  width: calc(100dvw - (2 * var(--margin-page)));
-  height: calc(100dvh - (3 * var(--margin-page)) - (16px * 3) - var(--fullscreen-caption-space, 0px));
+.fullscreenStage {
+  height: calc(100dvh - (2 * var(--caption-spacing)));
+  width: calc(100dvw);
+  padding-left: var(--margin-page);
+  padding-right: var(--margin-page);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  position: relative;
+  top: var(--caption-spacing);
+  /* left: var(--margin-page); */
+  cursor: none !important;
+  /* padding: var(--caption-spacing) 0; */
 }
 
 .fullscreenMedium {

@@ -30,11 +30,8 @@ export function useVideoPlayer() {
   }
 
   const enterFullscreen = () => {
-    console.log("entering fullscreen!");
     const player = playerRef.current;
     if (!player) return;
-
-    console.log("player exists!");
 
     // ---- Standard Fullscreen API (desktop + Android + iOS16+ sometimes)
     if (player.requestFullscreen) {

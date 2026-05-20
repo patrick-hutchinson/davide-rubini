@@ -73,15 +73,6 @@ const Video = ({ medium, playerState, fit = "cover" }) => {
       .sort((a, b) => getCandidateHeight(b) - getCandidateHeight(a));
 
     (async () => {
-      console.log("[Video] Mux media payload", {
-        medium,
-        playbackId: medium?.playbackId,
-        assetId: medium?.assetId,
-        status: medium?.status,
-        staticRenditions: medium?.staticRenditions,
-        staticRenditionFiles,
-      });
-
       if (readyMp4Renditions.length > 0) {
         const dpr = Math.max(1, window.devicePixelRatio || 1);
         const effectiveTargetHeight = Math.round(window.innerHeight * dpr);
@@ -95,38 +86,17 @@ const Video = ({ medium, playerState, fit = "cover" }) => {
           (rendition) => `https://stream.mux.com/${medium.playbackId}/${rendition.name}`,
         );
 
-        console.log("[Video] Ready Mux MP4 renditions from static_renditions", {
-          playbackId: medium.playbackId,
-          urls: readyMp4Urls,
-          effectiveTargetHeight,
-          selectedRendition: bestFitRendition,
-          selectedUrl: selectedMp4Url,
-        });
         video.src = selectedMp4Url;
         video.load();
         tryAutoplay();
         return;
       }
 
-      console.log("[Video] No ready MP4 static renditions found; using HLS fallback", {
-        playbackId: medium?.playbackId,
-        staticRenditions: medium?.staticRenditions,
-        staticRenditionFiles,
-        videoElement: {
-          currentSrc: video.currentSrc,
-          src: video.src,
-          networkState: video.networkState,
-          readyState: video.readyState,
-        },
-      });
-
       if (canPlayNativeHls) {
-        console.log("[Video] Falling back to native HLS (quality floor cannot be strictly enforced in native HLS)");
         video.src = hlsSource;
         video.load();
         tryAutoplay();
       } else {
-        console.log("[Video] Falling back to hls.js HLS");
         try {
           const hlsModule = await import("hls.js");
           if (canceled) return;
@@ -169,14 +139,6 @@ const Video = ({ medium, playerState, fit = "cover" }) => {
 
                 hlsInstance.startLevel = preferredStartLevel;
                 hlsInstance.nextAutoLevel = preferredStartLevel;
-
-                console.log("[Video] HLS quality floor + startup level", {
-                  minAllowedLevelIndex,
-                  minAllowedHeight: levels[minAllowedLevelIndex]?.height,
-                  preferredStartLevel,
-                  preferredStartHeight: levels[preferredStartLevel]?.height,
-                  effectiveTargetHeight,
-                });
               }
               tryAutoplay();
             });

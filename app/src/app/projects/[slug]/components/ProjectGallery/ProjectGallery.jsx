@@ -58,24 +58,19 @@ const ProjectGallery = ({ gallery }) => {
   const goNext = () =>
     setActiveIndex((prev) => {
       const nextIndex = (prev + 1) % fullscreenCount;
-      console.log("[ProjectGallery] goNext", { prevIndex: prev, nextIndex, fullscreenCount });
+
       return nextIndex;
     });
   const goPrev = () =>
     setActiveIndex((prev) => {
       const nextIndex = (prev - 1 + fullscreenCount) % fullscreenCount;
-      console.log("[ProjectGallery] goPrev", { prevIndex: prev, nextIndex, fullscreenCount });
+
       return nextIndex;
     });
   const openFullscreenForImage = (mediumItem) => {
     if (mediumItem?.medium?.type !== "image") return;
     const imageIndex = fullscreenGallery.findIndex((item) => item?.medium?._id === mediumItem?.medium?._id);
     if (imageIndex >= 0) {
-      console.log("[ProjectGallery] openFullscreenForImage", {
-        selectedIndex: imageIndex,
-        selectedId: mediumItem?.medium?._id,
-        selectedAltText: mediumItem?.medium?.altText,
-      });
       setActiveIndex(imageIndex);
     }
   };
@@ -144,11 +139,6 @@ const ProjectGallery = ({ gallery }) => {
 
   useEffect(() => {
     if (activeIndex === null) return;
-    console.log("[ProjectGallery] activeIndex changed", {
-      activeIndex,
-      activeId: fullscreenGallery[activeIndex]?.medium?._id,
-      activeAltText: fullscreenGallery[activeIndex]?.medium?.altText,
-    });
   }, [activeIndex, fullscreenGallery]);
 
   return (

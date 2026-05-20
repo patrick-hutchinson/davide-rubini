@@ -121,7 +121,6 @@ const ListView = ({ projects }) => {
       labels.forEach((label) => {
         measureEl.textContent = label;
         maxWidth = Math.max(maxWidth, measureEl.getBoundingClientRect().width);
-        console.log(maxWidth, "maxWidth");
       });
 
       document.body.removeChild(measureEl);

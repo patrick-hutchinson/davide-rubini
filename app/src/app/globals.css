@@ -15,6 +15,10 @@
 
   --header-height: 88px;
   --content-height: calc(100dvh - ((2 * var(--margin-page)) + var(--header-height)));
+
+  --text-height: 18.5px;
+
+  --caption-spacing: calc(var(--margin-page) + var(--text-height) + var(--margin-page));
 }
 
 @media screen and (min-width: 769px) {

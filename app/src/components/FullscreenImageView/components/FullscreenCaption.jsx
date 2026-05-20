@@ -1,22 +1,33 @@
 import { useViewport } from "@/context/ViewportContext";
 import styles from "../FullscreenImageView.module.css";
 
-import { useRef, useState, useLayoutEffect } from "react";
+import { useRef, useState, useLayoutEffect, useEffect } from "react";
 
-const FullscreenCaption = ({ caption, onHeightChange, onInteractiveHover }) => {
+const FullscreenCaption = ({ caption, onInteractiveHover, setCaptionHeight }) => {
   const { viewportWidth } = useViewport();
 
   const [displayCaption, setDisplayCaption] = useState(caption);
   const trimmedRef = useRef("");
 
-  const measureCaption = useRef(null);
+  const measureCaptionLength = useRef(null);
+  const measureCaptionHeight = useRef(null);
   const measureMore = useRef(null);
   const visibleCaption = useRef(null);
 
   const measureText = (text) => {
-    measureCaption.current.innerText = text;
+    measureCaptionLength.current.innerText = text;
 
-    return measureCaption.current.getBoundingClientRect().width;
+    return measureCaptionLength.current.getBoundingClientRect().width;
+  };
+
+  const setExpandedCaption = () => {
+    setDisplayCaption(<FullCaption />);
+    setCaptionHeight(measureCaptionHeight.current.getBoundingClientRect().height);
+  };
+
+  const setCollapsedCaption = () => {
+    setDisplayCaption(<CollapsedCaption trimmed={trimmedRef.current} />);
+    setCaptionHeight(0);
   };
 
   const CollapsedCaption = ({ trimmed }) => (
@@ -28,7 +39,7 @@ const FullscreenCaption = ({ caption, onHeightChange, onInteractiveHover }) => {
           event.stopPropagation();
           onInteractiveHover?.();
         }}
-        onClick={() => setDisplayCaption(<FullCaption />)}
+        onClick={() => setExpandedCaption()}
       >
         (more)
       </a>
@@ -44,7 +55,7 @@ const FullscreenCaption = ({ caption, onHeightChange, onInteractiveHover }) => {
           event.stopPropagation();
           onInteractiveHover?.();
         }}
-        onClick={() => setDisplayCaption(<CollapsedCaption trimmed={trimmedRef.current} />)}
+        onClick={() => setCollapsedCaption()}
       >
         (less)
       </a>
@@ -52,7 +63,7 @@ const FullscreenCaption = ({ caption, onHeightChange, onInteractiveHover }) => {
   );
 
   useLayoutEffect(() => {
-    if (!measureCaption.current || !measureMore.current) return;
+    if (!measureCaptionLength.current || !measureMore.current) return;
 
     const captionWidth = measureText(caption);
 
@@ -62,7 +73,7 @@ const FullscreenCaption = ({ caption, onHeightChange, onInteractiveHover }) => {
 
     const rootStyles = window.getComputedStyle(document.documentElement);
     const marginPage = Number.parseFloat(rootStyles.getPropertyValue("--margin-page")) || 16;
-    const availableSpace = Math.max(0, viewportWidth - (2 * marginPage));
+    const availableSpace = Math.max(0, viewportWidth - 2 * marginPage);
 
     // Fits already
     if (totalWidth <= availableSpace) {
@@ -91,41 +102,18 @@ const FullscreenCaption = ({ caption, onHeightChange, onInteractiveHover }) => {
     setDisplayCaption(<CollapsedCaption trimmed={trimmed} />);
   }, [caption, viewportWidth]);
 
-  useLayoutEffect(() => {
-    const node = visibleCaption.current;
-    if (!node || typeof onHeightChange !== "function") return undefined;
-
-    const update = () => {
-      const height = Math.ceil(node.getBoundingClientRect().height);
-      const computed = window.getComputedStyle(node);
-      const parsedLineHeight = Number.parseFloat(computed.lineHeight);
-      const fallbackLineHeight = Number.parseFloat(computed.fontSize) * 1.2;
-      const singleLineHeight = Math.ceil(Number.isFinite(parsedLineHeight) ? parsedLineHeight : fallbackLineHeight);
-      const extraHeight = Math.max(0, height - singleLineHeight);
-      onHeightChange(extraHeight);
-    };
-
-    update();
-    const observer = new ResizeObserver(update);
-    observer.observe(node);
-
-    return () => {
-      observer.disconnect();
-      onHeightChange(0);
-    };
-  }, [displayCaption, onHeightChange]);
-
   return (
     <div style={{ position: "relative" }}>
       {/* Hidden measurement elements */}
-      <div className={styles.measureCaption} ref={measureCaption}>
+      <div className={styles.measureCaptionLength} ref={measureCaptionLength}>
         {caption}
       </div>
-
+      <div className={styles.measureCaptionHeight} ref={measureCaptionHeight}>
+        {caption}
+      </div>
       <div className={styles.measureMore} ref={measureMore}>
         <a>(more)</a>
       </div>
-
       {/* Visible caption */}
       <div className={styles.fullscreencaption} ref={visibleCaption}>
         {displayCaption}
