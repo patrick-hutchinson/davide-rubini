@@ -10,13 +10,20 @@ export const ViewportProvider = ({ children }) => {
 
   useLayoutEffect(() => {
     const update = () => {
-      setViewportHeight(window.innerHeight);
-      setViewportWidth(window.innerWidth);
+      const vv = window.visualViewport;
+      setViewportHeight(Math.round(vv?.height ?? window.innerHeight));
+      setViewportWidth(Math.round(vv?.width ?? window.innerWidth));
     };
 
     update();
     window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
+    window.visualViewport?.addEventListener("resize", update);
+    window.visualViewport?.addEventListener("scroll", update);
+    return () => {
+      window.removeEventListener("resize", update);
+      window.visualViewport?.removeEventListener("resize", update);
+      window.visualViewport?.removeEventListener("scroll", update);
+    };
   }, []);
 
   return <ViewportContext.Provider value={{ viewportHeight, viewportWidth }}>{children}</ViewportContext.Provider>;

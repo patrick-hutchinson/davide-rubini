@@ -55,6 +55,7 @@
 .fullscreenMeta {
   position: fixed;
   left: var(--margin-page);
+  right: var(--margin-page);
   bottom: var(--margin-page);
   z-index: 53;
   display: flex;
@@ -67,6 +68,8 @@
   display: flex;
   align-items: center;
   gap: var(--margin-page);
+  width: 100%;
+  justify-content: flex-end;
 }
 
 .fullscreenLabel {
@@ -77,4 +80,5 @@
 .fullscreencaption {
   white-space: normal;
   overflow-wrap: anywhere;
+  max-width: 100%;
 }

@@ -60,7 +60,9 @@ const FullscreenCaption = ({ caption, onHeightChange, onInteractiveHover }) => {
 
     const totalWidth = captionWidth + moreWidth;
 
-    const availableSpace = viewportWidth - 32;
+    const rootStyles = window.getComputedStyle(document.documentElement);
+    const marginPage = Number.parseFloat(rootStyles.getPropertyValue("--margin-page")) || 16;
+    const availableSpace = Math.max(0, viewportWidth - (2 * marginPage));
 
     // Fits already
     if (totalWidth <= availableSpace) {

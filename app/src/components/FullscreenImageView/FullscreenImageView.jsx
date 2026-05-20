@@ -70,7 +70,8 @@ const FullscreenImageView = ({ items, activeIndex, onClose, onPrev, onNext, capt
 
   const handleClick = (event) => {
     if (event.defaultPrevented) return;
-    if (event.clientX < window.innerWidth / 2) {
+    const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
+    if (event.clientX < viewportWidth / 2) {
       onPrev?.();
       return;
     }
@@ -78,11 +79,12 @@ const FullscreenImageView = ({ items, activeIndex, onClose, onPrev, onNext, capt
   };
 
   const handleMouseMove = (event) => {
+    const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
     setCursorIndicator({
       visible: true,
       x: event.clientX - 16,
       y: event.clientY - 16,
-      direction: event.clientX < window.innerWidth / 2 ? "left" : "right",
+      direction: event.clientX < viewportWidth / 2 ? "left" : "right",
     });
   };
 
