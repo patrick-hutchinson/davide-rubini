@@ -46,7 +46,7 @@ export const disableScroll = () => {
     document.body.style.top = `-${lockedScrollY}px`;
     document.body.style.left = "0";
     document.body.style.right = "0";
-    document.body.style.width = "100%";
+    // document.body.style.width = "100%";
   }
   scrollLockCount += 1;
 
