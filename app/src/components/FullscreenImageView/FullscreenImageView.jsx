@@ -16,6 +16,11 @@ const FullscreenImageView = ({ items, activeIndex, onClose, onPrev, onNext, capt
     setCursorIndicator({ visible: false, x: 0, y: 0, direction: "right" });
   }, [activeIndex]);
 
+  useEffect(() => {
+    if (activeIndex === null) return;
+    setCaptionHeight(0);
+  }, [activeIndex]);
+
   const handleClick = (event) => {
     if (event.defaultPrevented) return;
     const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
@@ -75,7 +80,7 @@ const FullscreenImageView = ({ items, activeIndex, onClose, onPrev, onNext, capt
       >
         Close
       </button>
-      <FullscreenMedium medium={items[activeIndex].medium} captionHeight={captionHeight} />
+      <FullscreenMedium key={items[activeIndex]?.medium?._id ?? activeIndex} medium={items[activeIndex].medium} captionHeight={captionHeight} />
       <div
         className={styles.fullscreenMeta}
         onClick={(event) => {
@@ -84,6 +89,7 @@ const FullscreenImageView = ({ items, activeIndex, onClose, onPrev, onNext, capt
       >
         <div className={styles.fullscreenControls}>
           <FullscreenCaption
+            key={items[activeIndex]?.medium?._id ?? activeIndex}
             caption={caption}
             setCaptionHeight={setCaptionHeight}
             onInteractiveHover={() => setCursorIndicator((prev) => ({ ...prev, visible: false }))}

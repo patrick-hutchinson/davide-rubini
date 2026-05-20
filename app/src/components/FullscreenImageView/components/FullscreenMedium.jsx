@@ -5,9 +5,10 @@ import { useEffect, useRef, useState } from "react";
 
 const FullscreenMedium = ({ medium, captionHeight }) => {
   const ref = useRef(null);
+  const baseTopRef = useRef(null);
+  const baseDimensionsRef = useRef({ width: 0, height: 0 });
 
   const [dimensions, setDimensions] = useState({ width: null, height: null });
-  const [baseDimensions, setBaseDimensions] = useState({ width: null, height: null });
   const [position, setPosition] = useState({ left: null, top: null });
 
   useEffect(() => {
@@ -20,39 +21,37 @@ const FullscreenMedium = ({ medium, captionHeight }) => {
 
     const mediaWidth = medium.width * scale;
     const mediaHeight = medium.height * scale;
+    const initialTop = (availableHeight - mediaHeight) / 2;
 
     setDimensions({ width: mediaWidth, height: mediaHeight });
-    setBaseDimensions({ width: mediaWidth, height: mediaHeight });
-    setPosition({ top: (availableHeight - mediaHeight) / 2 });
+    baseDimensionsRef.current = { width: mediaWidth, height: mediaHeight };
+    baseTopRef.current = initialTop;
+    setPosition({ left: (availableWidth - mediaWidth) / 2, top: initialTop });
   }, [medium]);
 
   useEffect(() => {
     if (!ref.current || !medium?.width || !medium?.height) return;
 
-    const availableHeight = ref.current.getBoundingClientRect().height;
+    const { width: availableWidth, height: availableHeight } = ref.current.getBoundingClientRect();
+    const baseWidth = baseDimensionsRef.current.width;
+    const baseHeight = baseDimensionsRef.current.height;
+    if (!baseWidth || !baseHeight) return;
 
-    const whiteSpace = availableHeight - dimensions.height;
-    const whiteSpaceBottom = whiteSpace / 2;
+    const whiteSpaceBottom = Math.max(0, (availableHeight - baseHeight) / 2);
+    const requiredCaptionSpace = Math.max(0, captionHeight + 8);
+    const requiredShrink = Math.max(0, requiredCaptionSpace - whiteSpaceBottom);
+    const nextHeight = Math.max(0, baseHeight - requiredShrink);
+    const nextWidth = Math.max(0, nextHeight * (medium.width / medium.height));
 
-    const additionalCaptionSpace = captionHeight - 34.5;
-
-    if (additionalCaptionSpace > whiteSpaceBottom) {
-      const newHeight = dimensions.height - additionalCaptionSpace;
-      const scale = newHeight / medium.height;
-
-      setDimensions({
-        width: medium.width * scale,
-        height: medium.height * scale,
-      });
-    } else {
-      setDimensions({
-        width: baseDimensions.width,
-        height: baseDimensions.height,
-      });
-    }
-
-    console.log(whiteSpace, "whiteSpace");
-  }, [captionHeight, baseDimensions, medium]);
+    setDimensions({
+      width: nextWidth,
+      height: nextHeight,
+    });
+    setPosition({
+      left: (availableWidth - nextWidth) / 2,
+      top: baseTopRef.current ?? 0,
+    });
+  }, [captionHeight, medium?.height, medium?.width]);
 
   return (
     <div className={styles.fullscreenStage} ref={ref}>

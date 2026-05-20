@@ -1,7 +1,7 @@
 import { useViewport } from "@/context/ViewportContext";
 import styles from "../FullscreenImageView.module.css";
 
-import { useRef, useState, useLayoutEffect, useEffect } from "react";
+import { useRef, useState, useLayoutEffect } from "react";
 
 const FullscreenCaption = ({ caption, onInteractiveHover, setCaptionHeight }) => {
   const { viewportWidth } = useViewport();
@@ -12,7 +12,6 @@ const FullscreenCaption = ({ caption, onInteractiveHover, setCaptionHeight }) =>
   const measureCaptionLength = useRef(null);
   const measureCaptionHeight = useRef(null);
   const measureMore = useRef(null);
-  const visibleCaption = useRef(null);
 
   const measureText = (text) => {
     measureCaptionLength.current.innerText = text;
@@ -22,7 +21,12 @@ const FullscreenCaption = ({ caption, onInteractiveHover, setCaptionHeight }) =>
 
   const setExpandedCaption = () => {
     setDisplayCaption(<FullCaption />);
-    setCaptionHeight(measureCaptionHeight.current.getBoundingClientRect().height);
+    const expandedHeight = measureCaptionHeight.current.getBoundingClientRect().height;
+    const computed = window.getComputedStyle(measureCaptionHeight.current);
+    const parsedLineHeight = Number.parseFloat(computed.lineHeight);
+    const fallbackLineHeight = Number.parseFloat(computed.fontSize) * 1.2;
+    const singleLineHeight = Number.isFinite(parsedLineHeight) ? parsedLineHeight : fallbackLineHeight;
+    setCaptionHeight(Math.max(0, expandedHeight - singleLineHeight));
   };
 
   const setCollapsedCaption = () => {
@@ -115,9 +119,7 @@ const FullscreenCaption = ({ caption, onInteractiveHover, setCaptionHeight }) =>
         <a>(more)</a>
       </div>
       {/* Visible caption */}
-      <div className={styles.fullscreencaption} ref={visibleCaption}>
-        {displayCaption}
-      </div>
+      <div className={styles.fullscreencaption}>{displayCaption}</div>
     </div>
   );
 };
