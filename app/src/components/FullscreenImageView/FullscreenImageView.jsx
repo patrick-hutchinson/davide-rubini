@@ -10,11 +10,18 @@ import FullscreenCaption from "./components/FullscreenCaption";
 const FullscreenImageView = ({ items, activeIndex, onClose, onPrev, onNext, caption }) => {
   const [cursorIndicator, setCursorIndicator] = useState({ visible: false, x: 0, y: 0, direction: "right" });
   const [captionHeight, setCaptionHeight] = useState(0);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   useEffect(() => {
     if (activeIndex !== null) return;
     setCursorIndicator({ visible: false, x: 0, y: 0, direction: "right" });
   }, [activeIndex]);
+
+  useEffect(() => {
+    const coarsePointer = window.matchMedia?.("(pointer: coarse)")?.matches;
+    const touchPoints = typeof navigator !== "undefined" && navigator.maxTouchPoints > 0;
+    setIsTouchDevice(Boolean(coarsePointer || touchPoints));
+  }, []);
 
   useEffect(() => {
     if (activeIndex === null) return;
@@ -32,6 +39,7 @@ const FullscreenImageView = ({ items, activeIndex, onClose, onPrev, onNext, capt
   };
 
   const handleMouseMove = (event) => {
+    if (isTouchDevice) return;
     const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
     setCursorIndicator({
       visible: true,
@@ -54,7 +62,7 @@ const FullscreenImageView = ({ items, activeIndex, onClose, onPrev, onNext, capt
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
     >
-      {cursorIndicator.visible ? (
+      {!isTouchDevice && cursorIndicator.visible ? (
         <div
           className={styles.fullscreenCursorArrow}
           style={{

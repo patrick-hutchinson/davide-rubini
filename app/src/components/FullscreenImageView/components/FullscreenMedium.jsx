@@ -1,7 +1,7 @@
 import Medium from "@/components/Medium/Medium";
 
 import styles from "../FullscreenImageView.module.css";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const FullscreenMedium = ({ medium, captionHeight }) => {
   const ref = useRef(null);
@@ -11,31 +11,20 @@ const FullscreenMedium = ({ medium, captionHeight }) => {
   const [dimensions, setDimensions] = useState({ width: null, height: null });
   const [position, setPosition] = useState({ left: null, top: null });
 
-  useEffect(() => {
-    if (!ref.current || !medium?.width || !medium?.height) return;
-
-    const availableHeight = ref.current.getBoundingClientRect().height;
-    const availableWidth = ref.current.getBoundingClientRect().width;
-
-    const scale = Math.min(availableWidth / medium.width, availableHeight / medium.height);
-
-    const mediaWidth = medium.width * scale;
-    const mediaHeight = medium.height * scale;
-    const initialTop = (availableHeight - mediaHeight) / 2;
-
-    setDimensions({ width: mediaWidth, height: mediaHeight });
-    baseDimensionsRef.current = { width: mediaWidth, height: mediaHeight };
-    baseTopRef.current = initialTop;
-    setPosition({ left: (availableWidth - mediaWidth) / 2, top: initialTop });
-  }, [medium]);
-
-  useEffect(() => {
+  const updateLayout = useCallback(() => {
     if (!ref.current || !medium?.width || !medium?.height) return;
 
     const { width: availableWidth, height: availableHeight } = ref.current.getBoundingClientRect();
-    const baseWidth = baseDimensionsRef.current.width;
-    const baseHeight = baseDimensionsRef.current.height;
-    if (!baseWidth || !baseHeight) return;
+    if (!availableWidth || !availableHeight) return;
+
+    const scale = Math.min(availableWidth / medium.width, availableHeight / medium.height);
+
+    const baseWidth = medium.width * scale;
+    const baseHeight = medium.height * scale;
+    const initialTop = (availableHeight - baseHeight) / 2;
+
+    baseDimensionsRef.current = { width: baseWidth, height: baseHeight };
+    baseTopRef.current = initialTop;
 
     const whiteSpaceBottom = Math.max(0, (availableHeight - baseHeight) / 2);
     const requiredCaptionSpace = Math.max(0, captionHeight + 8);
@@ -52,6 +41,23 @@ const FullscreenMedium = ({ medium, captionHeight }) => {
       top: baseTopRef.current ?? 0,
     });
   }, [captionHeight, medium?.height, medium?.width]);
+
+  useEffect(() => {
+    updateLayout();
+  }, [updateLayout]);
+
+  useEffect(() => {
+    if (!ref.current) return undefined;
+    const observer = new ResizeObserver(updateLayout);
+    observer.observe(ref.current);
+    window.addEventListener("resize", updateLayout);
+    window.visualViewport?.addEventListener("resize", updateLayout);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateLayout);
+      window.visualViewport?.removeEventListener("resize", updateLayout);
+    };
+  }, [updateLayout]);
 
   return (
     <div className={styles.fullscreenStage} ref={ref}>
