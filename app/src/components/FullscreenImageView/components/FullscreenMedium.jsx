@@ -27,7 +27,7 @@ const FullscreenMedium = ({ medium, captionHeight }) => {
     baseTopRef.current = initialTop;
 
     const whiteSpaceBottom = Math.max(0, (availableHeight - baseHeight) / 2);
-    const requiredCaptionSpace = Math.max(0, captionHeight + 8);
+    const requiredCaptionSpace = Math.max(0, captionHeight);
     const requiredShrink = Math.max(0, requiredCaptionSpace - whiteSpaceBottom);
     const nextHeight = Math.max(0, baseHeight - requiredShrink);
     const nextWidth = Math.max(0, nextHeight * (medium.width / medium.height));
