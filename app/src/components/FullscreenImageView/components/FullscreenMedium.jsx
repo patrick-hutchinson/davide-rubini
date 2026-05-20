@@ -37,7 +37,7 @@ const FullscreenMedium = ({ medium, captionHeight }) => {
       height: nextHeight,
     });
     setPosition({
-      left: (availableWidth - nextWidth) / 2,
+      left: 0,
       top: baseTopRef.current ?? 0,
     });
   }, [captionHeight, medium?.height, medium?.width]);
