@@ -126,33 +126,31 @@ const FullscreenImageView = ({ items, activeIndex, onClose, onPrev, onNext, capt
       >
         Close
       </button>
-      <div className={styles.fullscreenLayout}>
-        <div className={styles.fullscreenStage}>
-          <div className={styles.fullscreenMediumWrap} ref={mediumWrapRef}>
-            <Medium
-              className={styles.fullscreenMedium}
-              medium={items[activeIndex].medium}
-              sizes="100vw"
-              quality={100}
-              fit="contain"
-              showPlaceholderOnMount
-              constrainToContainer
-            />
-          </div>
+      <div className={styles.fullscreenStage}>
+        <div className={styles.fullscreenMediumWrap} ref={mediumWrapRef}>
+          <Medium
+            className={styles.fullscreenMedium}
+            medium={items[activeIndex].medium}
+            sizes="100vw"
+            quality={100}
+            fit="contain"
+            showPlaceholderOnMount
+            constrainToContainer
+          />
         </div>
-        <div
-          className={styles.fullscreenMeta}
-          onClick={(event) => {
-            event.stopPropagation();
-          }}
-        >
-          <div className={styles.fullscreenControls}>
-            <FullscreenCaption
-              caption={caption}
-              onHeightChange={setCaptionRequiredExtra}
-              onInteractiveHover={() => setCursorIndicator((prev) => ({ ...prev, visible: false }))}
-            />
-          </div>
+      </div>
+      <div
+        className={styles.fullscreenMeta}
+        onClick={(event) => {
+          event.stopPropagation();
+        }}
+      >
+        <div className={styles.fullscreenControls}>
+          <FullscreenCaption
+            caption={caption}
+            onHeightChange={setCaptionRequiredExtra}
+            onInteractiveHover={() => setCursorIndicator((prev) => ({ ...prev, visible: false }))}
+          />
         </div>
       </div>
     </div>
