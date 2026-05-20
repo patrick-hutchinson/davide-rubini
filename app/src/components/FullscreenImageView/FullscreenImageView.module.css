@@ -37,7 +37,7 @@
 
 .fullscreenMediumWrap {
   width: calc(100dvw - (2 * var(--margin-page)));
-  height: calc(100dvh - (2 * var(--margin-page)) - (16px * 3) - var(--fullscreen-caption-space, 0px));
+  height: calc(100dvh - (3 * var(--margin-page)) - (16px * 3) - var(--fullscreen-caption-space, 0px));
 }
 
 .fullscreenMedium {
