@@ -6,12 +6,17 @@ import { useRef, useState, useLayoutEffect } from "react";
 const FullscreenCaption = ({ caption, onInteractiveHover, setCaptionHeight }) => {
   const { viewportWidth } = useViewport();
 
-  const [displayCaption, setDisplayCaption] = useState(caption);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [trimmed, setTrimmed] = useState(caption);
   const trimmedRef = useRef("");
+  const rafRef = useRef(null);
 
   const measureCaptionLength = useRef(null);
   const measureCaptionHeight = useRef(null);
   const measureMore = useRef(null);
+  const FIT_BUFFER_PX = 6;
+  const HYSTERESIS_PX = 8;
 
   const measureText = (text) => {
     measureCaptionLength.current.innerText = text;
@@ -20,7 +25,7 @@ const FullscreenCaption = ({ caption, onInteractiveHover, setCaptionHeight }) =>
   };
 
   const setExpandedCaption = () => {
-    setDisplayCaption(<FullCaption />);
+    setIsExpanded(true);
     const expandedHeight = measureCaptionHeight.current.getBoundingClientRect().height;
     const computed = window.getComputedStyle(measureCaptionHeight.current);
     const parsedLineHeight = Number.parseFloat(computed.lineHeight);
@@ -30,7 +35,8 @@ const FullscreenCaption = ({ caption, onInteractiveHover, setCaptionHeight }) =>
   };
 
   const setCollapsedCaption = () => {
-    setDisplayCaption(<CollapsedCaption trimmed={trimmedRef.current} />);
+    setIsExpanded(false);
+    setIsCollapsed(true);
     setCaptionHeight(0);
   };
 
@@ -68,43 +74,55 @@ const FullscreenCaption = ({ caption, onInteractiveHover, setCaptionHeight }) =>
 
   useLayoutEffect(() => {
     if (!measureCaptionLength.current || !measureMore.current) return;
+    if (isExpanded) return;
 
-    const captionWidth = measureText(caption);
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      const captionWidth = measureText(caption);
+      const moreWidth = measureMore.current.getBoundingClientRect().width;
+      const totalWidth = captionWidth + moreWidth;
 
-    const moreWidth = measureMore.current.getBoundingClientRect().width;
+      const rootStyles = window.getComputedStyle(document.documentElement);
+      const marginPage = Number.parseFloat(rootStyles.getPropertyValue("--margin-page")) || 16;
+      const availableSpace = Math.max(0, viewportWidth - 2 * marginPage - FIT_BUFFER_PX);
 
-    const totalWidth = captionWidth + moreWidth;
+      const collapseThreshold = availableSpace;
+      const expandThreshold = availableSpace + HYSTERESIS_PX;
 
-    const rootStyles = window.getComputedStyle(document.documentElement);
-    const marginPage = Number.parseFloat(rootStyles.getPropertyValue("--margin-page")) || 16;
-    const availableSpace = Math.max(0, viewportWidth - 2 * marginPage);
+      if (isCollapsed) {
+        if (totalWidth <= expandThreshold) {
+          setIsCollapsed(false);
+          setTrimmed(caption);
+        }
+        return;
+      }
 
-    // Fits already
-    if (totalWidth <= availableSpace) {
-      setDisplayCaption(caption);
-      return;
-    }
+      if (totalWidth <= collapseThreshold) {
+        setIsCollapsed(false);
+        setTrimmed(caption);
+        return;
+      }
 
-    // Needs trimming
-    const targetWidth = availableSpace - moreWidth;
+      const targetWidth = availableSpace - moreWidth;
+      const words = caption.split(" ");
+      let nextTrimmed = "";
 
-    const words = caption.split(" ");
+      for (let i = 0; i < words.length; i++) {
+        const next = nextTrimmed ? `${nextTrimmed} ${words[i]}` : words[i];
+        const nextWidth = measureText(`${next}...`);
+        if (nextWidth > targetWidth) break;
+        nextTrimmed = next;
+      }
 
-    let trimmed = "";
+      trimmedRef.current = nextTrimmed;
+      setTrimmed(nextTrimmed);
+      setIsCollapsed(true);
+    });
 
-    for (let i = 0; i < words.length; i++) {
-      const next = trimmed ? `${trimmed} ${words[i]}` : words[i];
-
-      const nextWidth = measureText(`${next}...`);
-
-      if (nextWidth > targetWidth) break;
-
-      trimmed = next;
-    }
-
-    trimmedRef.current = trimmed;
-    setDisplayCaption(<CollapsedCaption trimmed={trimmed} />);
-  }, [caption, viewportWidth]);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [caption, isCollapsed, isExpanded, viewportWidth]);
 
   return (
     <div style={{ position: "relative" }}>
@@ -119,7 +137,9 @@ const FullscreenCaption = ({ caption, onInteractiveHover, setCaptionHeight }) =>
         <a>(more)</a>
       </div>
       {/* Visible caption */}
-      <div className={styles.fullscreencaption}>{displayCaption}</div>
+      <div className={styles.fullscreencaption}>
+        {isExpanded ? <FullCaption /> : isCollapsed ? <CollapsedCaption trimmed={trimmed} /> : caption}
+      </div>
     </div>
   );
 };
